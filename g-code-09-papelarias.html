@@ -392,13 +392,6 @@
   .g-ticks span.piso{color:var(--caramel);font-weight:800}
   .g-nota{font-family:var(--sans);font-size:13px;color:var(--ink-mute);margin:6px 0 24px}
 
-  .duelo{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px;margin:0 0 24px}
-  .duelo div{padding:20px 22px;border:1px solid var(--rule);background:#fff}
-  .duelo div:first-child{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
-  .duelo b{display:block;font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:clamp(52px,8vw,84px);line-height:.9;letter-spacing:-.04em}
-  .duelo div:first-child b{color:var(--green-neon)}
-  .duelo div:last-child b{color:var(--caramel)}
-  .duelo span{display:block;font-family:var(--sans);font-weight:600;font-size:14.5px;margin-top:10px}
 
   .folha{background:#fff;border:1px solid var(--rule);box-shadow:6px 6px 0 var(--paper-2);padding:clamp(18px,3vw,28px);margin:0 0 22px;max-width:780px}
   .folha-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:4px}
@@ -483,34 +476,11 @@
   .funil div:nth-child(3){width:58%;background:rgba(138,90,30,.28)}
   .funil div:nth-child(4){width:44%;background:var(--caramel);color:#fff}
 
-  /* ---------- placeholders de imagem ---------- */
-  figure{margin:0 0 24px;max-width:860px}
-  .cover-figure figure{max-width:none}
-  .ph{
-    border:1.5px dashed var(--green-deep);
-    background:
-      repeating-linear-gradient(180deg,rgba(45,122,79,.05) 0 3px,transparent 3px 7px),
-      rgba(45,122,79,.03);
-    padding:clamp(16px,2.6vw,22px);
-  }
-  .cover-figure .ph{border-color:rgba(74,222,128,.45);background:rgba(20,32,26,.72)}
-  .ph-id{
-    font-family:var(--sans);
-    font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--green-deep);
-    margin:0 0 4px;
-  }
-  .cover-figure .ph-id{color:var(--green-neon)}
-  .ph-meta{
-    font-family:var(--sans);
-    font-size:13px;color:var(--ink-soft);margin:0 0 12px;
-  }
-  .cover-figure .ph-meta{color:#9fb3a8}
-  .ph-prompt{
-    font-size:14px;line-height:1.5;
-    background:#fff;border:1px solid var(--rule);
-    padding:12px 14px;margin:0;max-width:none;
-  }
-  .cover-figure .ph-prompt{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16);color:#d7e2db}
+  /* ---------- ilustrações ---------- */
+  figure{margin:0 0 26px;max-width:860px}
+  .ill-art svg{display:block;width:100%;height:auto}
+  .ill figcaption{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink-mute);margin-top:10px}
+  .cover-figure figure{max-width:760px;margin:0}
 
   footer{
     background:var(--ink);color:#9fb3a8;
@@ -550,10 +520,9 @@
     .cover-code{animation:none;-webkit-text-fill-color:var(--green-neon);background:none}
     section{break-before:page;padding-top:0}
     main > section:first-of-type{break-before:page}
-    .ficha,.aviso,.obj,figure,table,.saida,.dor,.tipo,.msg,.dia-col,.grafico,.folha,.duelo,.conta,.semana,.prazo,.passo{break-inside:avoid}
+    .ficha,.aviso,.obj,figure,.ill,table,.saida,.dor,.tipo,.msg,.dia-col,.grafico,.folha,.conta,.semana,.prazo,.passo{break-inside:avoid}
     h2,h3,.sec-head{break-after:avoid}
-    .ph-prompt{display:none}
-    .ph{padding:40px 18px;text-align:center}
+    .ill-art svg{max-height:120mm}
     .tabela{overflow:visible}
     .folha{box-shadow:none}
   }
@@ -578,12 +547,8 @@
   </div>
 
   <div class="cover-figure">
-    <figure>
-      <div class="ph">
-        <p class="ph-id">IMG-01 · capa</p>
-        <p class="ph-meta">Horizontal 16:9 · o mostruário de fornecedor sobre o balcão da papelaria</p>
-        <p class="ph-prompt">Fotografia publicitária de um pequeno mostruário de peças impressas em 3D na cor verde escuro fosco, apoiado sobre o balcão de madeira clara de uma papelaria personalizada de bairro: um chaveiro com letras em relevo, um topo de bolo vazado espetado num palito de bambu e três plaquinhas retangulares pequenas alinhadas. Ao fundo, fora de foco, prateleiras com caixinhas de papel coloridas, rolos de fita de cetim e uma plotter de recorte. Luz natural de manhã entrando pela vitrine, profundidade de campo rasa, sombras suaves, estética fotográfica honesta de produto real. Sem texto legível em nenhuma peça nem nas embalagens ao fundo. Proporção 16:9.</p>
-      </div>
+    <figure class="ill">
+      <div class="ill-art" data-ill="capa" role="img" aria-label="Mostruário de fornecedor: placa de papelão com chaveiro, três plaquinhas e topo de bolo presos por elástico, ao lado de uma caixinha de papelaria com plaquinha colada e de um carretel de filamento"></div>
     </figure>
   </div>
 
@@ -655,14 +620,7 @@
     </div>
   </div>
 
-  <figure>
-    <div class="ph">
-      <p class="ph-id">IMG-02 · cliente ideal</p>
-      <p class="ph-meta">Horizontal 3:2 · a dona da papelaria montando kits de festa</p>
-      <p class="ph-prompt">Fotografia documental de uma mulher brasileira de aproximadamente 35 anos, dona de uma papelaria personalizada, montando caixinhas de lembrancinha de festa infantil numa mesa de trabalho cheia: pilhas de caixas de papel dobradas, fitas, uma guilhotina e uma pequena plotter de recorte ao fundo. Ela confere uma caixa contra uma folha de pedido. Luz natural de janela, ambiente real e um pouco bagunçado, cores quentes e naturais, estilo fotojornalístico sem pose de banco de imagens. Sem texto legível em papéis ou embalagens. Proporção 3:2.</p>
-    </div>
-  </figure>
-
+  
   <div class="split">
     <div class="ficha">
       <p class="ficha-tab">Como reconhecer</p>
@@ -756,13 +714,10 @@
     </div>
   </div>
 
-  <figure>
-    <div class="ph">
-      <p class="ph-id">IMG-03 · os três níveis</p>
-      <p class="ph-meta">Horizontal 3:2 · lote, mostruário e produção mensal lado a lado</p>
-      <p class="ph-prompt">Fotografia de produto em vista superior sobre uma mesa de madeira clara, três grupos de peças impressas em 3D em verde escuro fosco, bem separados: à esquerda um saco plástico transparente tipo zip com cerca de vinte chaveiros pequenos iguais; ao centro uma placa de papelão cinza com seis peças diferentes presas por elásticos, como um mostruário de fornecedor; à direita três caixas de papelão pardo empilhadas e abertas, cheias de peças pequenas organizadas. Iluminação difusa e uniforme, sombras suaves, composição limpa com espaço entre os grupos. Sem texto legível. Proporção 3:2.</p>
-    </div>
-  </figure>
+  <figure class="ill">
+      <div class="ill-art" data-ill="niveis" role="img" aria-label="Os três níveis: saco com 20 chaveiros, mostruário com seis peças e caixas da cota mensal"></div>
+      <figcaption>Entrada, Padrão e Completo: do saco de um pedido às caixas de uma cota mensal.</figcaption>
+    </figure>
 
   <div class="aviso">
     <p class="ficha-tab">Prazo é contrato</p>
@@ -798,7 +753,7 @@
   <div class="split">
     <div>
       <h3 style="margin-top:0">PLA fosco, quatro cores em estoque</h3>
-      <p>PLA fosco esconde as linhas de camada, imprime detalhe fino de letra e custa menos que PETG. PLA silk dourado faz o acabamento "de luxo" que papelaria adora vender mais caro.</p>
+      <p>PLA fosco esconde as linhas de camada, imprime detalhe fino de letra. PLA silk dourado dá o acabamento "de luxo" que papelaria gosta de oferecer como opção especial.</p>
       <div class="cores">
         <div class="cor"><i style="background-color:#f4f2ec"></i>Branco</div>
         <div class="cor"><i style="background-color:#f3c6d3"></i>Rosa bebê</div>
@@ -828,7 +783,7 @@
   </div>
   <p>A fonte cursiva fina que toda papelaria usa no convite não imprime abaixo disso: a letra some ou quebra ao tirar da mesa. Tenha três fontes testadas e mostre só essas. Quando ela pedir a fonte do convite, imprima uma prova antes de aceitar.</p>
   <p>A troca de cor por pausa exige você do lado da máquina. Uma mesa de 12 chaveiros em duas cores são 1h50 de impressão, mas você precisa estar em casa no minuto 14. Mesas de duas cores vão para os horários em que você está acordado e em casa; as de uma cor, para a madrugada e o horário do trabalho.</p>
-  <p>PLA amolece dentro de carro fechado no sol. Entregue na sombra e avise a papelaria para não deixar o pedido no porta-malas. Letreiro de ateliê que vai para festa ao ar livre, faça em PETG e cobre a diferença.</p>
+  <p>PLA amolece dentro de carro fechado no sol. Entregue na sombra e avise a papelaria para não deixar o pedido no porta-malas. Letreiro de ateliê que vai para festa ao ar livre, faça em PETG e refaça a conta de custo com o preço do seu rolo.</p>
 
   <h3>Grafia aprovada por escrito</h3>
   <div class="grafia" aria-label="Quatro grafias diferentes do mesmo nome">
@@ -836,13 +791,10 @@
   </div>
   <p>São quatro crianças diferentes, e as quatro existem. Toda arte vai para ela por WhatsApp antes de imprimir, com o nome em letra grande, e só entra na fila com um "aprovado" escrito. Se ela aprovar errado, a reimpressão é cobrada. Se você imprimir errado o que ela aprovou certo, refaz em 24 horas sem custo. Essa regra protege você e é argumento de venda contra o fornecedor de longe.</p>
 
-  <figure>
-    <div class="ph">
-      <p class="ph-id">IMG-04 · topo com palito de bambu</p>
-      <p class="ph-meta">Vertical 4:5 · o topo espetado no bolo, com a haste de bambu visível</p>
-      <p class="ph-prompt">Close fotográfico de um topo de bolo impresso em 3D em verde escuro fosco, com letras em relevo abstratas e um contorno de estrela, fixado em dois palitos finos de bambu natural que entram na cobertura branca de um bolo de festa. O foco nítido está no ponto onde a peça plástica encaixa no bambu, bem acima da superfície do bolo, deixando claro que só a madeira toca a cobertura. Fundo desfocado de mesa de festa com tons claros. Luz natural suave de lateral. Sem texto legível. Proporção 4:5.</p>
-    </div>
-  </figure>
+  <figure class="ill">
+      <div class="ill-art" data-ill="topo" role="img" aria-label="Topo de bolo fixado em dois palitos de bambu; só o bambu entra no bolo e a peça plástica fica acima da cobertura"></div>
+      <figcaption>O topo sai da impressora sem haste. Quem entra no bolo é o palito de bambu.</figcaption>
+    </figure>
 
   <div class="split">
     <div class="aviso">
@@ -893,13 +845,10 @@
   </div>
   <p>Imprima dois jogos: um para deixar na papelaria que pedir para ficar, outro para continuar a rota. A caixinha milk do detalhe abaixo é à parte.</p>
 
-  <figure>
-    <div class="ph">
-      <p class="ph-id">IMG-05 · kit de amostra</p>
-      <p class="ph-meta">Vertical 4:5 · as peças em vista superior, com régua</p>
-      <p class="ph-prompt">Fotografia flat lay técnica em vista superior sobre fundo de papel cinza claro, peças impressas em 3D em verde escuro fosco alinhadas com precisão: um chaveiro retangular com letras em relevo e argola metálica, um topo de bolo vazado de 15 centímetros ao lado de dois palitos de bambu, e três plaquinhas retangulares pequenas com relevo, uma delas colada sobre a tampa de uma caixinha de papel branca. Uma régua metálica fina ao lado para dar escala. Luz de estúdio uniforme, sombra mínima, composição organizada de catálogo. Sem texto legível. Proporção 4:5.</p>
-    </div>
-  </figure>
+  <figure class="ill">
+      <div class="ill-art" data-ill="kit" role="img" aria-label="Kit de amostra em escala sobre régua: chaveiro de 6 cm, topo de 15 cm com dois palitos de bambu e três plaquinhas de 5 por 2 cm"></div>
+      <figcaption>O kit em escala real, sobre régua em centímetros.</figcaption>
+    </figure>
 
   <div class="split">
     <div class="ficha escura">
@@ -913,13 +862,10 @@
     </div>
   </div>
 
-  <figure>
-    <div class="ph">
-      <p class="ph-id">IMG-06 · o mostruário no balcão</p>
-      <p class="ph-meta">Horizontal 3:2 · a placa de papelão com as peças, deixada ao lado do caixa</p>
-      <p class="ph-prompt">Fotografia de produto de uma placa de papelão cinza tamanho A5 apoiada em pé junto ao caixa de uma papelaria de bairro, com peças impressas em 3D em verde escuro fosco presas por elásticos pretos: um chaveiro, três plaquinhas pequenas e um topo de bolo vazado. Ao lado, uma caixinha de papel branca com uma plaquinha verde colada na tampa. Fundo desfocado com prateleiras de papel colorido. Luz natural lateral, estética simples e prática de amostra de fornecedor. Sem texto legível. Proporção 3:2.</p>
-    </div>
-  </figure>
+  <figure class="ill">
+      <div class="ill-art" data-ill="caixa" role="img" aria-label="Caixinha milk lisa de R$ 4 e a mesma caixa com plaquinha de nome, vendida a R$ 9"></div>
+      <figcaption>O detalhe que fecha venda: o produto dela, melhorado.</figcaption>
+    </figure>
 </section>
 
 <!-- ===================== 07 ===================== -->
@@ -945,10 +891,10 @@
   </div>
   <p class="g-nota">Margem = preço de atacado menos custo real. Retorno/h = margem dividida pelas horas de máquina.</p>
 
-  <div class="duelo">
-    <div><b>R$ 64/h</b><span>Peça pequena e chata, que enche a mesa e imprime baixa. É onde está o dinheiro.</span></div>
-    <div><b>R$ 12/h</b><span>Letreiro alto a R$ 90. Parece o pedido mais caro e é o que paga menos por hora.</span></div>
-  </div>
+  <figure class="ill">
+      <div class="ill-art" data-ill="mesas" role="img" aria-label="Duas mesas de impressão: uma cheia com 30 plaquinhas em 1h30, rendendo R$ 64 por hora; outra com um letreiro de 5 letras em 6h, rendendo R$ 12 por hora a R$ 90"></div>
+      <figcaption>Peça pequena e chata enche a mesa e imprime baixa. Peça alta ocupa a máquina o dia todo.</figcaption>
+    </figure>
 
   <div class="aviso">
     <p class="ficha-tab">Seu piso</p>
@@ -998,14 +944,7 @@
     <h2>A abordagem em 40 segundos</h2>
   </header>
 
-  <figure>
-    <div class="ph">
-      <p class="ph-id">IMG-07 · a conversa no balcão</p>
-      <p class="ph-meta">Horizontal 16:9 · o mostruário sobre o balcão, ela segurando o chaveiro</p>
-      <p class="ph-prompt">Fotografia documental de uma conversa no balcão de uma papelaria personalizada de bairro: uma mulher atrás do balcão segura e examina um pequeno chaveiro impresso em 3D em verde escuro fosco, enquanto um homem do outro lado, visto de costas e parcialmente fora do quadro, apoia uma placa de papelão com outras peças sobre o balcão. Enquadramento na altura das mãos, rosto dela parcialmente visível e desfocado, expressão de avaliação atenta. Luz natural da manhã, prateleiras com papéis e fitas ao fundo. Estilo fotojornalístico, nada posado, cores naturais. Sem texto legível. Proporção 16:9.</p>
-    </div>
-  </figure>
-
+  
   <div class="relogio">
     <div class="passo">
       <span class="t">antes</span>
@@ -1066,7 +1005,7 @@
       <p class="obj-real">Eu comparei o preço da unidade e esqueci o resto da conta.</p>
       <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Acha mesmo. Mais o frete, mais doze dias de espera, e se vier o nome errado com a festa no sábado, não tem o que fazer. Comigo você aprova a arte antes, recebe até a quarta, e erro meu eu refaço em um dia. O que você compra aqui é não passar a sexta-feira com a mãe da aniversariante no seu WhatsApp."</p></div>
     </div>
-    <p class="erro">Erro fatal: baixar o atacado para chegar perto do marketplace. Você perde a margem e continua mais caro.</p>
+    <p class="erro">Erro fatal: baixar o atacado para chegar perto do marketplace. Você perde a margem e a conversa continua sendo sobre preço de unidade.</p>
   </div>
 
   <div class="obj">
@@ -1245,6 +1184,194 @@
   <p>Todo número deste manual é hipótese a validar: tempos, gramaturas, preços de atacado e de revenda mudam com a sua impressora, o seu filamento e a sua região. Refaça as contas antes de entregar a primeira tabela.</p>
   <p>As orientações sobre peças próximas de alimento não substituem a regulamentação sanitária local. Não reproduza personagens, logotipos ou marcas de terceiros sem autorização do titular.</p>
 </footer>
+
+<script>
+/* Ilustrações do manual, desenhadas em SVG por JavaScript. Tudo em escala e na paleta da marca. */
+(function(){
+  var G="#2d7a4f", GD="#1f5c3b", INK="#14201a", SOFT="#42514a", MUTE="#6b7a72", CAR="#8a5a1e", WHITE="#f7f6f1", F="Archivo, system-ui, sans-serif";
+  function defs(id){
+    return '<defs><pattern id="'+id+'-l" width="6" height="3.2" patternUnits="userSpaceOnUse">'+
+      '<rect width="6" height="3.2" fill="'+G+'"/><rect y="2.55" width="6" height=".65" fill="'+GD+'" opacity=".5"/></pattern></defs>';
+  }
+  function svg(id,w,h,body,bg){
+    return '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+defs(id)+
+      (bg?'<rect width="'+w+'" height="'+h+'" fill="'+bg+'"/>':'')+body+'</svg>';
+  }
+  function txt(x,y,s,o){
+    o=o||{};
+    return '<text x="'+x+'" y="'+y+'" font-family="'+F+'" font-size="'+(o.size||16)+'" font-weight="'+(o.weight||700)+'" fill="'+(o.fill||INK)+'"'+
+      (o.anchor?' text-anchor="'+o.anchor+'"':'')+(o.len?' textLength="'+o.len+'" lengthAdjust="spacingAndGlyphs"':'')+
+      (o.ls?' letter-spacing="'+o.ls+'"':'')+'>'+s+'</text>';
+  }
+  function sombra(x,y,w,h,r){return '<rect x="'+(x+4)+'" y="'+(y+5)+'" width="'+w+'" height="'+h+'" rx="'+(r||0)+'" fill="rgba(20,32,26,.16)"/>';}
+
+  /* peças */
+  function chaveiro(p,x,y,w,h,nome,fundo){
+    var r=h*.22, cx=x+h*.36, tx=x+h*.64;
+    return sombra(x,y,w,h,r)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+r+'" fill="url(#'+p+'-l)"/>'+
+      '<circle cx="'+cx+'" cy="'+(y+h/2)+'" r="'+(h*.13)+'" fill="'+fundo+'"/>'+
+      '<circle cx="'+(x-h*.1)+'" cy="'+(y+h/2)+'" r="'+(h*.34)+'" fill="none" stroke="#98a29d" stroke-width="'+(h*.07)+'"/>'+
+      txt(tx+(x+w-h*.18-tx)/2,y+h*.7,nome,{size:h*.52,weight:800,fill:WHITE,anchor:"middle",len:(x+w-h*.18-tx)*.86});
+  }
+  function plaquinha(p,x,y,w,h,nome){
+    return sombra(x,y,w,h,h*.12)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(h*.12)+'" fill="url(#'+p+'-l)"/>'+
+      txt(x+w/2,y+h*.68,nome,{size:h*.5,weight:800,fill:WHITE,anchor:"middle",len:w*.52});
+  }
+  function topo(p,x,y,w){
+    var h=w*.3, sx=x+h*.46, sy=y+h*.44, R=h*.42, pts=[];
+    for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5, rr=i%2?R*.45:R; pts.push((sx+rr*Math.cos(a)).toFixed(1)+","+(sy+rr*Math.sin(a)).toFixed(1));}
+    var cx=x+w-h*.4, t0=x+h*1.0, t1=cx-h*.46;
+    return '<g opacity=".16" transform="translate(4 5)"><polygon points="'+pts.join(" ")+'" fill="'+INK+'"/><rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" fill="'+INK+'"/></g>'+
+      '<rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" rx="'+(h*.05)+'" fill="url(#'+p+'-l)"/>'+
+      '<polygon points="'+pts.join(" ")+'" fill="url(#'+p+'-l)"/>'+
+      txt(t0+(t1-t0)/2,y+h*.78,"Ísis",{size:h*.66,weight:900,fill:"url(#"+p+"-l)",anchor:"middle",len:t1-t0})+
+      '<circle cx="'+cx+'" cy="'+(y+h*.46)+'" r="'+(h*.36)+'" fill="url(#'+p+'-l)"/>'+
+      txt(cx,y+h*.64,"5",{size:h*.5,weight:900,fill:WHITE,anchor:"middle"});
+  }
+  function bambu(x1,y1,x2,y2,w){
+    w=w||7;
+    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#cfa964" stroke-width="'+w+'" stroke-linecap="round"/>'+
+      '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#ead19c" stroke-width="'+(w*.28)+'" stroke-linecap="round" transform="translate('+(-w*.18)+' 0)"/>';
+  }
+  function caixaMilk(p,x,y,w,h,comPlaca){
+    var t=y+h*.28;
+    var s='<ellipse cx="'+(x+w/2+6)+'" cy="'+(y+h+2)+'" rx="'+(w*.58)+'" ry="'+(h*.035)+'" fill="rgba(20,32,26,.14)"/>'+
+      '<rect x="'+(x+w*.32)+'" y="'+y+'" width="'+(w*.36)+'" height="'+(h*.08)+'" fill="#e9e5da" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<polygon points="'+x+','+t+' '+(x+w/2)+','+(y+h*.07)+' '+(x+w)+','+t+'" fill="#efece4" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+x+'" y="'+t+'" width="'+w+'" height="'+(h*.72)+'" fill="'+WHITE+'" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+(x+w*.82)+'" y="'+t+'" width="'+(w*.18)+'" height="'+(h*.72)+'" fill="rgba(20,32,26,.05)"/>';
+    if(comPlaca) s+=plaquinha(p,x+w*.14,y+h*.52,w*.62,w*.24,"Ísis");
+    return s;
+  }
+  function placa(x,y,w,h){
+    var s='<rect x="'+(x+6)+'" y="'+(y+7)+'" width="'+w+'" height="'+h+'" fill="rgba(20,32,26,.18)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#bdb6a7"/>';
+    for(var i=x+9;i<x+w;i+=9) s+='<line x1="'+i+'" y1="'+y+'" x2="'+i+'" y2="'+(y+h)+'" stroke="rgba(20,32,26,.05)" stroke-width="1"/>';
+    return s;
+  }
+  function elastico(x1,x2,y){return '<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" stroke="#1d1f1e" stroke-width="3.5" stroke-linecap="round" opacity=".88"/>';}
+  function mesa(x,y,s){
+    var m='<rect x="'+(x+6)+'" y="'+(y+8)+'" width="'+s+'" height="'+s+'" rx="10" fill="rgba(20,32,26,.2)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" rx="10" fill="#1b2a22"/>';
+    for(var i=1;i<10;i++){var d=s*i/10;
+      m+='<line x1="'+(x+d)+'" y1="'+(y+6)+'" x2="'+(x+d)+'" y2="'+(y+s-6)+'" stroke="rgba(74,222,128,.1)"/>'+
+         '<line x1="'+(x+6)+'" y1="'+(y+d)+'" x2="'+(x+s-6)+'" y2="'+(y+d)+'" stroke="rgba(74,222,128,.1)"/>';}
+    return m;
+  }
+  function cota(x1,x2,y,rotulo){
+    return '<g stroke="'+MUTE+'" stroke-width="1.5"><line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'"/><line x1="'+x1+'" y1="'+(y-7)+'" x2="'+x1+'" y2="'+(y+7)+'"/><line x1="'+x2+'" y1="'+(y-7)+'" x2="'+x2+'" y2="'+(y+7)+'"/></g>'+
+      '<rect x="'+((x1+x2)/2-(rotulo.length*5+12))+'" y="'+(y-12)+'" width="'+(rotulo.length*10+24)+'" height="24" fill="#eceae4"/>'+
+      txt((x1+x2)/2,y+6,rotulo,{size:15,weight:700,fill:SOFT,anchor:"middle"});
+  }
+
+  /* cenas */
+  var ILL={
+    capa:function(){
+      var p="ic", b="";
+      b+='<rect x="0" y="372" width="1200" height="68" fill="#22332a"/><rect x="0" y="368" width="1200" height="4" fill="rgba(74,222,128,.28)"/>';
+      /* carretel */
+      b+='<circle cx="190" cy="290" r="80" fill="#1b2a22" stroke="#2f443a" stroke-width="3"/>';
+      for(var r=68;r>28;r-=5) b+='<circle cx="190" cy="290" r="'+r+'" fill="none" stroke="'+(r%10?G:GD)+'" stroke-width="5"/>';
+      b+='<circle cx="190" cy="290" r="22" fill="#14201a" stroke="#2f443a" stroke-width="3"/>';
+      /* mostruário */
+      b+=placa(370,58,330,312);
+      b+=chaveiro(p,418,92,210,70,"ÍSIS","#bdb6a7")+elastico(380,690,127);
+      b+=plaquinha(p,400,200,82,34,"Ísis")+plaquinha(p,494,200,82,34,"Léo")+plaquinha(p,588,200,82,34,"Bia")+elastico(380,690,217);
+      b+=topo(p,410,262,250)+elastico(380,690,302);
+      /* caixinha da papelaria */
+      b+=caixaMilk(p,790,176,136,194,true);
+      return svg(p,1200,440,b);
+    },
+    niveis:function(){
+      var p="in", b="", seed=11;
+      function rnd(){seed=(seed*9301+49297)%233280;return seed/233280;}
+      /* 1 · saco zip com 20 chaveiros */
+      var sac="";
+      for(var i=0;i<20;i++){
+        var x=100+(i%4)*52+rnd()*14, y=112+Math.floor(i/4)*40+rnd()*10, a=(rnd()-.5)*50;
+        sac+='<g transform="rotate('+a.toFixed(1)+' '+(x+28)+' '+(y+10)+')">'+chaveiro(p,x,y,58,21,"ÍSIS","#f5f4ef")+'</g>';
+      }
+      b+='<rect x="78" y="62" width="244" height="276" rx="14" fill="#f5f4ef" stroke="#b7c2bb" stroke-width="2"/>'+sac+
+         '<rect x="78" y="62" width="244" height="276" rx="14" fill="rgba(255,255,255,.3)" stroke="#b7c2bb" stroke-width="2"/>'+
+         '<rect x="78" y="86" width="244" height="7" fill="#c9d3cd"/>';
+      /* 2 · mostruário com 6 peças */
+      b+=placa(462,52,276,286);
+      b+=chaveiro(p,494,78,98,38,"ÍSIS","#bdb6a7")+chaveiro(p,622,78,98,38,"LÉO","#bdb6a7")+elastico(470,730,97);
+      b+=plaquinha(p,480,158,70,28,"Ísis")+plaquinha(p,565,158,70,28,"Léo")+plaquinha(p,650,158,70,28,"Bia")+elastico(470,730,172);
+      b+=topo(p,488,236,226)+elastico(470,730,272);
+      /* 3 · caixas da cota mensal */
+      function cx(x,y,w,h){return sombra(x,y,w,h,2)+'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#c9a877" stroke="#a5854f" stroke-width="2"/><line x1="'+x+'" y1="'+(y+h*.3)+'" x2="'+(x+w)+'" y2="'+(y+h*.3)+'" stroke="#a5854f" stroke-width="2"/><rect x="'+(x+w*.4)+'" y="'+y+'" width="'+(w*.2)+'" height="'+h+'" fill="rgba(255,255,255,.18)"/>';}
+      b+=plaquinha(p,905,62,56,24,"")+plaquinha(p,968,54,56,24,"")+plaquinha(p,1030,66,56,24,"");
+      b+=cx(890,80,220,80)+cx(872,166,256,82)+cx(856,254,288,84);
+      /* rótulos */
+      [[200,"R$ 150–250","ENTRADA · LOTE-TESTE"],[600,"R$ 250–500","PADRÃO · FORNECEDOR FIXO"],[1000,"R$ 600–1.500/mês","COMPLETO · COTA MENSAL"]].forEach(function(r){
+        b+=txt(r[0],386,r[1],{size:30,weight:900,fill:INK,anchor:"middle"})+txt(r[0],414,r[2],{size:15,weight:700,fill:G,anchor:"middle",ls:1.4});
+      });
+      return svg(p,1200,432,b,"#f2efe7");
+    },
+    topo:function(){
+      var p="it", b="";
+      b+='<rect x="170" y="540" width="560" height="16" rx="8" fill="#cfc9bb"/>';
+      b+=bambu(392,210,392,440,8)+bambu(508,210,508,440,8);
+      b+='<rect x="220" y="360" width="460" height="180" rx="4" fill="#fff" stroke="#ddd8cc" stroke-width="2"/>';
+      b+='<rect x="222" y="444" width="456" height="10" fill="#f3e8d3"/>';
+      b+='<rect x="220" y="356" width="460" height="24" rx="6" fill="#f6ecdc"/>';
+      for(var i=0;i<9;i++){var dx=236+i*52, dh=16+((i*37)%22); b+='<rect x="'+dx+'" y="372" width="20" height="'+dh+'" rx="10" fill="#f6ecdc"/>';}
+      b+='<line x1="392" y1="362" x2="392" y2="438" stroke="#cfa964" stroke-width="8" stroke-dasharray="7 6" opacity=".75"/>'+
+         '<line x1="508" y1="362" x2="508" y2="438" stroke="#cfa964" stroke-width="8" stroke-dasharray="7 6" opacity=".75"/>';
+      b+=topo(p,290,140,320);
+      /* cota: plástico acima da cobertura */
+      b+='<g stroke="'+G+'" stroke-width="2"><line x1="700" y1="238" x2="700" y2="356"/><line x1="690" y1="238" x2="710" y2="238"/><line x1="690" y1="356" x2="710" y2="356"/><line x1="612" y1="238" x2="690" y2="238" stroke-dasharray="4 4"/></g>';
+      b+=txt(720,288,"Plástico fica",{size:19,weight:800,fill:G})+txt(720,312,"acima da cobertura",{size:19,weight:800,fill:G});
+      /* chamada: só o bambu entra */
+      b+='<line x1="206" y1="412" x2="384" y2="412" stroke="'+CAR+'" stroke-width="2"/><circle cx="388" cy="412" r="4" fill="'+CAR+'"/>';
+      b+=txt(30,406,"Só o bambu",{size:19,weight:800,fill:CAR})+txt(30,430,"entra no bolo",{size:19,weight:800,fill:CAR});
+      return svg(p,960,580,b,"#f2efe7");
+    },
+    kit:function(){
+      var p="ik", b="", u=36;
+      b+=chaveiro(p,74,70,6*u,76,"ÍSIS","#eceae4")+cota(74,74+6*u,176,"6 cm");
+      b+=topo(p,400,48,15*u)+cota(400,400+15*u,236,"15 cm");
+      b+=bambu(420,282,900,282,8)+bambu(420,302,900,302,8);
+      b+=plaquinha(p,74,332,5*u,2*u,"Ísis")+plaquinha(p,272,332,5*u,2*u,"Léo");
+      b+='<rect x="458" y="318" width="232" height="100" fill="#fbfaf6" stroke="#d6d0c3" stroke-width="1.5"/>'+plaquinha(p,484,332,5*u,2*u,"Bia");
+      b+=txt(708,366,"colada na tampa",{size:15,weight:600,fill:MUTE})+txt(708,386,"da caixinha",{size:15,weight:600,fill:MUTE});
+      b+=cota(74,74+5*u,432,"5 × 2 cm");
+      /* régua */
+      var rx=40, ry=470;
+      b+='<rect x="'+rx+'" y="'+ry+'" width="'+(26*u+18)+'" height="56" rx="3" fill="#d3d9d6" stroke="#b3bdb8"/>';
+      for(var mm=0;mm<=255;mm++){var x=rx+18+mm*u/10, hh=mm%10===0?20:(mm%5===0?13:7);
+        b+='<line x1="'+x.toFixed(1)+'" y1="'+ry+'" x2="'+x.toFixed(1)+'" y2="'+(ry+hh)+'" stroke="#55615b" stroke-width="'+(mm%10===0?1.4:.8)+'"/>';
+        if(mm%10===0) b+=txt(x,ry+40,String(mm/10),{size:12,weight:600,fill:SOFT,anchor:"middle"});}
+      return svg(p,1000,550,b,"#eceae4");
+    },
+    caixa:function(){
+      var p="ix", b="";
+      b+=caixaMilk(p,150,50,170,250,false)+caixaMilk(p,580,50,170,250,true);
+      b+='<line x1="360" y1="190" x2="530" y2="190" stroke="'+G+'" stroke-width="3"/><polygon points="540,190 524,181 524,199" fill="'+G+'"/>';
+      b+=txt(445,172,"+ plaquinha",{size:19,weight:800,fill:G,anchor:"middle"})+txt(445,222,"custa R$ 3,50",{size:15,weight:600,fill:MUTE,anchor:"middle"});
+      b+=txt(235,360,"R$ 4",{size:44,weight:900,fill:SOFT,anchor:"middle"})+txt(235,390,"a caixa lisa",{size:15,weight:600,fill:MUTE,anchor:"middle"});
+      b+=txt(665,360,"R$ 9",{size:44,weight:900,fill:G,anchor:"middle"})+txt(665,390,"a mesma caixa, com nome",{size:15,weight:600,fill:MUTE,anchor:"middle"});
+      return svg(p,900,410,b,"#f2efe7");
+    },
+    mesas:function(){
+      var p="im", b="", s=380;
+      b+=mesa(80,30,s);
+      for(var r=0;r<10;r++) for(var c=0;c<3;c++) b+=plaquinha(p,80+58+c*92,30+17+r*35,80,30,"Ísis");
+      b+=mesa(640,30,s);
+      b+=txt(640+s/2,30+168,"SOF",{size:170,weight:900,fill:"url(#"+p+"-l)",anchor:"middle",len:300});
+      b+=txt(640+s/2,30+350,"IA",{size:170,weight:900,fill:"url(#"+p+"-l)",anchor:"middle",len:190});
+      b+=txt(80+s/2,452,"30 plaquinhas · 1h30 de máquina",{size:17,weight:700,fill:SOFT,anchor:"middle"})+txt(80+s/2,496,"R$ 64/h",{size:40,weight:900,fill:G,anchor:"middle"});
+      b+=txt(640+s/2,452,"Letreiro de 5 letras · 6h de máquina",{size:17,weight:700,fill:SOFT,anchor:"middle"})+txt(640+s/2,496,"R$ 12/h a R$ 90",{size:40,weight:900,fill:CAR,anchor:"middle"});
+      return svg(p,1100,512,b,"#f2efe7");
+    }
+  };
+  var alvos=document.querySelectorAll("[data-ill]");
+  for(var i=0;i<alvos.length;i++){var f=ILL[alvos[i].getAttribute("data-ill")]; if(f) alvos[i].innerHTML=f();}
+})();
+</script>
 
 </body>
 </html>
