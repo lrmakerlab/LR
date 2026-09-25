@@ -3,23 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>G-Code 09 — Papelarias, gráficas e ateliês de festa | LR Maker Lab</title>
+<title>G-Code 09 · Papelarias e festa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#14201a;
     --ink-soft:#42514a;
+    --ink-mute:#6b7a72;
     --paper:#fbfaf6;
     --paper-2:#f2efe7;
     --rule:#ddd8cc;
     --green-deep:#2d7a4f;
     --green-neon:#4ade80;
+    --green-wash:#e4f1e8;
+    --plate:#1b2a22;
     --caramel:#8a5a1e;
     --caramel-soft:#f6ecdc;
     --measure:66ch;
+    --wide:1080px;
+    --gut:clamp(18px,5vw,64px);
+    --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
     box-sizing:border-box;
+    color-scheme:light;
     padding-top:env(safe-area-inset-top,0px);
     padding-bottom:env(safe-area-inset-bottom,0px);
   }
@@ -29,217 +38,470 @@
     margin:0;
     background:var(--paper);
     color:var(--ink);
-    font-family:"Source Serif 4",Georgia,"Times New Roman",serif;
+    font-family:var(--serif);
     font-size:17px;
     line-height:1.62;
     -webkit-font-smoothing:antialiased;
   }
   img{max-width:100%}
 
-  /* ---------- capa ---------- */
+  /* =========================================================
+     CAPA — a mesa de impressão
+     ========================================================= */
   .cover{
-    background:var(--ink);
+    background-color:var(--plate);
+    background-image:
+      linear-gradient(rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(rgba(74,222,128,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.035) 1px,transparent 1px);
+    background-size:80px 80px,80px 80px,16px 16px,16px 16px;
     color:var(--paper);
-    padding:clamp(28px,6vw,72px) clamp(20px,5vw,64px) 0;
+    padding:clamp(24px,5vw,56px) var(--gut) 0;
     position:relative;
     overflow:hidden;
   }
-  .cover-brand{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:600;
-    font-size:13px;
-    letter-spacing:.02em;
-    color:var(--green-neon);
-    margin:0 0 clamp(24px,7vw,60px);
+  .cover-top{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;
+    font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.02em;
+    margin:0 0 clamp(28px,6vw,56px);
   }
+  .cover-brand{color:var(--green-neon);margin:0}
+  .cover-level{color:#9fb3a8;margin:0;font-stretch:112%}
+  .gcode{
+    font-family:var(--mono);font-size:13px;line-height:1.7;
+    color:rgba(74,222,128,.62);
+    margin:0 0 18px;white-space:pre-wrap;
+  }
+  .gcode b{color:var(--green-neon);font-weight:600}
   .cover-code{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:800;
-    font-size:clamp(76px,22vw,220px);
-    line-height:.82;
-    letter-spacing:-.045em;
-    margin:0;
+    font-family:var(--sans);
+    font-weight:900;
+    font-stretch:78%;
+    font-size:clamp(110px,31vw,330px);
+    line-height:.78;
+    letter-spacing:-.035em;
+    margin:0 0 0 -.04em;
     color:var(--green-neon);
+    background:repeating-linear-gradient(180deg,var(--green-neon) 0 .052em,#2fbf63 .052em .062em);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .cover-grid{
+    display:grid;gap:clamp(18px,3vw,40px);
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));
+    align-items:end;
+    margin-top:clamp(14px,2vw,22px);
   }
   .cover-market{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:700;
-    font-size:clamp(26px,6.2vw,54px);
-    line-height:1.05;
+    font-family:var(--sans);
+    font-weight:800;
+    font-stretch:88%;
+    font-size:clamp(30px,5.4vw,58px);
+    line-height:1;
     letter-spacing:-.025em;
-    margin:.22em 0 0;
-    max-width:16ch;
+    margin:0;
+    text-wrap:balance;
   }
   .cover-promise{
     max-width:46ch;
-    margin:clamp(18px,3vw,26px) 0 0;
-    font-size:clamp(17px,2.1vw,21px);
+    margin:0;
+    font-size:clamp(17px,2vw,20px);
     color:#cdd8d0;
   }
   .cover-figure{margin:clamp(28px,5vw,44px) 0 0}
 
   .radar{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(138px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
     gap:1px;
-    background:rgba(255,255,255,.14);
-    border-top:1px solid rgba(255,255,255,.14);
-    margin:clamp(28px,5vw,44px) calc(clamp(20px,5vw,64px) * -1) 0;
+    background:rgba(74,222,128,.22);
+    border-top:1px solid rgba(74,222,128,.22);
+    margin:clamp(28px,5vw,44px) calc(var(--gut) * -1) 0;
   }
-  .radar div{background:var(--ink);padding:18px clamp(20px,5vw,64px) 22px}
+  .radar div{background:var(--ink);padding:18px var(--gut) 22px}
   .radar dt{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-size:12px;font-weight:600;letter-spacing:.01em;
-    color:#8ba296;margin:0 0 4px;
+    font-family:var(--sans);
+    font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:#8ba296;margin:0 0 6px;
   }
   .radar dd{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:700;font-size:20px;letter-spacing:-.02em;
+    font-family:var(--sans);
+    font-weight:800;font-stretch:85%;font-size:24px;line-height:1.05;letter-spacing:-.02em;
     margin:0;color:var(--paper);
   }
+  .radar .hot dd{color:var(--green-neon)}
 
-  /* ---------- corpo ---------- */
-  main{padding:0 clamp(20px,5vw,64px)}
+  /* =========================================================
+     CORPO
+     ========================================================= */
+  main{padding-inline:var(--gut)}
   section{
-    max-width:calc(var(--measure) + 64px);
-    padding:clamp(40px,6vw,64px) 0 0;
-    border-top:1px solid var(--rule);
-    margin-top:clamp(40px,6vw,64px);
+    max-width:var(--wide);
+    margin-inline:auto;
+    padding-block:clamp(56px,8vw,96px) 0;
   }
-  section:first-of-type{border-top:0;margin-top:0}
+  .sec-head{
+    display:grid;grid-template-columns:auto 1fr;gap:6px clamp(14px,2.4vw,28px);
+    align-items:end;
+    margin:0 0 clamp(22px,3vw,34px);
+    padding-bottom:clamp(16px,2vw,22px);
+    border-bottom:2px solid var(--ink);
+  }
   .sec-num{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:700;font-size:13px;
+    font-family:var(--sans);
+    font-weight:900;font-stretch:72%;
+    font-size:clamp(64px,10vw,112px);
+    line-height:.8;letter-spacing:-.04em;
     color:var(--green-deep);
-    margin:0 0 6px;
+    margin:0;
+    grid-row:span 2;
+  }
+  .camadas{display:flex;gap:3px;max-width:260px;margin:0 0 10px}
+  .camadas i{flex:1;height:7px;background:var(--rule)}
+  .l1 i:nth-child(-n+1),.l2 i:nth-child(-n+2),.l3 i:nth-child(-n+3),.l4 i:nth-child(-n+4),
+  .l5 i:nth-child(-n+5),.l6 i:nth-child(-n+6),.l7 i:nth-child(-n+7),.l8 i:nth-child(-n+8),
+  .l9 i:nth-child(-n+9),.l10 i:nth-child(-n+10),.l11 i:nth-child(-n+11),.l12 i:nth-child(-n+12){background:var(--green-deep)}
+  .kicker{
+    font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--ink-mute);margin:0 0 4px;
   }
   h2{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:700;
-    font-size:clamp(25px,3.6vw,34px);
-    line-height:1.12;letter-spacing:-.025em;
-    margin:0 0 .6em;
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;
+    font-size:clamp(28px,4.2vw,44px);
+    line-height:1.02;letter-spacing:-.028em;
+    margin:0;
     text-wrap:balance;
   }
   h3{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:600;font-size:18px;letter-spacing:-.01em;
-    margin:2em 0 .5em;
+    font-family:var(--sans);
+    font-weight:700;font-size:19px;letter-spacing:-.012em;
+    margin:2.2em 0 .6em;
+    text-wrap:balance;
   }
   p,li{max-width:var(--measure)}
   p{margin:0 0 1em}
   ul,ol{padding-left:1.1em;margin:0 0 1em}
   li{margin-bottom:.45em}
   strong{font-weight:600}
-  .lead{font-size:19px;color:var(--ink-soft)}
+  .lead{font-size:clamp(19px,2.1vw,22px);line-height:1.5;color:var(--ink-soft);max-width:60ch;margin-bottom:1.4em}
+  .label{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);margin:0 0 10px;
+  }
 
-  /* ---------- componentes ---------- */
+  .split{display:grid;gap:clamp(16px,2.6vw,28px);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));align-items:start;margin:0 0 20px}
+  .split > *{margin-bottom:0}
+
+  /* ---------- fichas e avisos ---------- */
   .ficha{
     border:1px solid var(--rule);
     background:#fff;
     padding:clamp(18px,3vw,26px);
     margin:0 0 18px;
-    max-width:var(--measure);
   }
   .ficha-tab{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:700;font-size:13px;
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
     color:var(--green-deep);
-    margin:0 0 10px;
+    margin:0 0 12px;
   }
   .ficha p:last-child,.ficha ul:last-child{margin-bottom:0}
-
-  .nivel{border-left:3px solid var(--green-deep)}
-  .nivel .preco{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:700;font-size:24px;letter-spacing:-.02em;
-    margin:.2em 0 .5em;
-  }
+  .ficha.escura{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .ficha.escura .ficha-tab{color:var(--green-neon)}
 
   .aviso{
     background:var(--caramel-soft);
-    border-left:3px solid var(--caramel);
-    padding:clamp(16px,2.6vw,22px);
+    border-top:4px solid var(--caramel);
+    padding:clamp(18px,3vw,26px);
     margin:0 0 18px;
-    max-width:var(--measure);
   }
   .aviso .ficha-tab{color:var(--caramel)}
-  .aviso p:last-child{margin-bottom:0}
+  .aviso p:last-child,.aviso ul:last-child{margin-bottom:0}
+  .aviso-grande{
+    font-family:var(--sans);font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.1;letter-spacing:-.02em;
+    color:var(--caramel);margin:0 0 .5em;
+  }
 
+  /* ---------- fala e ação ---------- */
   .fala{
-    font-size:20px;
+    font-size:clamp(19px,2.2vw,21px);
     line-height:1.5;
-    border-left:3px solid var(--green-neon);
+    border-left:4px solid var(--green-neon);
     padding:2px 0 2px 18px;
     margin:0 0 1em;
     max-width:56ch;
   }
   .acao{
-    font-family:"Archivo",system-ui,sans-serif;
+    font-family:var(--sans);
     font-weight:600;font-size:15px;
     background:var(--paper-2);
-    padding:12px 16px;
+    padding:12px 16px 12px 44px;
     margin:0 0 1em;
     max-width:var(--measure);
+    position:relative;
+  }
+  .acao::before{
+    content:"";position:absolute;left:16px;top:17px;width:14px;height:10px;
+    border:2px solid var(--green-deep);border-radius:2px;
   }
 
-  .tabela{overflow-x:auto;max-width:var(--measure);margin:0 0 18px}
+  /* ---------- tabelas ---------- */
+  .tabela{overflow-x:auto;margin:0 0 20px;max-width:760px}
   table{
     border-collapse:collapse;
     width:100%;
-    max-width:var(--measure);
-    margin:0 0 18px;
-    font-family:"Archivo",system-ui,sans-serif;
+    font-family:var(--sans);
     font-size:15px;
   }
-  .tabela table{margin:0}
-  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule)}
-  th{font-weight:600;color:var(--ink-soft);font-size:13px}
-  td.n{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
-  tr.total td{border-bottom:0;border-top:2px solid var(--ink);font-weight:700}
-  tr.abaixo td{color:var(--caramel)}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-weight:700;color:var(--ink-mute);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;border-bottom:2px solid var(--ink)}
+  td.n{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+  tr.total td{border-bottom:0;border-top:2px solid var(--ink);font-weight:800}
 
-  .obj{border-top:1px solid var(--rule);padding:26px 0 0;margin:26px 0 0;max-width:var(--measure)}
-  .obj:first-of-type{border-top:0;padding-top:0;margin-top:0}
+  /* =========================================================
+     COMPONENTES VISUAIS POR SEÇÃO
+     ========================================================= */
+
+  /* 01 · filtro */
+  .filtro{list-style:none;padding:0;margin:0 0 28px;max-width:none;border-top:2px solid var(--ink)}
+  .filtro li{
+    display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 16px;align-items:center;
+    max-width:none;margin:0;padding:16px 0;border-bottom:1px solid var(--rule);
+  }
+  .filtro .ok{width:22px;height:22px;background:var(--green-deep);position:relative}
+  .filtro .ok::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid var(--green-neon);border-width:0 3px 3px 0;transform:rotate(45deg)}
+  .filtro .crit{font-family:var(--sans);font-weight:700;font-size:16px;line-height:1.25}
+  .filtro .crit small{display:block;font-family:var(--serif);font-weight:400;font-size:15px;color:var(--ink-soft);margin-top:2px}
+  .filtro .val{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.02em;text-align:right;white-space:nowrap;color:var(--green-deep)}
+
+  .conta{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:1px;
+    background:var(--ink);border:1px solid var(--ink);margin:0 0 22px;
+  }
+  .conta div{background:var(--paper);padding:18px 20px}
+  .conta div:last-child{background:var(--ink);color:var(--paper)}
+  .conta .big{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,50px);line-height:1;letter-spacing:-.03em}
+  .conta div:last-child .big{color:var(--green-neon)}
+  .conta .cap{display:block;font-family:var(--sans);font-size:14px;font-weight:600;margin-top:8px;color:var(--ink-soft)}
+  .conta div:last-child .cap{color:#b9c8bf}
+  .conta .op{font-family:var(--sans);font-weight:700;color:var(--ink-mute);font-size:13px;display:block;margin-bottom:6px}
+
+  /* 02 · tipos de cliente + semana */
+  .tipos{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));margin:0 0 22px}
+  .tipo{border-top:4px solid var(--green-deep);background:#fff;padding:16px 18px 18px;border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .tipo.principal{border-top-color:var(--green-neon);background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .tipo h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:20px;line-height:1.1;letter-spacing:-.015em;margin:0 0 6px}
+  .tipo .tag{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 10px}
+  .tipo.principal .tag{color:var(--green-neon)}
+  .tipo p{font-size:15.5px;line-height:1.5;margin:0}
+
+  .semana{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:0 0 20px;max-width:760px}
+  .dia-sem{padding:12px 8px 14px;background:var(--paper-2);min-height:112px;display:flex;flex-direction:column;gap:6px}
+  .dia-sem b{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:22px;letter-spacing:-.02em;line-height:1}
+  .dia-sem span{font-family:var(--sans);font-size:12.5px;line-height:1.3;color:var(--ink-soft)}
+  .dia-sem.ir{background:var(--green-deep);color:#fff}
+  .dia-sem.ir span{color:#e4f1e8}
+  .dia-sem.ir em{font-style:normal;font-family:var(--sans);font-weight:800;font-size:15px;color:var(--green-neon)}
+  .dia-sem.nao{background:repeating-linear-gradient(135deg,var(--paper-2) 0 8px,#e8e3d8 8px 10px)}
+
+  /* 03 · dores */
+  .dores{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 20px}
+  .dor{background:#fff;border:1px solid var(--rule);padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px}
+  .dor .dn{font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:54px;line-height:.8;color:var(--rule)}
+  .dor h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:21px;line-height:1.1;letter-spacing:-.015em;margin:0}
+  .dor p{font-size:15.5px;line-height:1.52;margin:0}
+  .dor.fecha{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .dor.fecha .dn{color:var(--green-neon)}
+  .dor.fecha h4{color:#fff}
+
+  /* 04 · níveis */
+  .niveis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));align-items:stretch;margin:0 0 24px}
+  .ficha.nivel{margin:0;display:flex;flex-direction:column;border-top:4px solid var(--rule)}
+  .nivel .preco{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:78%;font-size:clamp(30px,3.6vw,38px);line-height:1;letter-spacing:-.03em;
+    margin:.1em 0 .5em;
+  }
+  .nivel p:not(.preco):not(.ficha-tab){font-size:15.5px;line-height:1.52}
+  .ficha.nivel.meio{background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .ficha.nivel.meio .ficha-tab{color:var(--green-neon)}
+  .ficha.nivel.meio .preco{color:var(--green-neon)}
+  .selo{align-self:flex-start;font-family:var(--sans);font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--green-neon);color:var(--ink);padding:4px 8px;margin:0 0 12px}
+
+  .prazo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:6px 0 18px}
+  .prazo div{background:rgba(255,255,255,.7);padding:10px 6px;text-align:center;font-family:var(--sans)}
+  .prazo b{display:block;font-weight:800;font-size:14px}
+  .prazo span{display:block;font-size:11.5px;line-height:1.25;color:var(--ink-soft);margin-top:3px}
+  .prazo .p-ok{background:var(--green-deep);color:#fff}
+  .prazo .p-ok span{color:#e4f1e8}
+  .prazo .p-festa{background:var(--caramel);color:#fff}
+  .prazo .p-festa span{color:#f6ecdc}
+
+  /* 05 · material */
+  .cores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 20px;max-width:640px}
+  .cor{font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.25}
+  .cor i{display:block;aspect-ratio:1;max-width:100%;border:1px solid rgba(20,32,26,.18);margin-bottom:8px;
+    background-image:repeating-linear-gradient(180deg,rgba(0,0,0,.05) 0 2px,transparent 2px 5px)}
+  .painel{background:var(--plate);color:#dfe8e2;padding:18px 20px;font-family:var(--sans);font-size:14.5px}
+  .painel .ficha-tab{color:var(--green-neon)}
+  .painel dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0}
+  .painel dt,.painel dd{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1);margin:0}
+  .painel dt{color:#9fb3a8}
+  .painel dd{font-family:var(--mono);color:var(--green-neon);text-align:right;padding-left:12px}
+  .letra{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:0 0 20px}
+  .letra div{background:#fff;padding:16px 18px}
+  .letra b{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:44px;line-height:1;letter-spacing:-.03em;color:var(--green-deep)}
+  .letra span{font-family:var(--sans);font-size:13.5px;color:var(--ink-soft)}
+  .grafia{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .grafia span{font-family:var(--sans);font-weight:800;font-stretch:85%;font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;line-height:1;padding:10px 16px 12px;border:2px solid var(--ink);background:#fff}
+  .grafia span.certo{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+
+  /* 06 · kit */
+  .mesa{margin:0 0 10px;max-width:760px}
+  .mesa-bar{display:flex;gap:3px;height:64px}
+  .mesa-bar div{background:var(--green-deep);color:#fff;font-family:var(--sans);font-weight:800;font-size:15px;padding:10px 12px;display:flex;align-items:flex-end;min-width:0;overflow:hidden;white-space:nowrap}
+  .mesa-bar div:nth-child(2){background:var(--ink)}
+  .mesa-bar div:nth-child(3){background:#3d9a66}
+  .mesa-leg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px;margin:14px 0 0;padding:0;list-style:none;max-width:none}
+  .mesa-leg li{max-width:none;margin:0;font-family:var(--sans);font-size:14px;line-height:1.35;padding-left:18px;position:relative}
+  .mesa-leg li::before{content:"";position:absolute;left:0;top:4px;width:10px;height:10px;background:var(--green-deep)}
+  .mesa-leg li:nth-child(2)::before{background:var(--ink)}
+  .mesa-leg li:nth-child(3)::before{background:#3d9a66}
+  .mesa-leg b{display:block;font-size:15px}
+  .totais{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;margin:22px 0 24px;padding:16px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+  .totais div{font-family:var(--sans)}
+  .totais b{display:block;font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,48px);line-height:1;letter-spacing:-.03em}
+  .totais span{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute)}
+
+  /* 07 · gráfico de retorno por hora */
+  .grafico{margin:8px 0 12px;max-width:820px;font-family:var(--sans)}
+  .g-row{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:6px 16px;align-items:center;padding:7px 0}
+  .g-lab{font-size:14px;line-height:1.25;font-weight:600}
+  .g-lab small{display:block;font-weight:500;color:var(--ink-mute);font-size:12.5px}
+  .g-track{position:relative;height:30px;background:
+    linear-gradient(90deg,transparent calc(21.43% - 1px),var(--caramel) calc(21.43% - 1px) calc(21.43% + 1px),transparent calc(21.43% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(14.2857% - 1px),#e6e1d6 calc(14.2857% - 1px) 14.2857%)}
+  .g-bar{height:100%;width:calc(var(--v) / 70 * 100%);background:var(--green-deep);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-weight:800;font-size:13.5px;white-space:nowrap;min-width:64px}
+  .g-bar.baixo{background:var(--caramel)}
+  .g-bar.top{background:var(--green-neon);color:var(--ink)}
+  .g-axis{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:16px;font-size:11.5px;color:var(--ink-mute);font-weight:600}
+  .g-ticks{position:relative;height:18px}
+  .g-ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+  .g-ticks span:first-child{transform:none}
+  .g-ticks span.piso{color:var(--caramel);font-weight:800}
+  .g-nota{font-family:var(--sans);font-size:13px;color:var(--ink-mute);margin:6px 0 24px}
+
+  .duelo{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px;margin:0 0 24px}
+  .duelo div{padding:20px 22px;border:1px solid var(--rule);background:#fff}
+  .duelo div:first-child{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+  .duelo b{display:block;font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:clamp(52px,8vw,84px);line-height:.9;letter-spacing:-.04em}
+  .duelo div:first-child b{color:var(--green-neon)}
+  .duelo div:last-child b{color:var(--caramel)}
+  .duelo span{display:block;font-family:var(--sans);font-weight:600;font-size:14.5px;margin-top:10px}
+
+  .folha{background:#fff;border:1px solid var(--rule);box-shadow:6px 6px 0 var(--paper-2);padding:clamp(18px,3vw,28px);margin:0 0 22px;max-width:780px}
+  .folha-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:4px}
+  .folha-top b{font-family:var(--sans);font-weight:900;font-stretch:80%;font-size:26px;letter-spacing:-.02em}
+  .folha-top span{font-family:var(--sans);font-size:13px;color:var(--ink-mute);font-weight:600}
+  .folha .tabela{margin:0;max-width:none}
+  .folha td.revende{color:var(--green-deep)}
+
+  /* 08 · os 40 segundos */
+  .relogio{position:relative;margin:6px 0 26px;padding-left:92px;max-width:780px}
+  .relogio::before{content:"";position:absolute;left:70px;top:6px;bottom:6px;width:2px;background:var(--rule)}
+  .passo{position:relative;margin:0 0 18px}
+  .passo:last-child{margin-bottom:0}
+  .passo .t{position:absolute;left:-92px;top:2px;width:60px;text-align:right;font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:17px;color:var(--green-deep);white-space:nowrap}
+  .passo::before{content:"";position:absolute;left:-27px;top:8px;width:12px;height:12px;background:var(--paper);border:3px solid var(--green-deep)}
+  .passo.cala::before{background:var(--green-neon);border-color:var(--ink)}
+  .passo .fala,.passo .acao,.passo p{margin-bottom:.6em}
+  .saidas{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0 0 18px}
+  .saida{background:#fff;border:1px solid var(--rule);padding:18px 20px}
+  .saida .quando{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:18px;line-height:1.2;letter-spacing:-.01em;margin:0 0 8px}
+  .saida p{font-size:15.5px;line-height:1.52;margin:0}
+
+  /* 09 · objeções */
+  .obj{border:1px solid var(--rule);background:#fff;margin:0 0 18px;display:grid;grid-template-columns:minmax(0,1fr)}
+  .obj-head{background:var(--ink);color:#fff;padding:clamp(18px,3vw,26px)}
+  .obj-n{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-neon);margin:0 0 8px}
   .obj-q{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:700;font-size:19px;letter-spacing:-.015em;
-    margin:0 0 .5em;
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.12;letter-spacing:-.02em;
+    margin:0;text-wrap:balance;max-width:none;
   }
-  .obj-real{color:var(--ink-soft);font-style:italic;margin:0 0 1em}
-  .erro{color:var(--caramel);font-weight:600;font-family:"Archivo",system-ui,sans-serif;font-size:15px}
+  .obj-body{padding:clamp(18px,3vw,26px);display:grid;gap:4px 28px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+  .obj-body > *{margin:0}
+  .obj-real{color:var(--ink-soft);font-style:italic;font-size:16px}
+  .obj-real::before{content:"O que ela quer dizer";display:block;font-style:normal;font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:6px}
+  .obj-resp{grid-column:1/-1}
+  .obj-resp .label{margin-top:12px}
+  .erro{
+    grid-column:1/-1;
+    color:var(--caramel);font-weight:700;font-family:var(--sans);font-size:15px;
+    background:var(--caramel-soft);margin:0;padding:12px clamp(18px,3vw,26px);
+  }
 
-  .check{list-style:none;padding:0;max-width:var(--measure)}
-  .check li{
-    position:relative;padding-left:32px;margin-bottom:.7em;
-  }
-  .check li::before{
-    content:"";position:absolute;left:0;top:.35em;
-    width:16px;height:16px;border:1.5px solid var(--green-deep);
-  }
+  /* 10 · follow-up */
+  .fio{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 22px;align-items:start}
+  .msg{position:relative}
+  .msg .quando{font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:40px;line-height:1;letter-spacing:-.03em;color:var(--green-deep);margin:0 0 10px}
+  .msg .quando small{font-size:14px;font-weight:700;font-stretch:100%;letter-spacing:0;color:var(--ink-mute);margin-left:6px}
+  .balao{background:var(--green-wash);border-radius:14px 14px 14px 3px;padding:14px 16px;font-size:16px;line-height:1.5;margin:0}
+  .msg.fim .quando{color:var(--caramel)}
+  .msg.fim .balao{background:var(--caramel-soft)}
+  .msg .obs{font-family:var(--sans);font-size:13.5px;color:var(--ink-mute);margin:10px 0 0}
+
+  /* 11 · perguntas */
+  .perguntas{list-style:none;padding:0;margin:0 0 22px;counter-reset:q;max-width:none}
+  .perguntas li{counter-increment:q;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:baseline;max-width:none;padding:14px 0;border-bottom:1px solid var(--rule);margin:0}
+  .perguntas li::before{content:counter(q);font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:48px;line-height:.8;color:var(--green-deep)}
+  .perguntas span{font-family:var(--sans);font-weight:700;font-stretch:92%;font-size:clamp(20px,2.6vw,26px);line-height:1.2;letter-spacing:-.015em}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;padding:0;list-style:none;max-width:none}
+  .chips li{margin:0;max-width:none;font-family:var(--sans);font-size:14px;font-weight:600;border:1.5px solid var(--green-deep);color:var(--green-deep);padding:6px 12px}
+  .chips li.g01{background:var(--green-deep);color:#fff}
+
+  /* 12 · missão */
+  .dias{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));margin:0 0 26px;align-items:start}
+  .dia-col{background:#fff;border:1px solid var(--rule);padding:0 20px 8px}
   .dia{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:700;font-size:15px;color:var(--green-deep);
-    margin:1.6em 0 .6em;
+    font-family:var(--sans);
+    font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);
+    margin:0 -20px 16px;padding:16px 20px 14px;border-bottom:2px solid var(--ink);
+    display:flex;align-items:baseline;gap:12px;
   }
+  .dia b{font-weight:900;font-stretch:72%;font-size:56px;line-height:.8;letter-spacing:-.04em;color:var(--ink)}
+  .check{list-style:none;padding:0;max-width:none}
+  .check li{position:relative;padding-left:30px;margin-bottom:.75em;font-size:15.5px;line-height:1.45;max-width:none}
+  .check li::before{content:"";position:absolute;left:0;top:.2em;width:17px;height:17px;border:2px solid var(--green-deep);background:#fff}
+
+  .funil{display:grid;gap:4px;margin:6px 0 16px;font-family:var(--sans)}
+  .funil div{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(138,90,30,.14);padding:10px 14px;font-weight:600;font-size:14.5px;min-width:0}
+  .funil div b{font-weight:900;font-stretch:78%;font-size:24px;letter-spacing:-.02em;white-space:nowrap}
+  .funil div:nth-child(1){width:100%}
+  .funil div:nth-child(2){width:78%}
+  .funil div:nth-child(3){width:58%;background:rgba(138,90,30,.28)}
+  .funil div:nth-child(4){width:44%;background:var(--caramel);color:#fff}
 
   /* ---------- placeholders de imagem ---------- */
-  figure{margin:0 0 20px;max-width:var(--measure)}
+  figure{margin:0 0 24px;max-width:860px}
   .cover-figure figure{max-width:none}
   .ph{
     border:1.5px dashed var(--green-deep);
-    background:rgba(45,122,79,.05);
+    background:
+      repeating-linear-gradient(180deg,rgba(45,122,79,.05) 0 3px,transparent 3px 7px),
+      rgba(45,122,79,.03);
     padding:clamp(16px,2.6vw,22px);
   }
-  .cover-figure .ph{border-color:rgba(74,222,128,.45);background:rgba(74,222,128,.06)}
+  .cover-figure .ph{border-color:rgba(74,222,128,.45);background:rgba(20,32,26,.72)}
   .ph-id{
-    font-family:"Archivo",system-ui,sans-serif;
-    font-weight:700;font-size:13px;color:var(--green-deep);
+    font-family:var(--sans);
+    font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--green-deep);
     margin:0 0 4px;
   }
   .cover-figure .ph-id{color:var(--green-neon)}
   .ph-meta{
-    font-family:"Archivo",system-ui,sans-serif;
+    font-family:var(--sans);
     font-size:13px;color:var(--ink-soft);margin:0 0 12px;
   }
   .cover-figure .ph-meta{color:#9fb3a8}
@@ -248,50 +510,78 @@
     background:#fff;border:1px solid var(--rule);
     padding:12px 14px;margin:0;max-width:none;
   }
-  .cover-figure .ph-prompt{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.18);color:#d7e2db}
+  .cover-figure .ph-prompt{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16);color:#d7e2db}
 
   footer{
     background:var(--ink);color:#9fb3a8;
-    margin-top:clamp(48px,7vw,80px);
-    padding:clamp(28px,5vw,44px) clamp(20px,5vw,64px);
-    font-family:"Archivo",system-ui,sans-serif;font-size:14px;
+    margin-top:clamp(64px,9vw,110px);
+    padding:clamp(28px,5vw,44px) var(--gut);
+    font-family:var(--sans);font-size:14px;
   }
-  footer p{max-width:60ch;margin:0 0 .6em}
-  footer strong{color:var(--green-neon);font-weight:600}
+  footer p{max-width:62ch;margin:0 0 .6em}
+  footer strong{color:var(--green-neon);font-weight:700}
+
+  :focus-visible{outline:3px solid var(--green-neon);outline-offset:2px}
 
   @media (prefers-reduced-motion:no-preference){
-    .cover-code{animation:rise .7s cubic-bezier(.2,.7,.3,1) both}
+    .cover-code{animation:imprime 1.1s steps(14,end) both}
   }
-  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes imprime{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
+
+  @media (max-width:560px){
+    .semana{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .prazo{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .cores{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .g-row,.g-axis{grid-template-columns:minmax(0,1fr)}
+    .g-axis > span:first-child{display:none}
+    .relogio{padding-left:30px}
+    .relogio::before{left:8px}
+    .passo .t{position:static;display:block;text-align:left;width:auto;margin-bottom:4px}
+    .passo::before{left:-30px;top:6px}
+    .funil div:nth-child(n){width:100%}
+    .filtro li{grid-template-columns:28px minmax(0,1fr)}
+    .filtro .val{grid-column:2;text-align:left}
+  }
 
   @media print{
-    @page{margin:16mm}
-    body{font-size:11pt}
-    .cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .radar,.aviso,.ficha,.acao{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    section{break-inside:auto;page-break-before:always;border-top:0;margin-top:0}
-    section:first-of-type{page-break-before:avoid}
-    .ficha,.aviso,.obj,figure,table{break-inside:avoid}
-    .tabela{overflow:visible}
-    h2,h3{break-after:avoid}
+    @page{margin:14mm}
+    body{font-size:10.5pt}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .cover-code{animation:none;-webkit-text-fill-color:var(--green-neon);background:none}
+    section{break-before:page;padding-top:0}
+    main > section:first-of-type{break-before:page}
+    .ficha,.aviso,.obj,figure,table,.saida,.dor,.tipo,.msg,.dia-col,.grafico,.folha,.duelo,.conta,.semana,.prazo,.passo{break-inside:avoid}
+    h2,h3,.sec-head{break-after:avoid}
     .ph-prompt{display:none}
-    .ph{padding:48px 18px;text-align:center}
+    .ph{padding:40px 18px;text-align:center}
+    .tabela{overflow:visible}
+    .folha{box-shadow:none}
   }
 </style>
 </head>
 <body>
 
 <header class="cover">
-  <p class="cover-brand">LR Maker Lab · G-Code 3D</p>
+  <div class="cover-top">
+    <p class="cover-brand">LR Maker Lab · G-Code 3D</p>
+    <p class="cover-level">Nível 3 · o cliente que compra todo mês</p>
+  </div>
+
+  <p class="gcode" aria-hidden="true">; manual 09 · papelarias, gráficas rápidas, ateliês de festa
+; material: PLA fosco · 4 cores em estoque
+<b>M600</b> ; troca de cor na camada do relevo</p>
   <p class="cover-code">G-09</p>
-  <h1 class="cover-market">Papelarias, gráficas rápidas e ateliês de festa</h1>
-  <p class="cover-promise">Vire o fornecedor 3D de quem já vende festa todo fim de semana. Ela revende, você imprime, e o próximo pedido chega sem você bater na porta de novo. Primeira proposta na rua em 72 horas.</p>
+
+  <div class="cover-grid">
+    <h1 class="cover-market">Papelarias, gráficas rápidas e ateliês de festa</h1>
+    <p class="cover-promise">Vire o fornecedor 3D de quem já vende festa todo fim de semana. Ela revende, você imprime, e o próximo pedido chega sem você bater na porta de novo. Primeira proposta na rua em 72 horas.</p>
+  </div>
 
   <div class="cover-figure">
     <figure>
       <div class="ph">
         <p class="ph-id">IMG-01 · capa</p>
-        <p class="ph-meta">Horizontal 16:9 — o mostruário de fornecedor sobre o balcão da papelaria</p>
+        <p class="ph-meta">Horizontal 16:9 · o mostruário de fornecedor sobre o balcão da papelaria</p>
         <p class="ph-prompt">Fotografia publicitária de um pequeno mostruário de peças impressas em 3D na cor verde escuro fosco, apoiado sobre o balcão de madeira clara de uma papelaria personalizada de bairro: um chaveiro com letras em relevo, um topo de bolo vazado espetado num palito de bambu e três plaquinhas retangulares pequenas alinhadas. Ao fundo, fora de foco, prateleiras com caixinhas de papel coloridas, rolos de fita de cetim e uma plotter de recorte. Luz natural de manhã entrando pela vitrine, profundidade de campo rasa, sombras suaves, estética fotográfica honesta de produto real. Sem texto legível em nenhuma peça nem nas embalagens ao fundo. Proporção 16:9.</p>
       </div>
     </figure>
@@ -300,7 +590,7 @@
   <dl class="radar">
     <div><dt>Ticket do 1º pedido</dt><dd>R$ 150 a 500</dd></div>
     <div><dt>Retorno por hora</dt><dd>~R$ 35/h</dd></div>
-    <div><dt>Recompra</dt><dd>Toda festa fechada</dd></div>
+    <div class="hot"><dt>Recompra</dt><dd>Toda festa fechada</dd></div>
     <div><dt>Ciclo de venda</dt><dd>1 a 2 visitas</dd></div>
     <div><dt>Nota no filtro</dt><dd>5 de 5</dd></div>
   </dl>
@@ -308,237 +598,363 @@
 
 <main>
 
-<section>
-  <p class="sec-num">01</p>
-  <h2>Por que este G-Code funciona</h2>
+<!-- ===================== 01 ===================== -->
+<section id="s01">
+  <header class="sec-head l1">
+    <p class="sec-num">01</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Por que este G-Code funciona</h2>
+  </header>
+
   <p class="lead">Não é o maior retorno por hora do kit. É o único em que o cliente volta a comprar antes de você ir atrás dele, porque cada festa que ela fecha já é um pedido seu.</p>
 
-  <div class="tabela">
-  <table>
-    <tr><th>Critério</th><th>Número</th><th>Leitura</th></tr>
-    <tr><td>Ticket mínimo</td><td class="n">R$ 150</td><td>Um lote de 30 lembrancinhas já passa o piso</td></tr>
-    <tr><td>Retorno por hora de máquina</td><td class="n">R$ 22 a 64/h</td><td>Depende da peça. Plaquinha rende quase o triplo do topo</td></tr>
-    <tr><td>Recompra</td><td class="n">Semanal</td><td>Festa infantil, chá de bebê, formatura, fim de ano corporativo</td></tr>
-    <tr><td>Decisor</td><td class="n">A dona</td><td>Fecha o primeiro lote em uma ou duas visitas</td></tr>
-    <tr><td>Insubstituível</td><td class="n">Alto</td><td>Laser não faz volume nem duas cores; marketplace não entrega em 5 dias com nome conferido</td></tr>
-  </table>
-  </div>
+  <ul class="filtro">
+    <li><span class="ok"></span><span class="crit">Ticket mínimo<small>Um lote de 30 lembrancinhas já passa o piso</small></span><span class="val">R$ 150</span></li>
+    <li><span class="ok"></span><span class="crit">Retorno por hora de máquina<small>Depende da peça. Plaquinha rende quase o triplo do topo</small></span><span class="val">R$ 22 a 64/h</span></li>
+    <li><span class="ok"></span><span class="crit">Recompra<small>Festa infantil, chá de bebê, formatura, fim de ano corporativo</small></span><span class="val">Semanal</span></li>
+    <li><span class="ok"></span><span class="crit">Decisor<small>Fecha o primeiro lote em uma ou duas visitas</small></span><span class="val">A dona</span></li>
+    <li><span class="ok"></span><span class="crit">Insubstituível<small>Laser não faz volume nem duas cores; marketplace não entrega em 5 dias com nome conferido</small></span><span class="val">Alto</span></li>
+  </ul>
 
-  <p>A conta que importa aqui é outra. Uma papelaria personalizada fecha de quatro a dez festas por mês. Se só duas delas levarem lembrancinha 3D, são dois pedidos de R$ 150 a 250 todo mês, sem visita nova, sem amostra nova, sem script. Com três papelarias na carteira, você tem um salário de máquina que não depende de você achar cliente.</p>
+  <h3>A conta que importa aqui</h3>
+  <div class="conta">
+    <div><span class="op">carteira</span><span class="big">3</span><span class="cap">papelarias atendidas</span></div>
+    <div><span class="op">×</span><span class="big">2</span><span class="cap">festas com peça 3D por mês, em cada uma</span></div>
+    <div><span class="op">×</span><span class="big">R$ 150–250</span><span class="cap">por pedido</span></div>
+    <div><span class="op">=</span><span class="big">R$ 900–1.500</span><span class="cap">por mês, sem visita nova</span></div>
+  </div>
+  <p>Uma papelaria personalizada fecha de quatro a dez festas por mês. Se só duas levarem lembrancinha 3D, você recebe pedido sem amostra nova e sem script. É um salário de máquina que não depende de você achar cliente.</p>
   <p>O preço disso é prazo. Festa tem data, e a data não mexe. Este manual trata prazo como contrato do começo ao fim.</p>
 </section>
 
-<section>
-  <p class="sec-num">02</p>
-  <h2>Quem é a cliente</h2>
+<!-- ===================== 02 ===================== -->
+<section id="s02">
+  <header class="sec-head l2">
+    <p class="sec-num">02</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Quem é a cliente</h2>
+  </header>
+
+  <p class="lead">Três tipos de negócio com a mesma necessidade: vendem festa personalizada e não têm como produzir peça em volume.</p>
+
+  <div class="tipos">
+    <div class="tipo principal">
+      <p class="tag">Cliente principal</p>
+      <h4>Papelaria personalizada</h4>
+      <p>Faz caixinha, tubete, topo de bolo de papel, convite e kit festa. Tem plotter de recorte e às vezes laser pequeno.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Forte de outubro a dezembro</p>
+      <h4>Gráfica rápida</h4>
+      <p>Faz adesivo, banner e brinde de empresa. Recebe pedido de chaveiro com logo e manda para fora.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Compra peça que dura</p>
+      <h4>Ateliê de festa</h4>
+      <p>Decoradora pegue-e-monte. Aluga peças de mesa e compra letreiro, número de idade e display que vão para dezenas de festas.</p>
+    </div>
+  </div>
 
   <figure>
     <div class="ph">
       <p class="ph-id">IMG-02 · cliente ideal</p>
-      <p class="ph-meta">Horizontal 3:2 — a dona da papelaria montando kits de festa</p>
+      <p class="ph-meta">Horizontal 3:2 · a dona da papelaria montando kits de festa</p>
       <p class="ph-prompt">Fotografia documental de uma mulher brasileira de aproximadamente 35 anos, dona de uma papelaria personalizada, montando caixinhas de lembrancinha de festa infantil numa mesa de trabalho cheia: pilhas de caixas de papel dobradas, fitas, uma guilhotina e uma pequena plotter de recorte ao fundo. Ela confere uma caixa contra uma folha de pedido. Luz natural de janela, ambiente real e um pouco bagunçado, cores quentes e naturais, estilo fotojornalístico sem pose de banco de imagens. Sem texto legível em papéis ou embalagens. Proporção 3:2.</p>
     </div>
   </figure>
 
-  <p>São três tipos de negócio com a mesma necessidade: vendem festa personalizada e não têm como produzir peça em volume.</p>
-
-  <div class="ficha">
-    <p class="ficha-tab">Perfil</p>
-    <ul>
-      <li><strong>Papelaria personalizada.</strong> Faz caixinha, tubete, topo de bolo de papel, convite e kit festa. Tem plotter de recorte e às vezes laser pequeno. É a cliente principal.</li>
-      <li><strong>Gráfica rápida.</strong> Faz adesivo, banner e brinde de empresa. Recebe pedido de chaveiro com logo e manda para fora. Forte de outubro a dezembro.</li>
-      <li><strong>Ateliê de festa e decoradora pegue-e-monte.</strong> Aluga peças de mesa. Compra letreiro, número de idade e display que vão ser usados em dezenas de festas.</li>
-      <li>Em comum: Instagram com foto de mesa montada, pedidos com nome de criança, e a dona respondendo WhatsApp de cliente no meio da conversa com você.</li>
-    </ul>
-  </div>
-
-  <div class="ficha">
-    <p class="ficha-tab">Quem não é cliente</p>
-    <ul>
-      <li>Papelaria só de material escolar, sem nada personalizado na vitrine</li>
-      <li>Gráfica offset grande, que compra por setor de suprimentos</li>
-      <li>Franquia de papelaria com fornecedor definido pela matriz</li>
-      <li>Quem já tem impressora 3D e usa. Ela vira concorrente, ou no máximo cliente de excesso em dezembro</li>
-    </ul>
+  <div class="split">
+    <div class="ficha">
+      <p class="ficha-tab">Como reconhecer</p>
+      <ul>
+        <li>Instagram com foto de mesa montada e pedido com nome de criança</li>
+        <li>Plotter de recorte no fundo da loja</li>
+        <li>A dona respondendo WhatsApp de cliente no meio da conversa com você</li>
+      </ul>
+    </div>
+    <div class="ficha">
+      <p class="ficha-tab">Quem não é cliente</p>
+      <ul>
+        <li>Papelaria só de material escolar, sem nada personalizado na vitrine</li>
+        <li>Gráfica offset grande, que compra por setor de suprimentos</li>
+        <li>Franquia com fornecedor definido pela matriz</li>
+        <li>Quem já tem impressora 3D e usa. No máximo vira cliente de excesso em dezembro</li>
+      </ul>
+    </div>
   </div>
 
   <h3>Quando aparecer</h3>
-  <p>Terça ou quarta, entre 10h e 11h30. Sexta e sábado são dias de entrega de festa, e ela não vai te ouvir com vinte caixas para fechar. Segunda de manhã ela está respondendo orçamento do fim de semana.</p>
+  <div class="semana">
+    <div class="dia-sem"><b>Seg</b><span>Respondendo orçamento do fim de semana</span></div>
+    <div class="dia-sem ir"><b>Ter</b><em>10h–11h30</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Qua</b><em>10h–11h30</em><span>Vá</span></div>
+    <div class="dia-sem"><b>Qui</b><span>Só se ela marcou</span></div>
+    <div class="dia-sem nao"><b>Sex</b><span>Entrega de festa</span></div>
+    <div class="dia-sem nao"><b>Sáb</b><span>Entrega de festa</span></div>
+  </div>
   <p>Muita papelaria personalizada funciona em casa, só com Instagram. Essa também é cliente, mas não se bate na porta: mande mensagem pedindo dez minutos para mostrar uma amostra, e marque dia e hora.</p>
   <p>Na loja, pergunte por quem fecha os pedidos de festa. Na gráfica rápida, por quem faz orçamento de brinde. O atendente do balcão de impressão não compra nada.</p>
 </section>
 
-<section>
-  <p class="sec-num">03</p>
-  <h2>A dor que ela já paga para resolver</h2>
-  <p>Ela não precisa de mais um produto. Ela precisa parar de perder pedido e parar de passar sufoco na sexta à noite.</p>
+<!-- ===================== 03 ===================== -->
+<section id="s03">
+  <header class="sec-head l3">
+    <p class="sec-num">03</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A dor que ela já paga para resolver</h2>
+  </header>
 
-  <div class="ficha">
-    <p class="ficha-tab">1 · O pedido que escapa</p>
-    <p>A mãe chega pedindo lembrancinha com o nome da criança em 3D, ou topo de bolo com relevo, porque viu no Instagram de alguém. Ela não tem quem faça. Diz que não trabalha com isso, e a mãe leva a festa inteira para outra papelaria que trabalha.</p>
+  <p class="lead">Ela não precisa de mais um produto. Ela precisa parar de perder pedido e parar de passar sufoco na sexta à noite.</p>
+
+  <div class="dores">
+    <div class="dor">
+      <span class="dn">1</span>
+      <h4>O pedido que escapa</h4>
+      <p>A mãe chega pedindo lembrancinha com o nome da criança em 3D, ou topo de bolo com relevo, porque viu no Instagram de alguém. Ela não tem quem faça, diz que não trabalha com isso, e a mãe leva a festa inteira para outra papelaria.</p>
+    </div>
+    <div class="dor">
+      <span class="dn">2</span>
+      <h4>O fornecedor que está a 800 km</h4>
+      <p>Quando aceita, compra de alguém de outro estado pelo marketplace. Dez a quinze dias, frete, e chega "Izabela" com Z quando a mãe escreveu com S. A festa é sábado. Quem apanha da mãe é ela.</p>
+    </div>
+    <div class="dor fecha">
+      <span class="dn">3</span>
+      <h4>A linha de produto que ela não tem</h4>
+      <p>Topo de papel tem teto: sai por R$ 30 a 45. Com você, ela vende topo, lembrancinha e letreiro 3D com a margem dela, sem comprar impressora e sem aprender a fatiar. Você vira o setor de produção dela.</p>
+    </div>
   </div>
 
-  <div class="ficha">
-    <p class="ficha-tab">2 · O fornecedor que está a 800 km</p>
-    <p>Quando ela aceita, compra de alguém de outro estado pelo marketplace. Leva dez a quinze dias, paga frete e chega "Izabela" com Z quando a mãe escreveu com S. A festa é sábado. Não dá tempo de refazer, e quem apanha da mãe é ela.</p>
-  </div>
-
-  <div class="ficha">
-    <p class="ficha-tab">3 · A linha de produto que ela não tem</p>
-    <p>Ela vende papel. Papel tem teto de preço: um topo de bolo de papel sai por R$ 30 a 45. Com você, ela passa a vender topo, lembrancinha e letreiro 3D com a margem dela, sem comprar impressora, sem aprender a fatiar, sem perder uma madrugada. Ela ganha uma linha nova de produto, e você vira o setor de produção dela.</p>
-  </div>
-
-  <p>A terceira é a que fecha contrato mensal. Mas quem abre a porta é a segunda: você está a quinze minutos dela, e quem está perto resolve o nome errado antes de sábado.</p>
+  <p>A terceira é a que fecha contrato mensal. Quem abre a porta é a segunda: você está a quinze minutos dela, e quem está perto resolve o nome errado antes de sábado.</p>
 </section>
 
-<section>
-  <p class="sec-num">04</p>
-  <h2>A oferta, em três níveis</h2>
+<!-- ===================== 04 ===================== -->
+<section id="s04">
+  <header class="sec-head l4">
+    <p class="sec-num">04</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A oferta, em três níveis</h2>
+  </header>
+
   <p class="lead">Aqui você não vende peça. Vende uma relação de fornecimento, e cada nível é um degrau dela.</p>
+
+  <div class="niveis">
+    <div class="ficha nivel">
+      <p class="ficha-tab">Entrada · lote-teste</p>
+      <p class="preco">R$ 150 a 250</p>
+      <p>Um pedido real que ela já tem fechado com uma cliente: 30 lembrancinhas com nome, ou um topo mais as plaquinhas das caixas. Preço de atacado desde o primeiro pedido. Ela testa você com o dinheiro da cliente dela, não com o próprio.</p>
+    </div>
+    <div class="ficha nivel meio">
+      <span class="selo">O que você quer vender</span>
+      <p class="ficha-tab">Padrão · fornecedor fixo</p>
+      <p class="preco">R$ 250 a 500</p>
+      <p>No primeiro pedido, mais um mostruário de seis peças que fica no balcão dela em comodato. Tabela de atacado com prazo fixo de cinco dias úteis. O mostruário vende por ela: a mãe vê, aponta, e ela anota o pedido.</p>
+    </div>
+    <div class="ficha nivel">
+      <p class="ficha-tab">Completo · cota mensal</p>
+      <p class="preco">R$ 600 a 1.500<small style="font-size:.45em;font-stretch:100%;letter-spacing:0"> /mês</small></p>
+      <p>Ela reserva horas fixas da sua máquina por mês, com prazo prioritário de três dias úteis. Paga metade no dia 1 e metade no dia 15. Só para a papelaria que já mandou três pedidos seguidos. Não ofereça na primeira visita.</p>
+    </div>
+  </div>
 
   <figure>
     <div class="ph">
       <p class="ph-id">IMG-03 · os três níveis</p>
-      <p class="ph-meta">Horizontal 3:2 — lote, mostruário e produção mensal lado a lado</p>
+      <p class="ph-meta">Horizontal 3:2 · lote, mostruário e produção mensal lado a lado</p>
       <p class="ph-prompt">Fotografia de produto em vista superior sobre uma mesa de madeira clara, três grupos de peças impressas em 3D em verde escuro fosco, bem separados: à esquerda um saco plástico transparente tipo zip com cerca de vinte chaveiros pequenos iguais; ao centro uma placa de papelão cinza com seis peças diferentes presas por elásticos, como um mostruário de fornecedor; à direita três caixas de papelão pardo empilhadas e abertas, cheias de peças pequenas organizadas. Iluminação difusa e uniforme, sombras suaves, composição limpa com espaço entre os grupos. Sem texto legível. Proporção 3:2.</p>
     </div>
   </figure>
 
-  <div class="ficha nivel">
-    <p class="ficha-tab">Entrada — lote-teste</p>
-    <p class="preco">R$ 150 a 250</p>
-    <p>Um pedido real que ela já tem fechado com uma cliente: 30 lembrancinhas com nome, ou um topo de bolo mais as plaquinhas das caixas. Preço de atacado desde o primeiro pedido. Ela testa você com o dinheiro da cliente dela, não com o próprio.</p>
-  </div>
-
-  <div class="ficha nivel">
-    <p class="ficha-tab">Padrão — fornecedor fixo · o que você quer vender</p>
-    <p class="preco">R$ 250 a 500 no 1º pedido</p>
-    <p>Tabela de atacado com prazo fixo de cinco dias úteis, mais um mostruário de seis peças que fica no balcão dela em comodato. O mostruário vende para ela: a mãe vê, aponta, e ela anota o pedido. Você entra com o primeiro lote e o mostruário na mesma entrega.</p>
-  </div>
-
-  <div class="ficha nivel">
-    <p class="ficha-tab">Completo — cota mensal</p>
-    <p class="preco">R$ 600 a 1.500 por mês</p>
-    <p>Ela reserva uma quantidade fixa de horas da sua máquina por mês, com prazo prioritário de três dias úteis. Paga metade no dia 1 e metade no dia 15. Serve para a papelaria que já te mandou três pedidos seguidos. Não ofereça na primeira visita.</p>
-  </div>
-
   <div class="aviso">
     <p class="ficha-tab">Prazo é contrato</p>
-    <p>Festa não adia. Se você atrasar uma vez, perde a cliente e ela conta para as outras papelarias do bairro, porque elas se conhecem. Por isso:</p>
+    <p class="aviso-grande">Festa não adia. Um atraso e ela conta para as outras papelarias do bairro.</p>
+    <div class="prazo" aria-label="Linha do tempo de um pedido para festa de sábado">
+      <div class="p-ok"><b>Qua</b><span>Arte aprovada por escrito</span></div>
+      <div><b>Qui</b><span>Dia útil 1</span></div>
+      <div><b>Sex</b><span>Dia útil 2</span></div>
+      <div><b>Seg</b><span>Dia útil 3</span></div>
+      <div><b>Ter</b><span>Dia útil 4</span></div>
+      <div class="p-ok"><b>Qua</b><span>Entrega, dia útil 5</span></div>
+      <div class="p-festa"><b>Sáb</b><span>Festa</span></div>
+    </div>
     <ul>
       <li>O prazo conta a partir da arte aprovada por escrito, nunca da conversa.</li>
       <li>Entrega sempre até a quarta-feira anterior a uma festa de sábado. Nunca na sexta.</li>
       <li>Não aceite pedido que você não consegue imprimir duas vezes dentro do prazo. A segunda vez é a sua margem para falha de impressão.</li>
-      <li>Se a agenda da máquina estiver cheia, diga não na hora. Um "não consigo essa semana" dito na terça vale mais que um atraso na sexta.</li>
+      <li>Agenda cheia, diga não na hora. Um "não consigo essa semana" dito na terça vale mais que um atraso na sexta.</li>
     </ul>
   </div>
 </section>
 
-<section>
-  <p class="sec-num">05</p>
-  <h2>Material, acabamento e os dois riscos</h2>
+<!-- ===================== 05 ===================== -->
+<section id="s05">
+  <header class="sec-head l5">
+    <p class="sec-num">05</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Material, acabamento e os dois riscos</h2>
+  </header>
+
   <p class="lead">Aqui quase nada toca em comida, e quase tudo vai para foto. O que decide a venda é a peça sair bonita na mesa e no Instagram da mãe.</p>
 
-  <h3>PLA fosco para decoração, com estoque de quatro cores</h3>
-  <p>Peça de festa é decorativa, pequena e vai para a foto. PLA fosco esconde as linhas de camada, imprime detalhe fino de letra e custa menos que PETG. PLA silk dourado ou prateado faz o acabamento "de luxo" que papelaria adora vender mais caro.</p>
-  <p>Comece com quatro cores: branco, rosa bebê, azul bebê e dourado silk. Elas cobrem a maior parte das festas infantis e de chá de bebê. Cor fora do estoque tem taxa fixa de R$ 40 por pedido, porque você vai comprar um rolo para usar 80 gramas. Diga isso antes, não depois.</p>
-
-  <div class="tabela">
-  <table>
-    <tr><th>Parâmetro</th><th>Valor</th></tr>
-    <tr><td>Bico</td><td class="n">205 a 215 °C</td></tr>
-    <tr><td>Mesa</td><td class="n">55 a 60 °C</td></tr>
-    <tr><td>Altura de camada</td><td class="n">0,20 mm (0,12 mm na primeira camada de letra)</td></tr>
-    <tr><td>Paredes</td><td class="n">3</td></tr>
-    <tr><td>Preenchimento</td><td class="n">15%</td></tr>
-    <tr><td>Altura mínima da letra</td><td class="n">6 mm</td></tr>
-    <tr><td>Traço mínimo da letra</td><td class="n">1,2 mm</td></tr>
-    <tr><td>Troca de cor</td><td class="n">Pausa na camada do relevo</td></tr>
-  </table>
+  <div class="split">
+    <div>
+      <h3 style="margin-top:0">PLA fosco, quatro cores em estoque</h3>
+      <p>PLA fosco esconde as linhas de camada, imprime detalhe fino de letra e custa menos que PETG. PLA silk dourado faz o acabamento "de luxo" que papelaria adora vender mais caro.</p>
+      <div class="cores">
+        <div class="cor"><i style="background-color:#f4f2ec"></i>Branco</div>
+        <div class="cor"><i style="background-color:#f3c6d3"></i>Rosa bebê</div>
+        <div class="cor"><i style="background-color:#bcd8ef"></i>Azul bebê</div>
+        <div class="cor"><i style="background:linear-gradient(135deg,#b88a2c,#f2d98a 45%,#a8791f 70%,#e8c96a)"></i>Dourado silk</div>
+      </div>
+      <p>Elas cobrem a maior parte das festas infantis e de chá de bebê. Cor fora do estoque tem taxa fixa de R$ 40 por pedido, porque você vai comprar um rolo para usar 80 gramas. Diga isso antes, não depois.</p>
+    </div>
+    <div class="painel">
+      <p class="ficha-tab">Perfil de fatiamento</p>
+      <dl>
+        <dt>Bico</dt><dd>205–215 °C</dd>
+        <dt>Mesa</dt><dd>55–60 °C</dd>
+        <dt>Camada</dt><dd>0,20 mm</dd>
+        <dt>1ª camada da letra</dt><dd>0,12 mm</dd>
+        <dt>Paredes</dt><dd>3</dd>
+        <dt>Preenchimento</dt><dd>15%</dd>
+        <dt>Troca de cor</dt><dd>M600 no relevo</dd>
+      </dl>
+    </div>
   </div>
 
-  <p>A fonte cursiva fina que toda papelaria usa no convite não imprime em bico de 0,4 mm abaixo de 1,2 mm de traço: a letra some ou quebra ao tirar da mesa. Tenha três fontes testadas e mostre só essas. Quando ela pedir a fonte do convite, imprima uma prova antes de aceitar.</p>
-  <p>A troca de cor por pausa exige você do lado da máquina. Uma mesa de 12 chaveiros em duas cores são 1h50 de impressão, mas você precisa estar em casa no minuto 14. Planeje as mesas de duas cores para os horários em que você está acordado e em casa, e as de uma cor para a madrugada e o horário do trabalho.</p>
+  <h3>O limite da letra</h3>
+  <div class="letra">
+    <div><b>6 mm</b><span>altura mínima da letra</span></div>
+    <div><b>1,2 mm</b><span>traço mínimo, com bico de 0,4 mm</span></div>
+  </div>
+  <p>A fonte cursiva fina que toda papelaria usa no convite não imprime abaixo disso: a letra some ou quebra ao tirar da mesa. Tenha três fontes testadas e mostre só essas. Quando ela pedir a fonte do convite, imprima uma prova antes de aceitar.</p>
+  <p>A troca de cor por pausa exige você do lado da máquina. Uma mesa de 12 chaveiros em duas cores são 1h50 de impressão, mas você precisa estar em casa no minuto 14. Mesas de duas cores vão para os horários em que você está acordado e em casa; as de uma cor, para a madrugada e o horário do trabalho.</p>
   <p>PLA amolece dentro de carro fechado no sol. Entregue na sombra e avise a papelaria para não deixar o pedido no porta-malas. Letreiro de ateliê que vai para festa ao ar livre, faça em PETG e cobre a diferença.</p>
 
   <h3>Grafia aprovada por escrito</h3>
-  <p>Isis, Ísis, Ysis e Izis são quatro crianças diferentes, e as quatro existem. Toda arte vai para ela por WhatsApp antes de imprimir, com o nome em letra grande, e só entra na fila com um "aprovado" escrito. Se ela aprovar errado, a reimpressão é cobrada. Se você imprimir errado o que ela aprovou certo, refaz em 24 horas sem custo. Essa regra protege você e é argumento de venda contra o fornecedor de longe.</p>
+  <div class="grafia" aria-label="Quatro grafias diferentes do mesmo nome">
+    <span>Isis</span><span class="certo">Ísis</span><span>Ysis</span><span>Izis</span>
+  </div>
+  <p>São quatro crianças diferentes, e as quatro existem. Toda arte vai para ela por WhatsApp antes de imprimir, com o nome em letra grande, e só entra na fila com um "aprovado" escrito. Se ela aprovar errado, a reimpressão é cobrada. Se você imprimir errado o que ela aprovou certo, refaz em 24 horas sem custo. Essa regra protege você e é argumento de venda contra o fornecedor de longe.</p>
 
   <figure>
     <div class="ph">
       <p class="ph-id">IMG-04 · topo com palito de bambu</p>
-      <p class="ph-meta">Vertical 4:5 — o topo espetado no bolo, com a haste de bambu visível</p>
+      <p class="ph-meta">Vertical 4:5 · o topo espetado no bolo, com a haste de bambu visível</p>
       <p class="ph-prompt">Close fotográfico de um topo de bolo impresso em 3D em verde escuro fosco, com letras em relevo abstratas e um contorno de estrela, fixado em dois palitos finos de bambu natural que entram na cobertura branca de um bolo de festa. O foco nítido está no ponto onde a peça plástica encaixa no bambu, bem acima da superfície do bolo, deixando claro que só a madeira toca a cobertura. Fundo desfocado de mesa de festa com tons claros. Luz natural suave de lateral. Sem texto legível. Proporção 4:5.</p>
     </div>
   </figure>
 
-  <div class="aviso">
-    <p class="ficha-tab">Risco 1 · Peça perto de comida</p>
-    <p>Nenhuma peça impressa em FDM é indicada para tocar alimento, e não existe fornecedor de impressão 3D que possa garantir isso honestamente. Na festa, duas peças chegam perto: o topo de bolo e o suporte de doce.</p>
-    <ul>
-      <li><strong>Topo de bolo:</strong> imprima sem haste. A peça encaixa em palito de bambu descartável, e só o bambu entra no bolo. O plástico fica acima da cobertura.</li>
-      <li><strong>Suporte ou bandeja de doce:</strong> sempre com forminha de papel entre o doce e a peça. Sem forminha, não venda.</li>
-      <li><strong>Lembrancinha que vai dentro da caixa de doce:</strong> em saquinho próprio, separada do alimento.</li>
-    </ul>
-    <p>Escreva isso numa etiqueta que vai junto com o pedido, para a papelaria repassar à mãe. Nunca diga que a peça pode encostar em comida.</p>
-  </div>
-
-  <div class="aviso">
-    <p class="ficha-tab">Risco 2 · Personagem de marca</p>
-    <p>O pedido mais comum em festa infantil é o personagem do desenho do momento. Imprimir e vender personagem licenciado é reproduzir marca registrada sem autorização, e a responsabilidade cai em quem fabrica e em quem vende. Loja pequena é denunciada, sim, principalmente quando posta foto.</p>
-    <p>Você não imprime personagem. Você imprime o tema: as cores, os elementos genéricos (patinha, estrela, coroa, foguete, osso), o nome e a idade da criança. Quem olha a mesa entende o tema sem que exista um único personagem nela. Diga isso na primeira conversa, antes do primeiro pedido.</p>
+  <div class="split">
+    <div class="aviso">
+      <p class="ficha-tab">Risco 1 · Peça perto de comida</p>
+      <p>Nenhuma peça impressa em FDM é indicada para tocar alimento, e nenhum fornecedor de impressão 3D pode garantir isso honestamente. Na festa, duas peças chegam perto:</p>
+      <ul>
+        <li><strong>Topo de bolo:</strong> imprima sem haste. A peça encaixa em palito de bambu descartável, e só o bambu entra no bolo.</li>
+        <li><strong>Suporte de doce:</strong> sempre com forminha de papel entre o doce e a peça. Sem forminha, não venda.</li>
+        <li><strong>Lembrancinha na caixa de doce:</strong> em saquinho próprio, separada do alimento.</li>
+      </ul>
+      <p>Mande essas regras numa etiqueta junto com o pedido, para a papelaria repassar à mãe. Nunca diga que a peça pode encostar em comida.</p>
+    </div>
+    <div class="aviso">
+      <p class="ficha-tab">Risco 2 · Personagem de marca</p>
+      <p>O pedido mais comum em festa infantil é o personagem do desenho do momento. Imprimir e vender personagem licenciado é reproduzir marca registrada sem autorização, e a responsabilidade cai em quem fabrica e em quem vende. Loja pequena é denunciada, sim, principalmente quando posta foto.</p>
+      <p>Você imprime o tema: as cores, os elementos genéricos (patinha, estrela, coroa, foguete, osso), o nome e a idade da criança. Diga isso na primeira conversa, antes do primeiro pedido.</p>
+    </div>
   </div>
 </section>
 
-<section>
-  <p class="sec-num">06</p>
-  <h2>Kit de amostra — o que imprimir hoje à noite</h2>
-  <p class="lead">Três peças que mostram as três coisas que ela vai revender: lembrancinha, topo e acabamento do produto dela. Mais uma folha com a tabela de atacado.</p>
+<!-- ===================== 06 ===================== -->
+<section id="s06">
+  <header class="sec-head l6">
+    <p class="sec-num">06</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Kit de amostra: o que imprimir hoje à noite</h2>
+  </header>
+
+  <p class="lead">Três peças que mostram o que ela vai revender: lembrancinha, topo e o acabamento do produto dela. Mais uma folha com a tabela de atacado.</p>
+
+  <h3 style="margin-top:0">Uma noite de máquina</h3>
+  <div class="mesa">
+    <div class="mesa-bar" role="img" aria-label="Tempo de impressão: chaveiro 25 minutos, topo 70 minutos, plaquinhas 30 minutos">
+      <div style="flex:25">25 min</div>
+      <div style="flex:70">1h10</div>
+      <div style="flex:30">30 min</div>
+    </div>
+    <ul class="mesa-leg">
+      <li><b>Chaveiro 6 cm</b>Nome em duas cores, com argola · 5 g</li>
+      <li><b>Topo "nome + idade" 15 cm</b>Sem haste, com 2 palitos de bambu · 20 g</li>
+      <li><b>3 plaquinhas 5 × 2 cm</b>Com nome, para colar em caixa · 8 g</li>
+    </ul>
+  </div>
+  <div class="totais">
+    <div><b>2h05</b><span>de máquina</span></div>
+    <div><b>33 g</b><span>de PLA</span></div>
+    <div><b>R$ 4,60</b><span>com argola, palitos e energia</span></div>
+  </div>
+  <p>Imprima dois jogos: um para deixar na papelaria que pedir para ficar, outro para continuar a rota. A caixinha milk do detalhe abaixo é à parte.</p>
 
   <figure>
     <div class="ph">
       <p class="ph-id">IMG-05 · kit de amostra</p>
-      <p class="ph-meta">Vertical 4:5 — as peças em vista superior, com régua</p>
+      <p class="ph-meta">Vertical 4:5 · as peças em vista superior, com régua</p>
       <p class="ph-prompt">Fotografia flat lay técnica em vista superior sobre fundo de papel cinza claro, peças impressas em 3D em verde escuro fosco alinhadas com precisão: um chaveiro retangular com letras em relevo e argola metálica, um topo de bolo vazado de 15 centímetros ao lado de dois palitos de bambu, e três plaquinhas retangulares pequenas com relevo, uma delas colada sobre a tampa de uma caixinha de papel branca. Uma régua metálica fina ao lado para dar escala. Luz de estúdio uniforme, sombra mínima, composição organizada de catálogo. Sem texto legível. Proporção 4:5.</p>
     </div>
   </figure>
 
-  <div class="tabela">
-  <table>
-    <tr><th>Peça</th><th>Tempo</th><th>Material</th></tr>
-    <tr><td>Chaveiro 6 cm com nome em duas cores, com argola</td><td class="n">25 min</td><td class="n">5 g</td></tr>
-    <tr><td>Topo de bolo "nome + idade" 15 cm, sem haste, com 2 palitos de bambu</td><td class="n">1h10</td><td class="n">20 g</td></tr>
-    <tr><td>3 plaquinhas de 5 × 2 cm com nome, para colar em caixa</td><td class="n">30 min</td><td class="n">8 g</td></tr>
-    <tr class="total"><td>Total</td><td class="n">2h05</td><td class="n">33 g · R$ 4,60</td></tr>
-  </table>
-  </div>
-
-  <p>O custo inclui argola, palitos e energia. A caixinha milk do detalhe abaixo é à parte. Imprima dois jogos: um para deixar na papelaria que pedir para ficar, outro para continuar a rota.</p>
-
-  <div class="ficha">
-    <p class="ficha-tab">Detalhe que fecha venda</p>
-    <p>Compre uma caixinha milk branca lisa, dessas de R$ 1, e cole uma das plaquinhas na tampa. Esse é o único item do kit que não é seu: é o produto dela, melhorado. Ela vê a caixa que vende por R$ 4 virar uma caixa que dá para vender por R$ 9, e a conversa muda de "o que você faz" para "quanto custa a plaquinha".</p>
-    <p>Se descobrir o nome da papelaria antes da visita, imprima o chaveiro com esse nome. Se não, use um nome de criança comum na sua região.</p>
-  </div>
-
-  <div class="ficha">
-    <p class="ficha-tab">Mostruário, não presente</p>
-    <p>Você está entrando numa loja que vive de embalagem, e não vai ganhar dela nesse jogo. Não tente. Leve as peças presas com elástico numa placa de papelão cinza, do tamanho de uma folha A5, com a tabela de atacado atrás. Isso diz "fornecedor". Uma caixinha caprichada diz "concorrente".</p>
+  <div class="split">
+    <div class="ficha escura">
+      <p class="ficha-tab">Detalhe que fecha venda</p>
+      <p>Compre uma caixinha milk branca lisa, dessas de R$ 1, e cole uma plaquinha na tampa. É o único item do kit que não é seu: é o produto dela, melhorado. Ela vê a caixa de R$ 4 virar uma caixa de R$ 9, e a conversa muda de "o que você faz" para "quanto custa a plaquinha".</p>
+      <p>Se descobrir o nome da papelaria antes da visita, imprima o chaveiro com esse nome. Se não, use um nome de criança comum na sua região.</p>
+    </div>
+    <div class="ficha">
+      <p class="ficha-tab">Mostruário, não presente</p>
+      <p>Você está entrando numa loja que vive de embalagem, e não vai ganhar dela nesse jogo. Leve as peças presas com elástico numa placa de papelão cinza, do tamanho de uma folha A5, com a tabela de atacado atrás. Isso diz "fornecedor". Uma caixinha caprichada diz "concorrente".</p>
+    </div>
   </div>
 
   <figure>
     <div class="ph">
       <p class="ph-id">IMG-06 · o mostruário no balcão</p>
-      <p class="ph-meta">Horizontal 3:2 — a placa de papelão com as peças, deixada ao lado do caixa</p>
+      <p class="ph-meta">Horizontal 3:2 · a placa de papelão com as peças, deixada ao lado do caixa</p>
       <p class="ph-prompt">Fotografia de produto de uma placa de papelão cinza tamanho A5 apoiada em pé junto ao caixa de uma papelaria de bairro, com peças impressas em 3D em verde escuro fosco presas por elásticos pretos: um chaveiro, três plaquinhas pequenas e um topo de bolo vazado. Ao lado, uma caixinha de papel branca com uma plaquinha verde colada na tampa. Fundo desfocado com prateleiras de papel colorido. Luz natural lateral, estética simples e prática de amostra de fornecedor. Sem texto legível. Proporção 3:2.</p>
     </div>
   </figure>
 </section>
 
-<section>
-  <p class="sec-num">07</p>
-  <h2>Precificação</h2>
+<!-- ===================== 07 ===================== -->
+<section id="s07">
+  <header class="sec-head l7">
+    <p class="sec-num">07</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Precificação</h2>
+  </header>
+
   <p class="lead">Atacado mata de dois jeitos: preço baixo demais por unidade, ou peça que ocupa a máquina tempo demais. Calcule o retorno por hora de cada item antes de colocar na tabela.</p>
+
+  <h3 style="margin-top:0">Retorno por hora, peça por peça</h3>
+  <div class="grafico" role="img" aria-label="Gráfico de barras do retorno por hora de máquina por peça e preço, com a linha do piso em R$ 15 por hora">
+    <div class="g-row"><span class="g-lab">30 plaquinhas<small>a R$ 3,50 · 1h30</small></span><div class="g-track"><div class="g-bar top" style="--v:64">R$ 64/h</div></div></div>
+    <div class="g-row"><span class="g-lab">12 chaveiros<small>a R$ 6,50 · 1h50</small></span><div class="g-track"><div class="g-bar" style="--v:35">R$ 35/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Topo nome + idade<small>a R$ 38 · 1h15</small></span><div class="g-track"><div class="g-bar" style="--v:28">R$ 28/h</div></div></div>
+    <div class="g-row"><span class="g-lab">12 chaveiros<small>a R$ 4,50 · 1h50</small></span><div class="g-track"><div class="g-bar" style="--v:22">R$ 22/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Letreiro 5 letras<small>a R$ 140 · 6h</small></span><div class="g-track"><div class="g-bar" style="--v:21">R$ 21/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Topo nome + idade<small>a R$ 22 · 1h15</small></span><div class="g-track"><div class="g-bar baixo" style="--v:15">R$ 15/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Letreiro 5 letras<small>a R$ 90 · 6h</small></span><div class="g-track"><div class="g-bar baixo" style="--v:12">R$ 12/h</div></div></div>
+    <div class="g-axis"><span></span><div class="g-ticks"><span style="left:0">0</span><span class="piso" style="left:21.43%">piso R$ 15</span><span style="left:42.86%">30</span><span style="left:71.43%">50</span><span style="left:100%;transform:translateX(-100%)">70</span></div></div>
+  </div>
+  <p class="g-nota">Margem = preço de atacado menos custo real. Retorno/h = margem dividida pelas horas de máquina.</p>
+
+  <div class="duelo">
+    <div><b>R$ 64/h</b><span>Peça pequena e chata, que enche a mesa e imprime baixa. É onde está o dinheiro.</span></div>
+    <div><b>R$ 12/h</b><span>Letreiro alto a R$ 90. Parece o pedido mais caro e é o que paga menos por hora.</span></div>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Seu piso</p>
+    <p class="aviso-grande">R$ 15 por hora de máquina, calculado por item, antes de fechar qualquer tabela.</p>
+    <p>Letreiro abaixo de R$ 21 por letra ou topo de bolo abaixo de R$ 22 já estão no piso ou embaixo dele. Por isso a tabela que você entrega usa R$ 28 e R$ 38: sobra folga para uma impressão perdida.</p>
+  </div>
 
   <h3>Custo real de uma mesa de 12 chaveiros</h3>
   <div class="tabela">
@@ -551,213 +967,273 @@
     <tr class="total"><td>Custo da mesa</td><td>R$ 1,10 por chaveiro</td><td class="n">R$ 13,25</td></tr>
   </table>
   </div>
-
   <p>Não tem embalagem na conta. A papelaria embala: é o que ela faz melhor que você, e é parte da margem dela. Você entrega a granel, num saco zip por pedido, com o nome do pedido escrito por fora.</p>
 
-  <h3>Preço de atacado × retorno por hora</h3>
-  <div class="tabela">
-  <table>
-    <tr><th>Peça</th><th>Atacado</th><th>Margem</th><th>Máquina</th><th>Retorno/h</th></tr>
-    <tr class="abaixo"><td>Topo nome + idade</td><td class="n">R$ 22</td><td class="n">R$ 19</td><td class="n">1h15</td><td class="n">R$ 15/h</td></tr>
-    <tr><td>Topo nome + idade</td><td class="n">R$ 38</td><td class="n">R$ 35</td><td class="n">1h15</td><td class="n">R$ 28/h</td></tr>
-    <tr class="abaixo"><td>Letreiro 5 letras, 12 cm</td><td class="n">R$ 90</td><td class="n">R$ 75</td><td class="n">6h</td><td class="n">R$ 12/h</td></tr>
-    <tr><td>Letreiro 5 letras, 12 cm</td><td class="n">R$ 140</td><td class="n">R$ 125</td><td class="n">6h</td><td class="n">R$ 21/h</td></tr>
-    <tr><td>12 chaveiros a R$ 4,50</td><td class="n">R$ 54</td><td class="n">R$ 41</td><td class="n">1h50</td><td class="n">R$ 22/h</td></tr>
-    <tr><td>12 chaveiros a R$ 6,50</td><td class="n">R$ 78</td><td class="n">R$ 65</td><td class="n">1h50</td><td class="n">R$ 35/h</td></tr>
-    <tr><td>30 plaquinhas a R$ 3,50</td><td class="n">R$ 105</td><td class="n">R$ 95</td><td class="n">1h30</td><td class="n">R$ 64/h</td></tr>
-  </table>
-  </div>
-
-  <p>Leia a tabela de baixo para cima. Peça pequena e chata, que enche a mesa e imprime baixa, é onde está o dinheiro. Peça alta, como letreiro, parece o pedido mais caro e é o que paga menos por hora. O topo de bolo, que é o produto mais óbvio do nicho, a R$ 22 fica no piso.</p>
-
-  <div class="aviso">
-    <p class="ficha-tab">Seu piso</p>
-    <p>R$ 15 por hora de máquina, calculado por item, antes de fechar qualquer tabela. Letreiro abaixo de R$ 21 por letra ou topo de bolo abaixo de R$ 22 já estão no piso ou embaixo dele. Por isso a tabela que você entrega usa R$ 28 e R$ 38: sobra folga para uma impressão perdida.</p>
-  </div>
-
   <h3>A tabela que você entrega a ela</h3>
-  <div class="tabela">
-  <table>
-    <tr><th>Item</th><th>Mínimo</th><th>Atacado</th><th>Ela revende por</th></tr>
-    <tr><td>Chaveiro com nome, duas cores</td><td class="n">20 un</td><td class="n">R$ 6,50</td><td class="n">R$ 12 a 15</td></tr>
-    <tr><td>Chaveiro com nome, acima de 60 un</td><td class="n">60 un</td><td class="n">R$ 5,50</td><td class="n">R$ 10 a 13</td></tr>
-    <tr><td>Plaquinha para caixa 5 × 2 cm</td><td class="n">20 un</td><td class="n">R$ 3,50</td><td class="n">+R$ 4 a 6 na caixa</td></tr>
-    <tr><td>Topo de bolo nome + idade</td><td class="n">1 un</td><td class="n">R$ 38</td><td class="n">R$ 65 a 90</td></tr>
-    <tr><td>Letreiro de mesa, por letra</td><td class="n">3 letras</td><td class="n">R$ 28</td><td class="n">R$ 50 a 60</td></tr>
-    <tr><td>Cor fora do estoque</td><td class="n">—</td><td class="n">+R$ 40 por pedido</td><td class="n">—</td></tr>
-  </table>
+  <div class="folha">
+    <div class="folha-top"><b>Tabela de atacado</b><span>Prazo: 5 dias úteis da arte aprovada</span></div>
+    <div class="tabela">
+    <table>
+      <tr><th>Item</th><th>Mínimo</th><th>Atacado</th><th>Ela revende por</th></tr>
+      <tr><td>Chaveiro com nome, duas cores</td><td class="n">20 un</td><td class="n">R$ 6,50</td><td class="n revende">R$ 12 a 15</td></tr>
+      <tr><td>Chaveiro com nome, acima de 60 un</td><td class="n">60 un</td><td class="n">R$ 5,50</td><td class="n revende">R$ 10 a 13</td></tr>
+      <tr><td>Plaquinha para caixa 5 × 2 cm</td><td class="n">20 un</td><td class="n">R$ 3,50</td><td class="n revende">+R$ 4 a 6 na caixa</td></tr>
+      <tr><td>Topo de bolo nome + idade</td><td class="n">1 un</td><td class="n">R$ 38</td><td class="n revende">R$ 65 a 90</td></tr>
+      <tr><td>Letreiro de mesa, por letra</td><td class="n">3 letras</td><td class="n">R$ 28</td><td class="n revende">R$ 50 a 60</td></tr>
+      <tr><td>Cor fora do estoque</td><td class="n">—</td><td class="n">+R$ 40/pedido</td><td class="n">—</td></tr>
+    </table>
+    </div>
   </div>
 
-  <p>A coluna "ela revende por" é o que faz a tabela vender. A regra que ela entende sem conta: o atacado é metade do preço final. Nunca preencha a tabela sem essa coluna.</p>
+  <p>A coluna "ela revende por" é o que faz a tabela vender. A regra que ela entende sem conta: o atacado é metade do preço final. Nunca entregue a tabela sem essa coluna.</p>
   <p>O pedido mínimo de 20 unidades não é capricho. Abaixo de uma mesa cheia, o tempo de preparar arquivo, trocar cor e tirar peça come a margem inteira. Pedido de 5 chaveiros sai a R$ 10 cada, ou não sai.</p>
   <p>Pagamento: 50% na aprovação da arte e 50% na entrega. Para cota mensal, dia 1 e dia 15.</p>
 </section>
 
-<section>
-  <p class="sec-num">08</p>
-  <h2>A abordagem — 40 segundos</h2>
+<!-- ===================== 08 ===================== -->
+<section id="s08">
+  <header class="sec-head l8">
+    <p class="sec-num">08</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A abordagem em 40 segundos</h2>
+  </header>
 
   <figure>
     <div class="ph">
       <p class="ph-id">IMG-07 · a conversa no balcão</p>
-      <p class="ph-meta">Horizontal 16:9 — o mostruário sobre o balcão, ela segurando o chaveiro</p>
+      <p class="ph-meta">Horizontal 16:9 · o mostruário sobre o balcão, ela segurando o chaveiro</p>
       <p class="ph-prompt">Fotografia documental de uma conversa no balcão de uma papelaria personalizada de bairro: uma mulher atrás do balcão segura e examina um pequeno chaveiro impresso em 3D em verde escuro fosco, enquanto um homem do outro lado, visto de costas e parcialmente fora do quadro, apoia uma placa de papelão com outras peças sobre o balcão. Enquadramento na altura das mãos, rosto dela parcialmente visível e desfocado, expressão de avaliação atenta. Luz natural da manhã, prateleiras com papéis e fitas ao fundo. Estilo fotojornalístico, nada posado, cores naturais. Sem texto legível. Proporção 16:9.</p>
     </div>
   </figure>
 
-  <p class="acao">Entre e espere o balcão esvaziar. Se tiver cliente dela na frente, olhe as prateleiras. Nunca comece a falar com uma mãe esperando atendimento.</p>
+  <div class="relogio">
+    <div class="passo">
+      <span class="t">antes</span>
+      <p class="acao">Entre e espere o balcão esvaziar. Se tiver cliente dela na frente, olhe as prateleiras. Nunca comece a falar com uma mãe esperando atendimento.</p>
+    </div>
+    <div class="passo">
+      <span class="t">0–8 s</span>
+      <p class="fala">"Oi, tudo bem? Eu imprimo peça em 3D aqui no [bairro] e só trabalho com quem revende: papelaria e ateliê de festa. Trouxe umas peças pra você ver o acabamento."</p>
+    </div>
+    <div class="passo cala">
+      <span class="t">8–20 s</span>
+      <p class="acao">Coloque o mostruário no balcão virado para ela. Entregue o chaveiro na mão dela. Cale a boca e espere ela olhar a caixinha com a plaquinha.</p>
+      <p>Ela vai olhar primeiro o chaveiro e depois a caixa. Quando ela pegar a caixa, a conversa começou. Não explique a peça: ela entende de acabamento mais que você.</p>
+    </div>
+    <div class="passo">
+      <span class="t">20–28 s</span>
+      <p class="fala">"Quando uma cliente te pede lembrancinha com nome ou topo em 3D, hoje você faz com quem?"</p>
+    </div>
+    <div class="passo">
+      <span class="t">28–40 s</span>
+      <p>Essa pergunta separa as situações. Cada uma tem um caminho:</p>
+    </div>
+  </div>
 
-  <p class="fala">"Oi, tudo bem? Eu imprimo peça em 3D aqui no [bairro] e só trabalho com quem revende: papelaria e ateliê de festa. Trouxe umas peças pra você ver o acabamento."</p>
-
-  <p class="acao">Coloque o mostruário no balcão virado para ela. Entregue o chaveiro na mão dela. Cale a boca e espere ela olhar a caixinha com a plaquinha.</p>
-
-  <p>Ela vai olhar primeiro o chaveiro e depois a caixa. Quando ela pegar a caixa, a conversa começou. Não explique a peça: ela entende de acabamento mais que você.</p>
-
-  <p class="fala">"Quando uma cliente te pede lembrancinha com nome ou topo em 3D, hoje você faz com quem?"</p>
-
-  <p>Essa pergunta separa as três situações. Cada uma tem um caminho.</p>
-
-  <div class="ficha">
-    <p class="ficha-tab">As saídas possíveis</p>
-    <ul>
-      <li><strong>"Não faço, falo que não trabalho com isso."</strong> Esse é o buraco. "Então me passa o próximo pedido que aparecer. Eu te devolvo em cinco dias úteis, a preço de atacado, e você põe sua margem." Deixe a tabela.</li>
-      <li><strong>"Compro de um fornecedor pela internet."</strong> Pergunte duas coisas: "Quanto tempo leva pra chegar?" e "Já veio nome errado?". Quase sempre já veio. "Eu estou a quinze minutos. Nome errado por minha culpa eu refaço em 24 horas."</li>
-      <li><strong>"Conheço alguém que tem impressora."</strong> Não dispute. "Ótimo. Fica com meu contato pro pedido que ele não der conta, principalmente em novembro e dezembro." Isso é um cliente de excesso, e excesso em dezembro é muito pedido.</li>
-      <li><strong>Ela está atolada.</strong> "Posso deixar isso com você e voltar quinta às 10h?" Deixe o mostruário e a tabela. Volte na hora marcada.</li>
-    </ul>
+  <div class="saidas">
+    <div class="saida">
+      <p class="quando">"Não faço, falo que não trabalho com isso."</p>
+      <p>Esse é o buraco. "Então me passa o próximo pedido que aparecer. Eu te devolvo em cinco dias úteis, a preço de atacado, e você põe sua margem." Deixe a tabela.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">"Compro de um fornecedor pela internet."</p>
+      <p>Pergunte: "Quanto tempo leva pra chegar?" e "Já veio nome errado?". Quase sempre já veio. "Eu estou a quinze minutos. Nome errado por minha culpa eu refaço em 24 horas."</p>
+    </div>
+    <div class="saida">
+      <p class="quando">"Conheço alguém que tem impressora."</p>
+      <p>Não dispute. "Ótimo. Fica com meu contato pro pedido que ele não der conta, principalmente em novembro e dezembro." Excesso em dezembro é muito pedido.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">Ela está atolada.</p>
+      <p>"Posso deixar isso com você e voltar quinta às 10h?" Deixe o mostruário e a tabela. Volte na hora marcada.</p>
+    </div>
   </div>
 </section>
 
-<section>
-  <p class="sec-num">09</p>
-  <h2>Objeções</h2>
+<!-- ===================== 09 ===================== -->
+<section id="s09">
+  <header class="sec-head l9">
+    <p class="sec-num">09</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Objeções</h2>
+  </header>
+
   <p class="lead">Seis frases que você vai ouvir de papelaria. Ela negocia com fornecedor toda semana: se você hesitar, ela percebe antes de você terminar a frase.</p>
 
   <div class="obj">
-    <p class="obj-q">"Na Shopee eu acho chaveiro com nome por R$ 3."</p>
-    <p class="obj-real">O que ela está dizendo: eu comparei o preço da unidade e esqueci o resto da conta.</p>
-    <p class="fala">"Acha mesmo. Mais o frete, mais doze dias de espera, e se vier o nome errado com a festa no sábado, não tem o que fazer. Comigo você aprova a arte antes, recebe até a quarta, e erro meu eu refaço em um dia. O que você compra aqui não é o chaveiro. É não passar a sexta-feira com a mãe da aniversariante no seu WhatsApp."</p>
+    <div class="obj-head"><p class="obj-n">Objeção 1 de 6 · preço</p><p class="obj-q">"Na Shopee eu acho chaveiro com nome por R$ 3."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu comparei o preço da unidade e esqueci o resto da conta.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Acha mesmo. Mais o frete, mais doze dias de espera, e se vier o nome errado com a festa no sábado, não tem o que fazer. Comigo você aprova a arte antes, recebe até a quarta, e erro meu eu refaço em um dia. O que você compra aqui é não passar a sexta-feira com a mãe da aniversariante no seu WhatsApp."</p></div>
+    </div>
     <p class="erro">Erro fatal: baixar o atacado para chegar perto do marketplace. Você perde a margem e continua mais caro.</p>
   </div>
 
   <div class="obj">
-    <p class="obj-q">"Minhas clientes não pagam isso."</p>
-    <p class="obj-real">O que ela está dizendo: eu não sei por quanto revender, e tenho medo de ficar com a peça cara na mão.</p>
-    <p class="fala">"Faz a conta comigo: quanto você cobra numa caixinha personalizada hoje? Então, com essa plaquinha, ela passa a valer uns cinco reais a mais, e a plaquinha te custa três e cinquenta. Você não está vendendo um chaveiro caro. Está vendendo a mesma caixa mais cara."</p>
-    <p class="acao">Mostre a coluna "ela revende por" da tabela. Aponte com o dedo, não leia em voz alta.</p>
+    <div class="obj-head"><p class="obj-n">Objeção 2 de 6 · revenda</p><p class="obj-q">"Minhas clientes não pagam isso."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu não sei por quanto revender, e tenho medo de ficar com a peça cara na mão.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Faz a conta comigo: quanto você cobra numa caixinha personalizada hoje? Com essa plaquinha, ela passa a valer uns cinco reais a mais, e a plaquinha te custa três e cinquenta. Você não está vendendo um chaveiro caro. Está vendendo a mesma caixa mais cara."</p>
+      <p class="acao">Mostre a coluna "ela revende por" da tabela. Aponte com o dedo, não leia em voz alta.</p></div>
+    </div>
     <p class="erro">Erro fatal: discutir o preço final dela. Ela sabe o que a cliente dela paga; você só mostra quanto sobra.</p>
   </div>
 
   <div class="obj">
-    <p class="obj-q">"E se atrasar? Festa não espera."</p>
-    <p class="obj-real">O que ela está dizendo: já fui deixada na mão por fornecedor e quem pagou fui eu.</p>
-    <p class="fala">"Não espera mesmo, e por isso eu trabalho assim: o prazo conta da arte aprovada, e eu entrego até a quarta de uma festa de sábado. Se a minha agenda estiver cheia, eu te digo não na hora do pedido, não na véspera. Prefiro perder um pedido a te deixar sem entrega."</p>
+    <div class="obj-head"><p class="obj-n">Objeção 3 de 6 · prazo</p><p class="obj-q">"E se atrasar? Festa não espera."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Já fui deixada na mão por fornecedor e quem pagou fui eu.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Não espera mesmo, e por isso eu trabalho assim: o prazo conta da arte aprovada, e eu entrego até a quarta de uma festa de sábado. Se a minha agenda estiver cheia, eu te digo não na hora do pedido, não na véspera. Prefiro perder um pedido a te deixar sem entrega."</p></div>
+    </div>
     <p class="erro">Erro fatal: aceitar pedido pra depois de amanhã pra agradar. O primeiro atraso é o último pedido.</p>
   </div>
 
   <div class="obj">
-    <p class="obj-q">"Você faz o personagem? Todo mundo tá pedindo."</p>
-    <p class="obj-real">O que ela está dizendo: eu preciso vender o que a mãe pede, e o que a mãe pede é o desenho.</p>
-    <p class="fala">"Personagem de marca eu não imprimo, porque é produto licenciado e o problema cai em quem fabrica e em quem vende, eu e você. O que eu faço é o tema: as cores dele, os elementos, o nome da criança na fonte que combina. Olha" — mostre o topo — "isso aqui funciona pra qualquer festa de espaço sem ter um boneco em cima."</p>
+    <div class="obj-head"><p class="obj-n">Objeção 4 de 6 · personagem</p><p class="obj-q">"Você faz o personagem? Todo mundo tá pedindo."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu preciso vender o que a mãe pede, e o que a mãe pede é o desenho.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Personagem de marca eu não imprimo, porque é produto licenciado e o problema cai em quem fabrica e em quem vende, eu e você. O que eu faço é o tema: as cores dele, os elementos, o nome da criança na fonte que combina. Olha esse topo: funciona pra qualquer festa de espaço sem ter um boneco em cima."</p></div>
+    </div>
     <p class="erro">Erro fatal: abrir exceção "só dessa vez" para fechar o primeiro pedido. A foto vai para o Instagram dela com o seu trabalho.</p>
   </div>
 
   <div class="obj">
-    <p class="obj-q">"Não quero ficar com estoque parado."</p>
-    <p class="obj-real">O que ela está dizendo: não quero pôr dinheiro em peça que talvez ninguém compre.</p>
-    <p class="fala">"Nem eu quero que você fique. Eu só imprimo pedido que já tem cliente sua pagando. Você fecha a festa, me manda o nome e a quantidade, e eu produzo. Estoque zero dos dois lados. O mínimo é vinte unidades porque é o que enche a mesa da impressora."</p>
+    <div class="obj-head"><p class="obj-n">Objeção 5 de 6 · estoque</p><p class="obj-q">"Não quero ficar com estoque parado."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Não quero pôr dinheiro em peça que talvez ninguém compre.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Nem eu quero que você fique. Eu só imprimo pedido que já tem cliente sua pagando. Você fecha a festa, me manda o nome e a quantidade, e eu produzo. Estoque zero dos dois lados. O mínimo é vinte unidades porque é o que enche a mesa da impressora."</p></div>
+    </div>
     <p class="erro">Erro fatal: aceitar três ou cinco unidades a preço de atacado. A troca de cor e o preparo custam o mesmo para cinco ou para vinte.</p>
   </div>
 
   <div class="obj">
-    <p class="obj-q">"Preciso ver com a minha sócia."</p>
-    <p class="obj-real">O que ela está dizendo: eu gostei, mas não quero ser a única responsável se der errado.</p>
-    <p class="fala">"Faz sentido. Que dia ela costuma estar aqui? Eu volto nesse dia com uma peça de um pedido de vocês, com o nome de uma festa que já está fechada. Aí vocês duas decidem olhando o produto de verdade, e não uma tabela."</p>
-    <p class="acao">Anote o dia e a festa. Imprima a peça com o nome real dessa festa e volte na data.</p>
+    <div class="obj-head"><p class="obj-n">Objeção 6 de 6 · decisão</p><p class="obj-q">"Preciso ver com a minha sócia."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu gostei, mas não quero ser a única responsável se der errado.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Faz sentido. Que dia ela costuma estar aqui? Eu volto nesse dia com uma peça de um pedido de vocês, com o nome de uma festa que já está fechada. Aí vocês duas decidem olhando o produto de verdade, e não uma tabela."</p>
+      <p class="acao">Anote o dia e a festa. Imprima a peça com o nome real dessa festa e volte na data.</p></div>
+    </div>
     <p class="erro">Erro fatal: responder "então te mando a tabela no WhatsApp". Tabela sozinha no celular da sócia não fecha nada.</p>
   </div>
 </section>
 
-<section>
-  <p class="sec-num">10</p>
-  <h2>Follow-up</h2>
-  <p>Papelaria responde WhatsApp o dia inteiro, mas responde primeiro a cliente dela. Sua mensagem precisa ser curta e ter uma coisa que ela possa aprovar com uma palavra.</p>
+<!-- ===================== 10 ===================== -->
+<section id="s10">
+  <header class="sec-head l10">
+    <p class="sec-num">10</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Follow-up</h2>
+  </header>
 
-  <div class="ficha">
-    <p class="ficha-tab">48 horas depois</p>
-    <p>"Oi [nome], aqui é o [você], passei na [papelaria] na terça com o mostruário. Montei a arte da plaquinha com o nome daquela festa de [tema] que você comentou. Te mando pra ver como fica?"</p>
-  </div>
+  <p class="lead">Papelaria responde WhatsApp o dia inteiro, mas responde primeiro a cliente dela. Sua mensagem precisa ser curta e ter uma coisa que ela possa aprovar com uma palavra.</p>
 
-  <div class="ficha">
-    <p class="ficha-tab">7 dias depois</p>
-    <p>"Oi [nome]! Tô fechando a agenda da impressora das próximas duas semanas. Se tiver festa de [mês] com lembrancinha, me passa o nome e a quantidade até sexta que eu garanto entrega até a quarta anterior."</p>
-    <p>Só mande essa se for verdade que você organiza a agenda assim. Deveria ser.</p>
-  </div>
-
-  <div class="ficha">
-    <p class="ficha-tab">21 dias — o de desistência</p>
-    <p>"Oi [nome], não quero ficar enchendo seu WhatsApp. Vou tirar a [papelaria] da minha lista de contato. Se um dia aparecer pedido com nome em 3D, meu número é esse mesmo. Boas festas pra vocês!"</p>
+  <div class="fio">
+    <div class="msg">
+      <p class="quando">48h<small>depois da visita</small></p>
+      <p class="balao">"Oi [nome], aqui é o [você], passei na [papelaria] na terça com o mostruário. Montei a arte da plaquinha com o nome daquela festa de [tema] que você comentou. Te mando pra ver como fica?"</p>
+    </div>
+    <div class="msg">
+      <p class="quando">7 dias<small>agenda</small></p>
+      <p class="balao">"Oi [nome]! Tô fechando a agenda da impressora das próximas duas semanas. Se tiver festa de [mês] com lembrancinha, me passa o nome e a quantidade até sexta que eu garanto entrega até a quarta anterior."</p>
+      <p class="obs">Só mande se for verdade que você organiza a agenda assim. Deveria ser.</p>
+    </div>
+    <div class="msg fim">
+      <p class="quando">21 dias<small>desistência</small></p>
+      <p class="balao">"Oi [nome], não quero ficar enchendo seu WhatsApp. Vou tirar a [papelaria] da minha lista de contato. Se um dia aparecer pedido com nome em 3D, meu número é esse mesmo. Boas festas pra vocês!"</p>
+    </div>
   </div>
 
   <p>Depois disso, reative em outubro para fim de ano corporativo e formatura, e em fevereiro para a temporada de festas infantis. Com gráfica rápida, a data que vale é setembro: é quando as empresas começam a pedir brinde de Natal.</p>
 </section>
 
-<section>
-  <p class="sec-num">11</p>
-  <h2>Depois de entrar: as três perguntas</h2>
+<!-- ===================== 11 ===================== -->
+<section id="s11">
+  <header class="sec-head l11">
+    <p class="sec-num">11</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Depois de entrar: as três perguntas</h2>
+  </header>
+
   <p class="lead">Papelaria é a ponta de uma rede. Quem fecha festa com ela também fecha com confeiteira, buffet e decoradora, e todas precisam de peça.</p>
 
-  <p>Na segunda entrega, quando ela já confia no prazo, faça estas três perguntas e registre as respostas na planilha:</p>
+  <p>Na segunda entrega, quando ela já confia no prazo, pergunte nesta ordem e registre as respostas na planilha:</p>
 
-  <ol>
-    <li>"Qual pedido você recusou nos últimos trinta dias?"</li>
-    <li>"Que peça da sua mesa de festa quebra, some ou você precisa refazer toda vez?"</li>
-    <li>"Com quem você mais fecha festa junto: confeiteira, buffet, decoradora?"</li>
+  <ol class="perguntas">
+    <li><span>"Qual pedido você recusou nos últimos trinta dias?"</span></li>
+    <li><span>"Que peça da sua mesa de festa quebra, some ou você precisa refazer toda vez?"</span></li>
+    <li><span>"Com quem você mais fecha festa junto: confeiteira, buffet, decoradora?"</span></li>
   </ol>
 
-  <p>O que costuma aparecer: número de idade para painel, porta-guardanapo temático, marcador de mesa de casamento, lembrancinha de maternidade, chaveiro de formatura (turma de 30 é um pedido fechado), brinde de fim de ano via gráfica, e a peça de aluguel do ateliê que some em toda festa. A terceira pergunta é a mais valiosa: a confeiteira que ela indicar é a cliente do G-01.</p>
+  <p class="label">O que costuma aparecer</p>
+  <ul class="chips">
+    <li>Número de idade para painel</li>
+    <li>Porta-guardanapo temático</li>
+    <li>Marcador de mesa de casamento</li>
+    <li>Lembrancinha de maternidade</li>
+    <li>Chaveiro de formatura · turma de 30</li>
+    <li>Brinde de fim de ano via gráfica</li>
+    <li>Peça de aluguel que some em toda festa</li>
+    <li class="g01">Indicação da confeiteira → G-01</li>
+  </ul>
 
-  <div class="ficha">
+  <div class="ficha escura">
     <p class="ficha-tab">Meta</p>
     <p>Três oportunidades registradas por papelaria atendida, e pelo menos uma indicação de outra profissional da festa. Uma papelaria na carteira abre três portas que você não teria como abrir sozinho.</p>
   </div>
 </section>
 
-<section>
-  <p class="sec-num">12</p>
-  <h2>Missão 72 horas</h2>
+<!-- ===================== 12 ===================== -->
+<section id="s12">
+  <header class="sec-head l12">
+    <p class="sec-num">12</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Missão 72 horas</h2>
+  </header>
+
   <p class="lead">Em 72 horas, você sai da impressora parada para três propostas entregues na mão de um comerciante. Aqui, proposta é mostruário mais tabela de atacado no balcão de uma papelaria.</p>
 
-  <p class="dia">Dia 1 — preparar</p>
-  <ul class="check">
-    <li>Imprimir dois jogos do kit de amostra em PLA fosco</li>
-    <li>Colar uma plaquinha numa caixinha milk branca comprada pronta</li>
-    <li>Preencher a tabela de atacado com a coluna "ela revende por" e imprimir cinco cópias numa gráfica rápida da sua lista</li>
-    <li>Montar o mostruário em placa de papelão A5</li>
-    <li>Listar 20 alvos no Google Maps: papelaria personalizada, gráfica rápida e ateliê de festa, com Instagram ativo e foto de festa recente</li>
-    <li>Decorar o script de 40 segundos e as seis respostas de objeção</li>
-  </ul>
-
-  <p class="dia">Dia 2 — rua</p>
-  <ul class="check">
-    <li>Visitar 8 lojas entre 10h e 11h30, numa terça ou quarta</li>
-    <li>Mandar mensagem pedindo 10 minutos para 2 papelarias que atendem em casa</li>
-    <li>Entregar 3 propostas: mostruário na mão e tabela no balcão</li>
-    <li>Anotar o nome de toda festa fechada que ela citar, com data</li>
-    <li>Anotar toda objeção com as palavras exatas</li>
-  </ul>
-
-  <p class="dia">Dia 3 — fechar</p>
-  <ul class="check">
-    <li>Mandar a arte da plaquinha com o nome da festa citada para as três</li>
-    <li>Registrar tudo na aba 20 Alvos da planilha</li>
-    <li>Calcular o retorno por hora de todo pedido que chegar em orçamento antes de responder</li>
-    <li>Marcar a volta nas lojas em que ficou a frase "vou ver com a sócia"</li>
-  </ul>
+  <div class="dias">
+    <div class="dia-col">
+      <p class="dia"><b>1</b> Preparar</p>
+      <ul class="check">
+        <li>Imprimir dois jogos do kit de amostra em PLA fosco</li>
+        <li>Colar uma plaquinha numa caixinha milk branca comprada pronta</li>
+        <li>Preencher a tabela de atacado com a coluna "ela revende por" e imprimir cinco cópias numa gráfica rápida da sua lista</li>
+        <li>Montar o mostruário em placa de papelão A5</li>
+        <li>Listar 20 alvos no Google Maps: papelaria personalizada, gráfica rápida e ateliê de festa, com Instagram ativo e foto de festa recente</li>
+        <li>Decorar o script de 40 segundos e as seis respostas de objeção</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>2</b> Rua</p>
+      <ul class="check">
+        <li>Visitar 8 lojas entre 10h e 11h30, numa terça ou quarta</li>
+        <li>Mandar mensagem pedindo 10 minutos para 2 papelarias que atendem em casa</li>
+        <li>Entregar 3 propostas: mostruário na mão e tabela no balcão</li>
+        <li>Anotar o nome de toda festa fechada que ela citar, com data</li>
+        <li>Anotar toda objeção com as palavras exatas</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>3</b> Fechar</p>
+      <ul class="check">
+        <li>Mandar a arte da plaquinha com o nome da festa citada para as três</li>
+        <li>Registrar tudo na aba 20 Alvos da planilha</li>
+        <li>Calcular o retorno por hora de todo pedido que chegar em orçamento antes de responder</li>
+        <li>Marcar a volta nas lojas em que ficou a frase "vou ver com a sócia"</li>
+      </ul>
+    </div>
+  </div>
 
   <div class="aviso">
     <p class="ficha-tab">Número honesto</p>
-    <p>De 10 abordagens, espere 2 ou 3 papelarias interessadas e 1 lote-teste em até duas semanas, não em três dias. Ela precisa que uma cliente dela feche uma festa para ter o que te pedir. O primeiro pedido é pequeno e é um teste de prazo. O dinheiro deste G-Code está no terceiro pedido da mesma papelaria, e quem desiste antes do primeiro nunca chega nele.</p>
+    <div class="funil" role="img" aria-label="De 10 abordagens, 2 ou 3 interessadas, 1 lote-teste em até duas semanas, e o dinheiro no terceiro pedido">
+      <div><span>Abordagens</span><b>10</b></div>
+      <div><span>Interessadas</span><b>2–3</b></div>
+      <div><span>Lote-teste em até 2 semanas</span><b>1</b></div>
+      <div><span>O dinheiro</span><b>3º pedido</b></div>
+    </div>
+    <p>O lote-teste chega em até duas semanas, não em três dias. Ela precisa que uma cliente dela feche uma festa para ter o que te pedir. O primeiro pedido é pequeno e é um teste de prazo. O dinheiro deste G-Code está no terceiro pedido da mesma papelaria, e quem desiste antes do primeiro nunca chega nele.</p>
   </div>
 </section>
 
@@ -765,7 +1241,7 @@
 
 <footer>
   <p><strong>G-Code 09 · Papelarias, gráficas rápidas e ateliês de festa</strong></p>
-  <p>LR Maker Lab — G-Code 3D. Uso pessoal do comprador. Proibida a revenda ou redistribuição deste material.</p>
+  <p>LR Maker Lab · G-Code 3D. Uso pessoal do comprador. Proibida a revenda ou redistribuição deste material.</p>
   <p>Todo número deste manual é hipótese a validar: tempos, gramaturas, preços de atacado e de revenda mudam com a sua impressora, o seu filamento e a sua região. Refaça as contas antes de entregar a primeira tabela.</p>
   <p>As orientações sobre peças próximas de alimento não substituem a regulamentação sanitária local. Não reproduza personagens, logotipos ou marcas de terceiros sem autorização do titular.</p>
 </footer>
