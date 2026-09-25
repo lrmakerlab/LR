@@ -521,6 +521,7 @@
     font-family:var(--sans);font-size:14px;
   }
   footer p{max-width:62ch;margin:0 0 .6em}
+  footer .logo{display:block;width:44px;height:auto;margin-bottom:18px}
   footer strong{color:var(--green-neon);font-weight:700}
 
   :focus-visible{outline:3px solid var(--green-neon);outline-offset:2px}
@@ -565,8 +566,48 @@
     #cola .cola th,#cola .cola td{padding:3px 5px}
     #cola .cola .nunca li{font-size:8.5pt}
     .cola{break-inside:avoid}
-    @page{margin:14mm}
-    body{font-size:10.5pt}
+    @page{size:A4;margin:14mm 15mm}
+    @page capa{margin:0}
+    @page contracapa{margin:0}
+    :root{--paper:#ffffff;--gut:15mm}
+    body{font-size:10pt;line-height:1.5}
+    main{padding-inline:0}
+    section{max-width:none}
+    .lead{font-size:12pt;margin-bottom:1em}
+    .sec-head{margin-bottom:14px;padding-bottom:10px}
+    .sec-num{font-size:52pt}
+    h2{font-size:24pt}
+    h3{margin-top:1.4em;font-size:12.5pt}
+
+    /* capa e contracapa ocupam a folha inteira */
+    .cover{page:capa;height:297mm;box-sizing:border-box;width:210mm;display:flex;flex-direction:column;padding:18mm 15mm 0;overflow:hidden}
+    .cover > .cover-mark{right:-30mm;top:40mm;width:150mm}
+    .cover-code{font-size:210pt;margin-top:24mm;background:none;-webkit-text-fill-color:var(--green-neon)}
+    .cover-market{font-size:30pt}
+    .cover-promise{font-size:13pt}
+    .cover-grid{grid-template-columns:1.1fr 1fr;margin-top:8mm}
+    .cover-72h{margin-top:20mm}
+    .radar{margin:auto -15mm 0}
+    .radar div{padding-left:15mm}
+    footer{page:contracapa;break-before:page;height:297mm;overflow:hidden;box-sizing:border-box;margin:0;padding:0 15mm 22mm;display:flex;flex-direction:column;justify-content:flex-end;font-size:10pt}
+
+    /* colunas fixas no papel */
+    .tipos,.dores,.niveis,.fio,.dias{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .split,.saidas{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .conta{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .obj{display:block;margin-bottom:12px}
+    .obj-head{padding:10px 16px}
+    .obj-q{font-size:15pt}
+    .obj-body{padding:10px 16px;gap:2px 20px}
+    .obj-body .fala{font-size:10.5pt;line-height:1.42}
+    .obj-real{font-size:9.5pt}
+    .erro{font-size:9pt;padding:7px 16px}
+    .dia-col{break-inside:auto}
+    .check li{font-size:9.5pt;margin-bottom:.45em}
+    .tipo p,.dor p,.nivel p:not(.preco):not(.ficha-tab),.saida p{font-size:9.5pt;line-height:1.45}
+    .dia-sem{min-height:78px}
+    p,li{orphans:3;widows:3}
+    footer .logo{width:22mm;margin-bottom:8mm}
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     section{break-before:page;padding-top:0}
     main > section:first-of-type{break-before:page}
@@ -1299,6 +1340,7 @@
 </main>
 
 <footer>
+  <svg class="logo" style="fill:var(--green-neon)" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
   <p><strong>G-Code 09 · Papelarias, gráficas rápidas e ateliês de festa</strong></p>
   <p>LR Maker Lab · G-Code 3D. Uso pessoal do comprador. Proibida a revenda ou redistribuição deste material.</p>
   <p>Todo número deste manual é hipótese a validar: tempos, gramaturas, preços de atacado e de revenda mudam com a sua impressora, o seu filamento e a sua região. Refaça as contas antes de entregar a primeira tabela.</p>
