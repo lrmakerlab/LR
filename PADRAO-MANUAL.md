@@ -4,7 +4,9 @@ Referência: `g-code-09-papelarias.html`. Todo manual novo copia o CSS, os compo
 
 ## Estrutura
 
-Capa (código, mercado, promessa, radar com 5 números) + 12 seções + Cola de balcão.
+Capa: logo LR pequena no canto superior esquerdo, logo grande em marca d'água (verde a 7%), código com listras de camada, mercado, promessa, faixa Dia 1 / Dia 2 / Dia 3 / 72h e radar com 5 números. Sem ilustração e sem animação (entrega final em PDF).
+
+Depois da capa: + 12 seções + Cola de balcão.
 
 01 Por que funciona · 02 Quem é a cliente · 03 A dor · 04 Oferta em três níveis · 05 Material e execução · 06 Kit de amostra · 07 Precificação · 08 Abordagem de 40 segundos · 09 Seis objeções · 10 Follow-up · 11 As três perguntas · 12 Missão 72 horas
 
