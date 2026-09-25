@@ -68,12 +68,6 @@
   }
   .cover-brand{color:var(--green-neon);margin:0}
   .cover-level{color:#9fb3a8;margin:0;font-stretch:112%}
-  .gcode{
-    font-family:var(--mono);font-size:13px;line-height:1.7;
-    color:rgba(74,222,128,.62);
-    margin:0 0 18px;white-space:pre-wrap;
-  }
-  .gcode b{color:var(--green-neon);font-weight:600}
   .cover-code{
     font-family:var(--sans);
     font-weight:900;
@@ -109,7 +103,25 @@
     font-size:clamp(17px,2vw,20px);
     color:#cdd8d0;
   }
-  .cover-figure{margin:clamp(28px,5vw,44px) 0 0}
+  .cover > *{position:relative;z-index:1}
+  .cover > .cover-mark{
+    position:absolute;z-index:0;
+    right:clamp(-120px,-6vw,-30px);top:clamp(90px,10vw,130px);
+    width:clamp(260px,46vw,580px);height:auto;
+    fill:rgba(74,222,128,.07);
+  }
+  .cover-brand{display:flex;align-items:center;gap:10px}
+  .cover-brand .logo{width:26px;height:auto;fill:var(--green-neon);flex:none}
+  .cover-72h{
+    list-style:none;padding:0;margin:clamp(30px,5vw,48px) 0 0;max-width:none;
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;
+  }
+  .cover-72h li{max-width:none;margin:0;padding:14px 16px 16px;background:rgba(20,32,26,.78);border-top:3px solid rgba(74,222,128,.35);font-family:var(--sans)}
+  .cover-72h b{display:block;font-weight:900;font-stretch:78%;font-size:26px;letter-spacing:-.02em;line-height:1;color:var(--paper);margin-bottom:6px}
+  .cover-72h span{display:block;font-size:14px;line-height:1.35;color:#b9c8bf}
+  .cover-72h .fim{background:var(--green-neon);border-top-color:var(--green-neon)}
+  .cover-72h .fim b,.cover-72h .fim span{color:var(--ink)}
+  .cover-72h .fim span{font-weight:700}
 
   .radar{
     display:grid;
@@ -501,7 +513,6 @@
   figure{margin:0 0 26px;max-width:860px}
   .ill-art svg{display:block;width:100%;height:auto}
   .ill figcaption{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink-mute);margin-top:10px}
-  .cover-figure figure{max-width:760px;margin:0}
 
   footer{
     background:var(--ink);color:#9fb3a8;
@@ -514,12 +525,10 @@
 
   :focus-visible{outline:3px solid var(--green-neon);outline-offset:2px}
 
-  @media (prefers-reduced-motion:no-preference){
-    .cover-code{animation:imprime 1.1s steps(14,end) both}
-  }
-  @keyframes imprime{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
 
   @media (max-width:560px){
+    .cover-72h{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .radar div:last-child:nth-child(odd){grid-column:1/-1}
     .semana{grid-template-columns:repeat(3,minmax(0,1fr))}
     .prazo{grid-template-columns:repeat(4,minmax(0,1fr))}
     .cores{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -535,6 +544,9 @@
   }
 
   @media print{
+    .radar{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .radar div{padding:12px 14px 14px}
+    .radar dd{font-size:14pt}
     #cola .cola{font-size:9pt;padding:12px}
     #cola .cola .fala{font-size:10pt}
     #cola .cola-grid{gap:8px 18px;grid-template-columns:1fr 1fr}
@@ -556,7 +568,6 @@
     @page{margin:14mm}
     body{font-size:10.5pt}
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .cover-code{animation:none;-webkit-text-fill-color:var(--green-neon);background:none}
     section{break-before:page;padding-top:0}
     main > section:first-of-type{break-before:page}
     .ficha,.aviso,.obj,figure,.ill,table,.saida,.dor,.tipo,.msg,.dia-col,.grafico,.folha,.conta,.semana,.prazo,.passo{break-inside:avoid}
@@ -570,26 +581,26 @@
 <body>
 
 <header class="cover">
+  <svg class="cover-mark" viewBox="370 340 640 650" aria-hidden="true"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+
   <div class="cover-top">
-    <p class="cover-brand">LR Maker Lab · G-Code 3D</p>
+    <p class="cover-brand"><svg class="logo" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>LR Maker Lab · G-Code 3D</p>
     <p class="cover-level">Nível 3 · o cliente que compra todo mês</p>
   </div>
 
-  <p class="gcode" aria-hidden="true">; manual 09 · papelarias, gráficas rápidas, ateliês de festa
-; material: PLA fosco · 4 cores em estoque
-<b>M600</b> ; troca de cor na camada do relevo</p>
   <p class="cover-code">G-09</p>
 
   <div class="cover-grid">
     <h1 class="cover-market">Papelarias, gráficas rápidas e ateliês de festa</h1>
-    <p class="cover-promise">Vire o fornecedor 3D de quem já vende festa todo fim de semana. Ela revende, você imprime, e o próximo pedido chega sem você bater na porta de novo. Primeira proposta na rua em 72 horas.</p>
+    <p class="cover-promise">Vire o fornecedor 3D de quem já vende festa todo fim de semana. Ela revende, você imprime, e o próximo pedido chega sem você bater na porta de novo.</p>
   </div>
 
-  <div class="cover-figure">
-    <figure class="ill">
-      <div class="ill-art" data-ill="capa" role="img" aria-label="Mostruário de fornecedor: placa de papelão com chaveiro, três plaquinhas e topo de bolo presos por elástico, ao lado de uma caixinha de papelaria com plaquinha colada e de um carretel de filamento"></div>
-    </figure>
-  </div>
+  <ol class="cover-72h" aria-label="Missão 72 horas">
+    <li><b>Dia 1</b><span>Imprimir o kit e montar o mostruário</span></li>
+    <li><b>Dia 2</b><span>10 abordagens em papelarias do bairro</span></li>
+    <li><b>Dia 3</b><span>Arte do nome da festa no WhatsApp dela</span></li>
+    <li class="fim"><b>72h</b><span>Três propostas entregues na mão de um comerciante</span></li>
+  </ol>
 
   <dl class="radar">
     <div><dt>Ticket do 1º pedido</dt><dd>R$ 150 a 500</dd></div>
@@ -792,7 +803,7 @@
   <div class="split">
     <div>
       <h3 style="margin-top:0">PLA fosco, quatro cores em estoque</h3>
-      <p>PLA fosco esconde as linhas de camada, imprime detalhe fino de letra. PLA silk dourado dá o acabamento "de luxo" que papelaria gosta de oferecer como opção especial.</p>
+      <p>PLA fosco esconde as linhas de camada e imprime detalhe fino de letra. PLA silk dourado dá o acabamento "de luxo" que papelaria gosta de oferecer como opção especial.</p>
       <div class="cores">
         <div class="cor"><i style="background-color:#f4f2ec"></i>Branco</div>
         <div class="cor"><i style="background-color:#f3c6d3"></i>Rosa bebê</div>
@@ -1377,22 +1388,6 @@
 
   /* cenas */
   var ILL={
-    capa:function(){
-      var p="ic", b="";
-      b+='<rect x="0" y="372" width="1200" height="68" fill="#22332a"/><rect x="0" y="368" width="1200" height="4" fill="rgba(74,222,128,.28)"/>';
-      /* carretel */
-      b+='<circle cx="190" cy="290" r="80" fill="#1b2a22" stroke="#2f443a" stroke-width="3"/>';
-      for(var r=68;r>28;r-=5) b+='<circle cx="190" cy="290" r="'+r+'" fill="none" stroke="'+(r%10?G:GD)+'" stroke-width="5"/>';
-      b+='<circle cx="190" cy="290" r="22" fill="#14201a" stroke="#2f443a" stroke-width="3"/>';
-      /* mostruário */
-      b+=placa(370,58,330,312);
-      b+=chaveiro(p,418,92,210,70,"ÍSIS","#bdb6a7")+elastico(380,690,127);
-      b+=plaquinha(p,400,200,82,34,"Ísis")+plaquinha(p,494,200,82,34,"Léo")+plaquinha(p,588,200,82,34,"Bia")+elastico(380,690,217);
-      b+=topo(p,410,262,250)+elastico(380,690,302);
-      /* caixinha da papelaria */
-      b+=caixaMilk(p,790,176,136,194,true);
-      return svg(p,1200,440,b);
-    },
     niveis:function(){
       var p="in", b="", seed=11;
       function rnd(){seed=(seed*9301+49297)%233280;return seed/233280;}
