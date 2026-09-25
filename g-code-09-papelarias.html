@@ -476,6 +476,27 @@
   .funil div:nth-child(3){width:58%;background:rgba(138,90,30,.28)}
   .funil div:nth-child(4){width:44%;background:var(--caramel);color:#fff}
 
+  /* ---------- cola de balcão ---------- */
+  .cola{background:#fff;border:2px dashed var(--ink);padding:clamp(18px,3vw,30px);font-size:15px;line-height:1.45}
+  .cola-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 20px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin:0 0 18px}
+  .cola-top b{font-family:var(--sans);font-weight:900;font-stretch:78%;font-size:clamp(30px,4.4vw,44px);letter-spacing:-.03em;line-height:1}
+  .cola-top span{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-mute)}
+  .cola-grid{display:grid;gap:20px 30px;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr))}
+  .cola h4{font-family:var(--sans);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 8px}
+  .cola p,.cola li{max-width:none}
+  .cola ul{margin:0;padding-left:1em}
+  .cola li{margin-bottom:.3em}
+  .cola .fala{font-size:16px;margin:0 0 .6em;padding-left:12px;border-left-width:3px}
+  .cola .acao{font-size:13.5px;padding:8px 12px 8px 36px;margin:0 0 .6em}
+  .cola .acao::before{left:12px;top:12px}
+  .cola dl{margin:0}
+  .cola dt{font-family:var(--sans);font-weight:800;font-size:14.5px;margin:10px 0 2px}
+  .cola dt:first-child{margin-top:0}
+  .cola dd{margin:0;color:var(--ink-soft)}
+  .cola table{font-size:13.5px}
+  .cola th,.cola td{padding:6px 8px}
+  .cola .nunca li{color:var(--caramel);font-family:var(--sans);font-weight:600;font-size:14px}
+
   /* ---------- ilustrações ---------- */
   figure{margin:0 0 26px;max-width:860px}
   .ill-art svg{display:block;width:100%;height:auto}
@@ -514,6 +535,10 @@
   }
 
   @media print{
+    #cola .cola{font-size:9pt;padding:12px}
+    #cola .cola .fala{font-size:10pt}
+    #cola .cola-grid{gap:10px 20px}
+    .cola{break-inside:avoid}
     @page{margin:14mm}
     body{font-size:10.5pt}
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -1173,6 +1198,76 @@
       <div><span>O dinheiro</span><b>3º pedido</b></div>
     </div>
     <p>O lote-teste chega em até duas semanas, não em três dias. Ela precisa que uma cliente dela feche uma festa para ter o que te pedir. O primeiro pedido é pequeno e é um teste de prazo. O dinheiro deste G-Code está no terceiro pedido da mesma papelaria, e quem desiste antes do primeiro nunca chega nele.</p>
+  </div>
+</section>
+
+<!-- ===================== COLA ===================== -->
+<section id="cola">
+  <header class="sec-head">
+    <p class="sec-num">+</p>
+    <p class="kicker">Anexo · leia no carro, antes de entrar</p>
+    <h2>Cola de balcão</h2>
+  </header>
+
+  <div class="cola">
+    <div class="cola-top"><b>G-09 · Papelarias e festa</b><span>Terça ou quarta · 10h às 11h30</span></div>
+    <div class="cola-grid">
+
+      <div>
+        <h4>Na mão antes de entrar</h4>
+        <ul>
+          <li>Mostruário A5 com chaveiro, topo e plaquinhas</li>
+          <li>Caixinha milk com a plaquinha colada</li>
+          <li>Tabela de atacado com a coluna "ela revende por"</li>
+          <li>Espere o balcão esvaziar. Nunca fale na frente de cliente dela</li>
+        </ul>
+
+        <h4 style="margin-top:18px">Os 40 segundos</h4>
+        <p class="fala">"Eu imprimo peça em 3D aqui no [bairro] e só trabalho com quem revende. Trouxe umas peças pra você ver o acabamento."</p>
+        <p class="acao">Mostruário virado para ela. Chaveiro na mão dela. Cale a boca.</p>
+        <p class="fala">"Quando uma cliente te pede lembrancinha com nome ou topo em 3D, hoje você faz com quem?"</p>
+
+        <h4 style="margin-top:18px">As saídas</h4>
+        <dl>
+          <dt>"Não faço."</dt><dd>Me passa o próximo pedido. Cinco dias úteis, preço de atacado.</dd>
+          <dt>"Compro pela internet."</dt><dd>Quanto demora? Já veio nome errado? Estou a 15 minutos.</dd>
+          <dt>"Conheço quem tem impressora."</dt><dd>Fica com meu contato pro excesso de dezembro.</dd>
+          <dt>Atolada.</dt><dd>Deixo o mostruário e volto quinta às 10h.</dd>
+        </dl>
+      </div>
+
+      <div>
+        <h4>As 6 objeções</h4>
+        <dl>
+          <dt>"Na Shopee acho por R$ 3."</dt><dd>Frete, 12 dias e nome errado sem conserto. Comigo: arte aprovada, entrega na quarta, erro meu refeito em um dia.</dd>
+          <dt>"Minhas clientes não pagam isso."</dt><dd>Pergunte o preço da caixinha dela. A plaquinha de R$ 3,50 põe uns R$ 5 na caixa.</dd>
+          <dt>"E se atrasar?"</dt><dd>Prazo conta da arte aprovada, entrega até quarta. Agenda cheia, digo não na hora.</dd>
+          <dt>"Faz o personagem?"</dt><dd>Não, é licenciado. Faço o tema: cores, elementos, nome e idade.</dd>
+          <dt>"Não quero estoque."</dt><dd>Só imprimo pedido com cliente pagando. Mínimo de 20: é o que enche a mesa.</dd>
+          <dt>"Vou ver com a sócia."</dt><dd>Que dia ela vem? Volto com uma peça de uma festa real de vocês.</dd>
+        </dl>
+
+        <h4 style="margin-top:18px">Os números</h4>
+        <table>
+          <tr><th>Item</th><th>Atacado</th><th>Ela revende</th></tr>
+          <tr><td>Chaveiro com nome</td><td class="n">R$ 6,50</td><td class="n">R$ 12–15</td></tr>
+          <tr><td>Plaquinha 5 × 2 cm</td><td class="n">R$ 3,50</td><td class="n">+R$ 4–6</td></tr>
+          <tr><td>Topo nome + idade</td><td class="n">R$ 38</td><td class="n">R$ 65–90</td></tr>
+          <tr><td>Letreiro, por letra</td><td class="n">R$ 28</td><td class="n">R$ 50–60</td></tr>
+        </table>
+        <p style="font-family:var(--sans);font-size:13.5px;font-weight:600;margin:8px 0 0">Piso R$ 15/h · mínimo 20 un · 50% na arte, 50% na entrega</p>
+
+        <h4 style="margin-top:18px">Nunca</h4>
+        <ul class="nunca">
+          <li>Imprimir personagem de marca</li>
+          <li>Dizer que a peça pode tocar comida</li>
+          <li>Aceitar pedido para depois de amanhã</li>
+          <li>Baixar o atacado para chegar no marketplace</li>
+          <li>Sair sem uma data de volta</li>
+        </ul>
+      </div>
+
+    </div>
   </div>
 </section>
 
