@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G-Code 02 · Nail designers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14201a;
+    --ink-soft:#42514a;
+    --ink-mute:#6b7a72;
+    --paper:#fbfaf6;
+    --paper-2:#f2efe7;
+    --rule:#ddd8cc;
+    --green-deep:#2d7a4f;
+    --green-neon:#4ade80;
+    --green-wash:#e4f1e8;
+    --plate:#1b2a22;
+    --caramel:#8a5a1e;
+    --caramel-soft:#f6ecdc;
+    --measure:66ch;
+    --wide:1080px;
+    --gut:clamp(18px,5vw,64px);
+    --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    box-sizing:border-box;
+    color-scheme:light;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 12px);-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%}
+
+  /* =========================================================
+     CAPA — a mesa de impressão
+     ========================================================= */
+  .cover{
+    background-color:var(--plate);
+    background-image:
+      linear-gradient(rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(rgba(74,222,128,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.035) 1px,transparent 1px);
+    background-size:80px 80px,80px 80px,16px 16px,16px 16px;
+    color:var(--paper);
+    padding:clamp(24px,5vw,56px) var(--gut) 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .cover-top{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;
+    font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.02em;
+    margin:0 0 clamp(28px,6vw,56px);
+  }
+  .cover-brand{color:var(--green-neon);margin:0}
+  .cover-level{color:#9fb3a8;margin:0;font-stretch:112%}
+  .cover-code{
+    font-family:var(--sans);
+    font-weight:900;
+    font-stretch:78%;
+    font-size:clamp(110px,31vw,330px);
+    line-height:.78;
+    letter-spacing:-.035em;
+    margin:0 0 0 -.04em;
+    color:var(--green-neon);
+    background:repeating-linear-gradient(180deg,var(--green-neon) 0 .052em,#2fbf63 .052em .062em);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .cover-grid{
+    display:grid;gap:clamp(18px,3vw,40px);
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));
+    align-items:end;
+    margin-top:clamp(14px,2vw,22px);
+  }
+  .cover-market{
+    font-family:var(--sans);
+    font-weight:800;
+    font-stretch:88%;
+    font-size:clamp(30px,5.4vw,58px);
+    line-height:1;
+    letter-spacing:-.025em;
+    margin:0;
+    text-wrap:balance;
+  }
+  .cover-promise{
+    max-width:46ch;
+    margin:0;
+    font-size:clamp(17px,2vw,20px);
+    color:#cdd8d0;
+  }
+  .cover > *{position:relative;z-index:1}
+  .cover > .cover-mark{
+    position:absolute;z-index:0;
+    right:clamp(-120px,-6vw,-30px);top:clamp(90px,10vw,130px);
+    width:clamp(260px,46vw,580px);height:auto;
+    fill:rgba(74,222,128,.07);
+  }
+  .cover-brand{display:flex;align-items:center;gap:10px}
+  .cover-brand .logo{width:26px;height:auto;fill:var(--green-neon);flex:none}
+  .cover-72h{
+    list-style:none;padding:0;margin:clamp(30px,5vw,48px) 0 0;max-width:none;
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;
+  }
+  .cover-72h li{max-width:none;margin:0;padding:14px 16px 16px;background:rgba(20,32,26,.78);border-top:3px solid rgba(74,222,128,.35);font-family:var(--sans)}
+  .cover-72h b{display:block;font-weight:900;font-stretch:78%;font-size:26px;letter-spacing:-.02em;line-height:1;color:var(--paper);margin-bottom:6px}
+  .cover-72h span{display:block;font-size:14px;line-height:1.35;color:#b9c8bf}
+  .cover-72h .fim{background:var(--green-neon);border-top-color:var(--green-neon)}
+  .cover-72h .fim b,.cover-72h .fim span{color:var(--ink)}
+  .cover-72h .fim span{font-weight:700}
+
+  .radar{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px;
+    background:rgba(74,222,128,.22);
+    border-top:1px solid rgba(74,222,128,.22);
+    margin:clamp(28px,5vw,44px) calc(var(--gut) * -1) 0;
+  }
+  .radar div{background:var(--ink);padding:18px var(--gut) 22px}
+  .radar dt{
+    font-family:var(--sans);
+    font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:#8ba296;margin:0 0 6px;
+  }
+  .radar dd{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:85%;font-size:24px;line-height:1.05;letter-spacing:-.02em;
+    margin:0;color:var(--paper);
+  }
+  .radar .hot dd{color:var(--green-neon)}
+
+  /* =========================================================
+     CORPO
+     ========================================================= */
+  main{padding-inline:var(--gut)}
+  section{
+    max-width:var(--wide);
+    margin-inline:auto;
+    padding-block:clamp(56px,8vw,96px) 0;
+  }
+  .sec-head{
+    display:grid;grid-template-columns:auto 1fr;gap:6px clamp(14px,2.4vw,28px);
+    align-items:end;
+    margin:0 0 clamp(22px,3vw,34px);
+    padding-bottom:clamp(16px,2vw,22px);
+    border-bottom:2px solid var(--ink);
+  }
+  .sec-num{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:72%;
+    font-size:clamp(64px,10vw,112px);
+    line-height:.8;letter-spacing:-.04em;
+    color:var(--green-deep);
+    margin:0;
+    grid-row:span 2;
+  }
+  .camadas{display:flex;gap:3px;max-width:260px;margin:0 0 10px}
+  .camadas i{flex:1;height:7px;background:var(--rule)}
+  .l1 i:nth-child(-n+1),.l2 i:nth-child(-n+2),.l3 i:nth-child(-n+3),.l4 i:nth-child(-n+4),
+  .l5 i:nth-child(-n+5),.l6 i:nth-child(-n+6),.l7 i:nth-child(-n+7),.l8 i:nth-child(-n+8),
+  .l9 i:nth-child(-n+9),.l10 i:nth-child(-n+10),.l11 i:nth-child(-n+11),.l12 i:nth-child(-n+12){background:var(--green-deep)}
+  .kicker{
+    font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--ink-mute);margin:0 0 4px;
+  }
+  h2{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;
+    font-size:clamp(28px,4.2vw,44px);
+    line-height:1.02;letter-spacing:-.028em;
+    margin:0;
+    text-wrap:balance;
+  }
+  h3{
+    font-family:var(--sans);
+    font-weight:700;font-size:19px;letter-spacing:-.012em;
+    margin:2.2em 0 .6em;
+    text-wrap:balance;
+  }
+  p,li{max-width:var(--measure)}
+  p{margin:0 0 1em}
+  ul,ol{padding-left:1.1em;margin:0 0 1em}
+  li{margin-bottom:.45em}
+  strong{font-weight:600}
+  .lead{font-size:clamp(19px,2.1vw,22px);line-height:1.5;color:var(--ink-soft);max-width:60ch;margin-bottom:1.4em}
+  .label{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);margin:0 0 10px;
+  }
+
+  .split{display:grid;gap:clamp(16px,2.6vw,28px);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));align-items:start;margin:0 0 20px}
+  .split > *{margin-bottom:0}
+
+  /* ---------- fichas e avisos ---------- */
+  .ficha{
+    border:1px solid var(--rule);
+    background:#fff;
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .ficha-tab{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);
+    margin:0 0 12px;
+  }
+  .ficha p:last-child,.ficha ul:last-child{margin-bottom:0}
+  .ficha.escura{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .ficha.escura .ficha-tab{color:var(--green-neon)}
+
+  .aviso{
+    background:var(--caramel-soft);
+    border-top:4px solid var(--caramel);
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .aviso .ficha-tab{color:var(--caramel)}
+  .aviso p:last-child,.aviso ul:last-child{margin-bottom:0}
+  .aviso-grande{
+    font-family:var(--sans);font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.1;letter-spacing:-.02em;
+    color:var(--caramel);margin:0 0 .5em;
+  }
+
+  /* ---------- fala e ação ---------- */
+  .fala{
+    font-size:clamp(19px,2.2vw,21px);
+    line-height:1.5;
+    border-left:4px solid var(--green-neon);
+    padding:2px 0 2px 18px;
+    margin:0 0 1em;
+    max-width:56ch;
+  }
+  .acao{
+    font-family:var(--sans);
+    font-weight:600;font-size:15px;
+    background:var(--paper-2);
+    padding:12px 16px 12px 44px;
+    margin:0 0 1em;
+    max-width:var(--measure);
+    position:relative;
+  }
+  .acao::before{
+    content:"";position:absolute;left:16px;top:17px;width:14px;height:10px;
+    border:2px solid var(--green-deep);border-radius:2px;
+  }
+
+  /* ---------- tabelas ---------- */
+  .tabela{overflow-x:auto;margin:0 0 20px;max-width:760px}
+  table{
+    border-collapse:collapse;
+    width:100%;
+    font-family:var(--sans);
+    font-size:15px;
+  }
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-weight:700;color:var(--ink-mute);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;border-bottom:2px solid var(--ink)}
+  td.n{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+  tr.total td{border-bottom:0;border-top:2px solid var(--ink);font-weight:800}
+
+  /* =========================================================
+     COMPONENTES VISUAIS POR SEÇÃO
+     ========================================================= */
+
+  /* 01 · filtro */
+  .filtro{list-style:none;padding:0;margin:0 0 28px;max-width:none;border-top:2px solid var(--ink)}
+  .filtro li{
+    display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 16px;align-items:center;
+    max-width:none;margin:0;padding:16px 0;border-bottom:1px solid var(--rule);
+  }
+  .filtro .ok{width:22px;height:22px;background:var(--green-deep);position:relative}
+  .filtro .ok::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid var(--green-neon);border-width:0 3px 3px 0;transform:rotate(45deg)}
+  .filtro .crit{font-family:var(--sans);font-weight:700;font-size:16px;line-height:1.25}
+  .filtro .crit small{display:block;font-family:var(--serif);font-weight:400;font-size:15px;color:var(--ink-soft);margin-top:2px}
+  .filtro .val{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.02em;text-align:right;white-space:nowrap;color:var(--green-deep)}
+
+  .conta{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:1px;
+    background:var(--ink);border:1px solid var(--ink);margin:0 0 22px;
+  }
+  .conta div{background:var(--paper);padding:18px 20px}
+  .conta div:last-child{background:var(--ink);color:var(--paper)}
+  .conta .big{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,50px);line-height:1;letter-spacing:-.03em}
+  .conta div:last-child .big{color:var(--green-neon)}
+  .conta .cap{display:block;font-family:var(--sans);font-size:14px;font-weight:600;margin-top:8px;color:var(--ink-soft)}
+  .conta div:last-child .cap{color:#b9c8bf}
+  .conta .op{font-family:var(--sans);font-weight:700;color:var(--ink-mute);font-size:13px;display:block;margin-bottom:6px}
+
+  /* 02 · tipos de cliente + semana */
+  .tipos{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));margin:0 0 22px}
+  .tipo{border-top:4px solid var(--green-deep);background:#fff;padding:16px 18px 18px;border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .tipo.principal{border-top-color:var(--green-neon);background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .tipo h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:20px;line-height:1.1;letter-spacing:-.015em;margin:0 0 6px}
+  .tipo .tag{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 10px}
+  .tipo.principal .tag{color:var(--green-neon)}
+  .tipo p{font-size:15.5px;line-height:1.5;margin:0}
+
+  .semana{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:0 0 20px;max-width:760px}
+  .dia-sem{padding:12px 8px 14px;background:var(--paper-2);min-height:112px;display:flex;flex-direction:column;gap:6px}
+  .dia-sem b{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:22px;letter-spacing:-.02em;line-height:1}
+  .dia-sem span{font-family:var(--sans);font-size:12.5px;line-height:1.3;color:var(--ink-soft)}
+  .dia-sem.ir{background:var(--green-deep);color:#fff}
+  .dia-sem.ir span{color:#e4f1e8}
+  .dia-sem.ir em{font-style:normal;font-family:var(--sans);font-weight:800;font-size:15px;color:var(--green-neon)}
+  .dia-sem.nao{background:repeating-linear-gradient(135deg,var(--paper-2) 0 8px,#e8e3d8 8px 10px)}
+
+  /* 03 · dores */
+  .dores{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 20px}
+  .dor{background:#fff;border:1px solid var(--rule);padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px}
+  .dor .dn{font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:54px;line-height:.8;color:var(--rule)}
+  .dor h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:21px;line-height:1.1;letter-spacing:-.015em;margin:0}
+  .dor p{font-size:15.5px;line-height:1.52;margin:0}
+  .dor.fecha{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .dor.fecha .dn{color:var(--green-neon)}
+  .dor.fecha h4{color:#fff}
+
+  /* 04 · níveis */
+  .niveis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));align-items:stretch;margin:0 0 24px}
+  .ficha.nivel{margin:0;display:flex;flex-direction:column;border-top:4px solid var(--rule)}
+  .nivel .preco{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:78%;font-size:clamp(30px,3.6vw,38px);line-height:1;letter-spacing:-.03em;
+    margin:.1em 0 .5em;
+  }
+  .nivel p:not(.preco):not(.ficha-tab){font-size:15.5px;line-height:1.52}
+  .ficha.nivel.meio{background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .ficha.nivel.meio .ficha-tab{color:var(--green-neon)}
+  .ficha.nivel.meio .preco{color:var(--green-neon)}
+  .selo{align-self:flex-start;font-family:var(--sans);font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--green-neon);color:var(--ink);padding:4px 8px;margin:0 0 12px}
+
+  .prazo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:6px 0 18px}
+  .prazo div{background:rgba(255,255,255,.7);padding:10px 6px;text-align:center;font-family:var(--sans)}
+  .prazo b{display:block;font-weight:800;font-size:14px}
+  .prazo span{display:block;font-size:11.5px;line-height:1.25;color:var(--ink-soft);margin-top:3px}
+  .prazo .p-ok{background:var(--green-deep);color:#fff}
+  .prazo .p-ok span{color:#e4f1e8}
+  .prazo .p-festa{background:var(--caramel);color:#fff}
+  .prazo .p-festa span{color:#f6ecdc}
+
+  /* 05 · material */
+  .cores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 20px;max-width:640px}
+  .cor{font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.25}
+  .cor i{display:block;aspect-ratio:1;max-width:100%;border:1px solid rgba(20,32,26,.18);margin-bottom:8px;
+    background-image:repeating-linear-gradient(180deg,rgba(0,0,0,.05) 0 2px,transparent 2px 5px)}
+  .painel{background:var(--plate);color:#dfe8e2;padding:18px 20px;font-family:var(--sans);font-size:14.5px}
+  .painel .ficha-tab{color:var(--green-neon)}
+  .painel dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0}
+  .painel dt,.painel dd{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1);margin:0}
+  .painel dt{color:#9fb3a8}
+  .painel dd{font-family:var(--mono);color:var(--green-neon);text-align:right;padding-left:12px}
+  .letra{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:0 0 20px}
+  .letra div{background:#fff;padding:16px 18px}
+  .letra b{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:44px;line-height:1;letter-spacing:-.03em;color:var(--green-deep)}
+  .letra span{font-family:var(--sans);font-size:13.5px;color:var(--ink-soft)}
+  .grafia{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .grafia span{font-family:var(--sans);font-weight:800;font-stretch:85%;font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;line-height:1;padding:10px 16px 12px;border:2px solid var(--ink);background:#fff}
+  .grafia span.certo{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+
+  /* 06 · kit */
+  .mesa{margin:0 0 10px;max-width:760px}
+  .mesa-bar{display:flex;gap:3px;height:64px}
+  .mesa-bar div{background:var(--green-deep);color:#fff;font-family:var(--sans);font-weight:800;font-size:15px;padding:10px 12px;display:flex;align-items:flex-end;min-width:0;overflow:hidden;white-space:nowrap}
+  .mesa-bar div:nth-child(2){background:var(--ink)}
+  .mesa-bar div:nth-child(3){background:#3d9a66}
+  .mesa-leg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px;margin:14px 0 0;padding:0;list-style:none;max-width:none}
+  .mesa-leg li{max-width:none;margin:0;font-family:var(--sans);font-size:14px;line-height:1.35;padding-left:18px;position:relative}
+  .mesa-leg li::before{content:"";position:absolute;left:0;top:4px;width:10px;height:10px;background:var(--green-deep)}
+  .mesa-leg li:nth-child(2)::before{background:var(--ink)}
+  .mesa-leg li:nth-child(3)::before{background:#3d9a66}
+  .mesa-leg b{display:block;font-size:15px}
+  .totais{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;margin:22px 0 24px;padding:16px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+  .totais div{font-family:var(--sans)}
+  .totais b{display:block;font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,48px);line-height:1;letter-spacing:-.03em}
+  .totais span{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute)}
+
+  /* 07 · gráfico de retorno por hora */
+  .grafico{margin:8px 0 12px;max-width:820px;font-family:var(--sans)}
+  .g-row{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:6px 16px;align-items:center;padding:7px 0}
+  .g-lab{font-size:14px;line-height:1.25;font-weight:600}
+  .g-lab small{display:block;font-weight:500;color:var(--ink-mute);font-size:12.5px}
+  .g-track{position:relative;height:30px;background:
+    linear-gradient(90deg,transparent calc(21.43% - 1px),var(--caramel) calc(21.43% - 1px) calc(21.43% + 1px),transparent calc(21.43% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(14.2857% - 1px),#e6e1d6 calc(14.2857% - 1px) 14.2857%)}
+  .g-bar{height:100%;width:calc(var(--v) / 70 * 100%);background:var(--green-deep);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-weight:800;font-size:13.5px;white-space:nowrap;min-width:64px}
+  .g-bar.baixo{background:var(--caramel)}
+  .g-bar.top{background:var(--green-neon);color:var(--ink)}
+  .g-axis{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:16px;font-size:11.5px;color:var(--ink-mute);font-weight:600}
+  .g-ticks{position:relative;height:18px}
+  .g-ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+  .g-ticks span:first-child{transform:none}
+  .g-ticks span.piso{color:var(--caramel);font-weight:800}
+  .g-nota{font-family:var(--sans);font-size:13px;color:var(--ink-mute);margin:6px 0 24px}
+
+
+  .folha{background:#fff;border:1px solid var(--rule);box-shadow:6px 6px 0 var(--paper-2);padding:clamp(18px,3vw,28px);margin:0 0 22px;max-width:780px}
+  .folha-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:4px}
+  .folha-top b{font-family:var(--sans);font-weight:900;font-stretch:80%;font-size:26px;letter-spacing:-.02em}
+  .folha-top span{font-family:var(--sans);font-size:13px;color:var(--ink-mute);font-weight:600}
+  .folha .tabela{margin:0;max-width:none}
+  .folha td.revende{color:var(--green-deep)}
+
+  /* 08 · os 40 segundos */
+  .relogio{position:relative;margin:6px 0 26px;padding-left:92px;max-width:780px}
+  .relogio::before{content:"";position:absolute;left:70px;top:6px;bottom:6px;width:2px;background:var(--rule)}
+  .passo{position:relative;margin:0 0 18px}
+  .passo:last-child{margin-bottom:0}
+  .passo .t{position:absolute;left:-92px;top:2px;width:60px;text-align:right;font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:17px;color:var(--green-deep);white-space:nowrap}
+  .passo::before{content:"";position:absolute;left:-27px;top:8px;width:12px;height:12px;background:var(--paper);border:3px solid var(--green-deep)}
+  .passo.cala::before{background:var(--green-neon);border-color:var(--ink)}
+  .passo .fala,.passo .acao,.passo p{margin-bottom:.6em}
+  .saidas{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0 0 18px}
+  .saida{background:#fff;border:1px solid var(--rule);padding:18px 20px}
+  .saida .quando{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:18px;line-height:1.2;letter-spacing:-.01em;margin:0 0 8px}
+  .saida p{font-size:15.5px;line-height:1.52;margin:0}
+
+  /* 09 · objeções */
+  .obj{border:1px solid var(--rule);background:#fff;margin:0 0 18px;display:grid;grid-template-columns:minmax(0,1fr)}
+  .obj-head{background:var(--ink);color:#fff;padding:clamp(18px,3vw,26px)}
+  .obj-n{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-neon);margin:0 0 8px}
+  .obj-q{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.12;letter-spacing:-.02em;
+    margin:0;text-wrap:balance;max-width:none;
+  }
+  .obj-body{padding:clamp(18px,3vw,26px);display:grid;gap:4px 28px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+  .obj-body > *{margin:0}
+  .obj-real{color:var(--ink-soft);font-style:italic;font-size:16px}
+  .obj-real::before{content:"O que ela quer dizer";display:block;font-style:normal;font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:6px}
+  .obj-resp{grid-column:1/-1}
+  .obj-resp .label{margin-top:12px}
+  .erro{
+    grid-column:1/-1;
+    color:var(--caramel);font-weight:700;font-family:var(--sans);font-size:15px;
+    background:var(--caramel-soft);margin:0;padding:12px clamp(18px,3vw,26px);
+  }
+
+  /* 10 · follow-up */
+  .fio{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 22px;align-items:start}
+  .msg{position:relative}
+  .msg .quando{font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:40px;line-height:1;letter-spacing:-.03em;color:var(--green-deep);margin:0 0 10px}
+  .msg .quando small{font-size:14px;font-weight:700;font-stretch:100%;letter-spacing:0;color:var(--ink-mute);margin-left:6px}
+  .balao{background:var(--green-wash);border-radius:14px 14px 14px 3px;padding:14px 16px;font-size:16px;line-height:1.5;margin:0}
+  .msg.fim .quando{color:var(--caramel)}
+  .msg.fim .balao{background:var(--caramel-soft)}
+  .msg .obs{font-family:var(--sans);font-size:13.5px;color:var(--ink-mute);margin:10px 0 0}
+
+  /* 11 · perguntas */
+  .perguntas{list-style:none;padding:0;margin:0 0 22px;counter-reset:q;max-width:none}
+  .perguntas li{counter-increment:q;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:baseline;max-width:none;padding:14px 0;border-bottom:1px solid var(--rule);margin:0}
+  .perguntas li::before{content:counter(q);font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:48px;line-height:.8;color:var(--green-deep)}
+  .perguntas span{font-family:var(--sans);font-weight:700;font-stretch:92%;font-size:clamp(20px,2.6vw,26px);line-height:1.2;letter-spacing:-.015em}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;padding:0;list-style:none;max-width:none}
+  .chips li{margin:0;max-width:none;font-family:var(--sans);font-size:14px;font-weight:600;border:1.5px solid var(--green-deep);color:var(--green-deep);padding:6px 12px}
+  .chips li.g01{background:var(--green-deep);color:#fff}
+
+  /* 12 · missão */
+  .dias{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));margin:0 0 26px;align-items:start}
+  .dia-col{background:#fff;border:1px solid var(--rule);padding:0 20px 8px}
+  .dia{
+    font-family:var(--sans);
+    font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);
+    margin:0 -20px 16px;padding:16px 20px 14px;border-bottom:2px solid var(--ink);
+    display:flex;align-items:baseline;gap:12px;
+  }
+  .dia b{font-weight:900;font-stretch:72%;font-size:56px;line-height:.8;letter-spacing:-.04em;color:var(--ink)}
+  .check{list-style:none;padding:0;max-width:none}
+  .check li{position:relative;padding-left:30px;margin-bottom:.75em;font-size:15.5px;line-height:1.45;max-width:none}
+  .check li::before{content:"";position:absolute;left:0;top:.2em;width:17px;height:17px;border:2px solid var(--green-deep);background:#fff}
+
+  .funil{display:grid;gap:4px;margin:6px 0 16px;font-family:var(--sans)}
+  .funil div{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(138,90,30,.14);padding:10px 14px;font-weight:600;font-size:14.5px;min-width:0}
+  .funil div b{font-weight:900;font-stretch:78%;font-size:24px;letter-spacing:-.02em;white-space:nowrap}
+  .funil div:nth-child(1){width:100%}
+  .funil div:nth-child(2){width:78%}
+  .funil div:nth-child(3){width:58%;background:rgba(138,90,30,.28)}
+  .funil div:nth-child(4){width:44%;background:var(--caramel);color:#fff}
+
+  .g100 .g-bar{width:calc(var(--v) / 100 * 100%)}
+  .g100 .g-track{background:
+    linear-gradient(90deg,transparent calc(15% - 1px),var(--caramel) calc(15% - 1px) calc(15% + 1px),transparent calc(15% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(10% - 1px),#e6e1d6 calc(10% - 1px) 10%)}
+  /* ---------- etiqueta e passos ---------- */
+  .etiqueta{border:2px dashed var(--ink);background:#fff;padding:16px 18px;font-family:var(--sans);font-size:13.5px;line-height:1.4;align-self:start}
+  .etiqueta .etq-top{font-weight:900;font-stretch:85%;font-size:18px;letter-spacing:-.01em;margin:0 0 8px;padding-bottom:8px;border-bottom:2px solid var(--green-deep);color:var(--green-deep)}
+  .etiqueta ul{margin:0 0 8px;padding-left:1em}
+  .etiqueta li{margin-bottom:.25em;max-width:none}
+  .etiqueta .etq-pe{font-size:11.5px;color:var(--ink-mute);margin:0}
+  .perguntas.passos span{font-size:clamp(16px,2vw,19px);font-weight:600;font-stretch:100%}
+  .perguntas.passos li::before{font-size:38px}
+
+  .g40 .g-bar{width:calc(var(--v) / 40 * 100%)}
+  .g40 .g-track{background:
+    linear-gradient(90deg,transparent calc(37.5% - 1px),var(--caramel) calc(37.5% - 1px) calc(37.5% + 1px),transparent calc(37.5% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(12.5% - 1px),#e6e1d6 calc(12.5% - 1px) 12.5%)}
+  .filtro .ok.meio{background:var(--caramel-soft);box-shadow:inset 0 0 0 2px var(--caramel)}
+  .filtro .ok.meio::after{left:5px;top:9px;width:12px;height:3px;border:0;background:var(--caramel);transform:none}
+  .filtro li.parcial .val{color:var(--caramel)}
+  /* ---------- calendário e registro ---------- */
+  .calendario{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;margin:0 0 8px;max-width:820px}
+  .mes{background:var(--paper-2);padding:10px 8px 12px;font-family:var(--sans)}
+  .mes b{display:block;font-weight:800;font-size:15px;margin-bottom:4px}
+  .mes span{display:block;font-size:12px;line-height:1.3;color:var(--ink-soft)}
+  .mes.medio{background:var(--green-wash)}
+  .mes.pico{background:var(--green-deep);color:#fff}
+  .mes.pico span{color:#e4f1e8}
+  .registro td{height:34px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
+  .registro td:last-child{border-right:0}
+
+  /* ---------- cola de balcão ---------- */
+  .cola{background:#fff;border:2px dashed var(--ink);padding:clamp(18px,3vw,30px);font-size:15px;line-height:1.45}
+  .cola-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 20px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin:0 0 18px}
+  .cola-top b{font-family:var(--sans);font-weight:900;font-stretch:78%;font-size:clamp(30px,4.4vw,44px);letter-spacing:-.03em;line-height:1}
+  .cola-top span{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-mute)}
+  .cola-grid{display:grid;gap:20px 30px;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr))}
+  .cola h4{font-family:var(--sans);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 8px}
+  .cola p,.cola li{max-width:none}
+  .cola ul{margin:0;padding-left:1em}
+  .cola li{margin-bottom:.3em}
+  .cola .fala{font-size:16px;margin:0 0 .6em;padding-left:12px;border-left-width:3px}
+  .cola .acao{font-size:13.5px;padding:8px 12px 8px 36px;margin:0 0 .6em}
+  .cola .acao::before{left:12px;top:12px}
+  .cola dl{margin:0}
+  .cola dt{font-family:var(--sans);font-weight:800;font-size:14.5px;margin:10px 0 2px}
+  .cola dt:first-child{margin-top:0}
+  .cola dd{margin:0;color:var(--ink-soft)}
+  .cola table{font-size:13.5px}
+  .cola th,.cola td{padding:6px 8px}
+  .cola .nunca li{color:var(--caramel);font-family:var(--sans);font-weight:600;font-size:14px}
+
+  /* ---------- ilustrações ---------- */
+  figure{margin:0 0 26px;max-width:860px}
+  .ill-art svg{display:block;width:100%;height:auto}
+  .ill figcaption{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink-mute);margin-top:10px}
+
+  footer{
+    background:var(--ink);color:#9fb3a8;
+    margin-top:clamp(64px,9vw,110px);
+    padding:clamp(28px,5vw,44px) var(--gut);
+    font-family:var(--sans);font-size:14px;
+  }
+  footer p{max-width:62ch;margin:0 0 .6em}
+  footer .logo{display:block;width:44px;height:auto;margin-bottom:18px}
+  footer strong{color:var(--green-neon);font-weight:700}
+
+  :focus-visible{outline:3px solid var(--green-neon);outline-offset:2px}
+
+
+  @media (max-width:560px){
+    .calendario{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .cover-72h{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .radar div:last-child:nth-child(odd){grid-column:1/-1}
+    .semana{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .prazo{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .cores{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .g-row,.g-axis{grid-template-columns:minmax(0,1fr)}
+    .g-axis > span:first-child{display:none}
+    .relogio{padding-left:30px}
+    .relogio::before{left:8px}
+    .passo .t{position:static;display:block;text-align:left;width:auto;margin-bottom:4px}
+    .passo::before{left:-30px;top:6px}
+    .funil div:nth-child(n){width:100%}
+    .filtro li{grid-template-columns:28px minmax(0,1fr)}
+    .filtro .val{grid-column:2;text-align:left}
+  }
+
+  @media print{
+    .radar{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .radar div{padding:12px 14px 14px}
+    .radar dd{font-size:14pt}
+    #cola .cola{font-size:9pt;padding:12px}
+    #cola .cola .fala{font-size:10pt}
+    #cola .cola-grid{gap:8px 18px;grid-template-columns:1fr 1fr}
+    #cola .sec-head{margin-bottom:8px;padding-bottom:6px}
+    #cola .sec-num{font-size:40pt}
+    #cola .cola-top{margin-bottom:8px;padding-bottom:6px}
+    #cola .cola-top b{font-size:18pt}
+    #cola .cola h4{font-size:7.5pt;margin-bottom:4px}
+    #cola .cola h4[style]{margin-top:10px!important}
+    #cola .cola dt{font-size:8.5pt;margin-top:5px}
+    #cola .cola dd,#cola .cola li{font-size:8.5pt;margin-bottom:1px}
+    #cola .cola .fala{font-size:9pt;margin-bottom:4px}
+    #cola .cola .acao{font-size:8pt;padding:5px 8px 5px 30px;margin-bottom:4px}
+    #cola .cola .acao::before{left:9px;top:7px}
+    #cola .cola table{font-size:8pt}
+    #cola .cola th,#cola .cola td{padding:3px 5px}
+    #cola .cola .nunca li{font-size:8.5pt}
+    .cola{break-inside:avoid}
+    @page{size:A4;margin:14mm 15mm}
+    @page capa{margin:0}
+    @page contracapa{margin:0}
+    :root{--paper:#ffffff;--gut:15mm}
+    body{font-size:10pt;line-height:1.5}
+    main{padding-inline:0}
+    section{max-width:none}
+    .lead{font-size:12pt;margin-bottom:1em}
+    .sec-head{margin-bottom:14px;padding-bottom:10px}
+    .sec-num{font-size:52pt}
+    h2{font-size:24pt}
+    h3{margin-top:1.4em;font-size:12.5pt}
+
+    /* capa e contracapa ocupam a folha inteira */
+    .cover{page:capa;height:297mm;box-sizing:border-box;width:210mm;display:flex;flex-direction:column;padding:18mm 15mm 0;overflow:hidden}
+    .cover > .cover-mark{right:-30mm;top:40mm;width:150mm}
+    .cover-code{font-size:210pt;margin-top:24mm;background:none;-webkit-text-fill-color:var(--green-neon)}
+    .cover-market{font-size:30pt}
+    .cover-promise{font-size:13pt}
+    .cover-grid{grid-template-columns:1.1fr 1fr;margin-top:8mm}
+    .cover-72h{margin-top:20mm}
+    .radar{margin:auto -15mm 0}
+    .radar div{padding-left:15mm}
+    footer{page:contracapa;break-before:page;height:297mm;overflow:hidden;box-sizing:border-box;margin:0;padding:0 15mm 22mm;display:flex;flex-direction:column;justify-content:flex-end;font-size:10pt}
+
+    /* colunas fixas no papel */
+    .tipos,.dores,.niveis,.fio,.dias{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .split,.saidas{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .conta{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .obj{display:block;margin-bottom:12px}
+    .filtro li{padding:8px 0}
+    .funil div{padding:6px 12px}
+    .funil div b{font-size:16pt}
+    .conta div{padding:12px 14px}
+    .etiqueta{font-size:9pt}
+    .perguntas li{padding:8px 0}
+    .perguntas.passos span{font-size:10.5pt}
+    table{font-size:9pt}
+    th,td{padding:5px 8px}
+    .junto{break-inside:avoid}
+    .calendario{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .mes span{font-size:8pt}
+    .registro td{height:9mm}
+    .obj-head{padding:10px 16px}
+    .obj-q{font-size:15pt}
+    .obj-body{padding:10px 16px;gap:2px 20px}
+    .obj-body .fala{font-size:10.5pt;line-height:1.42}
+    .obj-real{font-size:9.5pt}
+    .erro{font-size:9pt;padding:7px 16px}
+    .dia-col{break-inside:auto}
+    .check li{font-size:9.5pt;margin-bottom:.45em}
+    .tipo p,.dor p,.nivel p:not(.preco):not(.ficha-tab),.saida p{font-size:9.5pt;line-height:1.45}
+    .dia-sem{min-height:78px}
+    p,li{orphans:3;widows:3}
+    footer .logo{width:22mm;margin-bottom:8mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    section{break-before:page;padding-top:0}
+    main > section:first-of-type{break-before:page}
+    .ficha,.aviso,.obj,figure,.ill,table,.saida,.dor,.tipo,.msg,.dia-col,.grafico,.folha,.conta,.semana,.prazo,.passo{break-inside:avoid}
+    h2,h3,.sec-head{break-after:avoid}
+    .ill-art svg{max-height:92mm;width:auto;max-width:100%;margin:0 auto}
+    .tabela{overflow:visible}
+    .folha{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <svg class="cover-mark" viewBox="370 340 640 650" aria-hidden="true"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+
+  <div class="cover-top">
+    <p class="cover-brand"><svg class="logo" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>LR Maker Lab · G-Code 3D</p>
+    <p class="cover-level">Nível 1 · primeira venda rápida</p>
+  </div>
+
+  <p class="cover-code">G-02</p>
+
+  <div class="cover-grid">
+    <h1 class="cover-market">Nail designers e salões</h1>
+    <p class="cover-promise">Mostruário de cores e bancada organizada sob medida, com a marca do studio. A venda é pequena; o que paga este G-Code é a profissional satisfeita indicando as colegas.</p>
+  </div>
+
+  <ol class="cover-72h" aria-label="Missão 72 horas">
+    <li><b>Dia 1</b><span>Imprimir o mini mostruário e a plaquinha</span></li>
+    <li><b>Dia 2</b><span>10 studios, com trena na mão</span></li>
+    <li><b>Dia 3</b><span>Orçamento com as medidas da bancada</span></li>
+    <li class="fim"><b>72h</b><span>Três propostas entregues na mão de um comerciante</span></li>
+  </ol>
+
+  <dl class="radar">
+    <div><dt>Ticket do 1º pedido</dt><dd>R$ 90 a 300</dd></div>
+    <div><dt>Retorno por hora</dt><dd>~R$ 21/h</dd></div>
+    <div class="hot"><dt>Recompra</dt><dd>A cada coleção</dd></div>
+    <div><dt>Ciclo de venda</dt><dd>1 a 2 visitas</dd></div>
+    <div><dt>Nota no filtro</dt><dd>3 de 5</dd></div>
+  </dl>
+</header>
+
+<main>
+
+<!-- ===================== 01 ===================== -->
+<section id="s01">
+  <header class="sec-head l1">
+    <p class="sec-num">01</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Por que este G-Code funciona</h2>
+  </header>
+
+  <p class="lead">Este é o G-Code mais fraco do kit em retorno por hora, e o manual não esconde isso. Ele está aqui por outro motivo: nail designer conversa com nail designer o dia inteiro, e uma cliente satisfeita traz as próximas.</p>
+
+  <ul class="filtro">
+    <li class="parcial"><span class="ok meio"></span><span class="crit">Ticket do primeiro pedido<small>A Entrada fica abaixo de R$ 150; só o Padrão passa</small></span><span class="val">R$ 90–300</span></li>
+    <li><span class="ok"></span><span class="crit">Retorno por hora de máquina<small>Passa, mas perto do piso. Peça grande ocupa a máquina muitas horas</small></span><span class="val">~R$ 21/h</span></li>
+    <li class="parcial"><span class="ok meio"></span><span class="crit">Recompra<small>Nova estação no salão, nova coleção de cores, reforma do studio</small></span><span class="val">Média</span></li>
+    <li><span class="ok"></span><span class="crit">Decisor<small>A própria profissional, ou a dona do salão</small></span><span class="val">No balcão</span></li>
+    <li><span class="ok"></span><span class="crit">Insubstituível<small>Organizador pronto não tem a medida da bancada nem o nome do studio</small></span><span class="val">Com logo</span></li>
+  </ul>
+
+  <h3>A conta que salva este G-Code</h3>
+  <div class="conta">
+    <div><span class="op">venda</span><span class="big">R$ 250</span><span class="cap">uma bancada Padrão</span></div>
+    <div><span class="op">+</span><span class="big">3</span><span class="cap">colegas indicadas por ela</span></div>
+    <div><span class="op">×</span><span class="big">1 em 3</span><span class="cap">fecha, sem visita fria</span></div>
+    <div><span class="op">=</span><span class="big">R$ 500</span><span class="cap">de uma única abordagem na rua</span></div>
+  </div>
+  <p>Sem indicação, este nicho não compensa o tempo de máquina. Tudo neste manual, da abordagem ao follow-up, foi escrito para gerar indicação.</p>
+
+  <div class="aviso">
+    <p class="ficha-tab">Quando escolher este G-Code</p>
+    <p>Se você mora perto de um polo de salões, conhece profissionais da área ou tem uma escola de unhas no bairro. Sem nenhum desses três, comece por outro G-Code e deixe este na biblioteca.</p>
+  </div>
+</section>
+
+<!-- ===================== 02 ===================== -->
+<section id="s02">
+  <header class="sec-head l2">
+    <p class="sec-num">02</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Quem é a cliente</h2>
+  </header>
+
+  <p class="lead">A profissional que trata a própria bancada como vitrine. Ela filma o trabalho, posta todo dia e sabe que a cliente nova julga o preço pelo que vê em volta da mão.</p>
+
+  <div class="tipos">
+    <div class="tipo principal">
+      <p class="tag">Cliente principal</p>
+      <h4>Studio de nail designer</h4>
+      <p>Espaço próprio, uma ou duas bancadas, agenda cheia. Decide sozinha e compra pela aparência do conteúdo.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Ticket multiplicado</p>
+      <h4>Salão com várias estações</h4>
+      <p>A dona compra a mesma bancada para cada manicure. Três estações são três pedidos Padrão.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Central de indicação</p>
+      <h4>Escola de unhas</h4>
+      <p>A professora recomenda material para turmas inteiras. Uma escola convencida vale dez studios.</p>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="ficha">
+      <p class="ficha-tab">Como reconhecer</p>
+      <ul>
+        <li>Instagram com vídeo de processo, em que a bancada aparece</li>
+        <li>Mostruário de tips já existente, genérico ou improvisado</li>
+        <li>Identidade visual definida: cor da marca, logo, nome do studio</li>
+      </ul>
+    </div>
+    <div class="ficha">
+      <p class="ficha-tab">Quem não é cliente</p>
+      <ul>
+        <li>Manicure que atende a domicílio, sem bancada fixa</li>
+        <li>Esmalteria de franquia, com mobiliário padrão da marca</li>
+        <li>Salão de cabelo com manicure terceirizada, sem voz na compra</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Quando aparecer</h3>
+  <div class="semana">
+    <div class="dia-sem nao"><b>Seg</b><span>Maioria fechada</span></div>
+    <div class="dia-sem ir"><b>Ter</b><em>9h–10h30</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Qua</b><em>9h–10h30</em><span>Vá</span></div>
+    <div class="dia-sem"><b>Qui</b><span>Só com hora marcada</span></div>
+    <div class="dia-sem nao"><b>Sex</b><span>Agenda cheia</span></div>
+    <div class="dia-sem nao"><b>Sáb</b><span>Agenda cheia</span></div>
+  </div>
+  <p>Chegue antes da primeira cliente do dia. Se tiver alguém na cadeira, não comece a conversa: pergunte a que horas é o próximo intervalo e volte nesse horário.</p>
+  <p>Studio pequeno quase sempre funciona com agenda fechada. Mande mensagem no Instagram pedindo dez minutos "antes da primeira cliente", com uma foto da amostra.</p>
+</section>
+
+<!-- ===================== 03 ===================== -->
+<section id="s03">
+  <header class="sec-head l3">
+    <p class="sec-num">03</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A dor que ela já paga para resolver</h2>
+  </header>
+
+  <p class="lead">Organizador não é prioridade de ninguém. O que ela sente é retrabalho, vídeo feio e cliente que pechincha.</p>
+
+  <div class="dores">
+    <div class="dor">
+      <span class="dn">1</span>
+      <h4>A cor que não era aquela</h4>
+      <p>A cliente escolhe pelo frasco. Na unha, a cor sai diferente, ela não gosta, e a profissional remove e refaz de graça. Mostruário com tip pintado mostra a cor real na unha antes de começar.</p>
+    </div>
+    <div class="dor">
+      <span class="dn">2</span>
+      <h4>A bancada que aparece no vídeo</h4>
+      <p>Todo vídeo de processo mostra a bancada. Frasco espalhado, lixa solta e pincel em copo de plástico entram no conteúdo junto com a unha perfeita.</p>
+    </div>
+    <div class="dor fecha">
+      <span class="dn">3</span>
+      <h4>O preço que ela consegue cobrar</h4>
+      <p>A cliente nova decide se o alongamento vale o preço olhando em volta. Bancada organizada, na cor da marca e com o nome do studio, sustenta o valor antes de a profissional abrir a boca.</p>
+    </div>
+  </div>
+
+  <p>A terceira é a que faz a Padrão parecer pequena. Guarde para quando ela perguntar o preço.</p>
+
+  <div class="split">
+    <figure class="ill">
+      <div class="ill-art" data-ill="cor" role="img" aria-label="A cor no frasco parece mais escura que a mesma cor aplicada na unha"></div>
+      <figcaption>A cliente escolhe por uma cor e recebe outra.</figcaption>
+    </figure>
+    <div>
+      <h3 style="margin-top:0">Antes de visitar: três sinais no Instagram dela</h3>
+      <div class="ficha">
+        <ul class="check">
+          <li><strong>Vídeo de processo com a bancada à mostra.</strong> A dor 2 já está no feed dela.</li>
+          <li><strong>Post pedindo "me manda a foto da cor que você quer".</strong> A dor 1 acontece toda semana.</li>
+          <li><strong>Logo e cor de marca definidos.</strong> Ela já investe em imagem e entende o que você oferece.</li>
+        </ul>
+        <p>Com os três sinais, mande a mensagem hoje. Com nenhum, deixe para a segunda leva.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 ===================== -->
+<section id="s04">
+  <header class="sec-head l4">
+    <p class="sec-num">04</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A oferta, em três níveis</h2>
+  </header>
+
+  <p class="lead">Aqui o nível do meio não é só o preferido: é o único que paga bem o seu tempo. Apresente os três e conduza para o Padrão.</p>
+
+  <div class="niveis">
+    <div class="ficha nivel">
+      <p class="ficha-tab">Entrada</p>
+      <p class="preco">R$ 90 a 120</p>
+      <p>Mostruário de 36 tips com o logo do studio. Resolve a dor da cor e já aparece no vídeo. Abaixo de R$ 90 você trabalha no piso.</p>
+    </div>
+    <div class="ficha nivel meio">
+      <span class="selo">O que você quer vender</span>
+      <p class="ficha-tab">Padrão · bancada completa</p>
+      <p class="preco">R$ 220 a 280</p>
+      <p>Mostruário de 36 tips, organizador de 12 frascos de gel e porta-pincéis com porta-lixas, tudo na cor da marca, com o nome dela e na medida da bancada.</p>
+    </div>
+    <div class="ficha nivel">
+      <p class="ficha-tab">Completo</p>
+      <p class="preco">R$ 300</p>
+      <p>A bancada Padrão mais um mostruário grande, de 60 tips, para a recepção. É o pior retorno por hora do kit. Venda só por R$ 300 ou mais.</p>
+    </div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="niveis" role="img" aria-label="Os três níveis: mostruário de tips; mostruário, organizador de frascos e porta-pincéis; e o conjunto com mostruário grande e plaquinha"></div>
+    <figcaption>Entrada, Padrão e Completo lado a lado.</figcaption>
+  </figure>
+
+  <div class="aviso">
+    <p class="ficha-tab">Salão com várias estações</p>
+    <p class="aviso-grande">Três manicures são três bancadas Padrão, não um desconto de quantidade.</p>
+    <p>O tempo de máquina de cada bancada é o mesmo. Se a dona pedir desconto pelo volume, ofereça outra coisa: a plaquinha com o nome de cada profissional sem custo, ou a entrega dividida em duas etapas.</p>
+  </div>
+
+  <h3>O que anotar na visita: a medição da bancada</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Medida</th><th>Como pegar</th><th>Para quê</th></tr>
+    <tr><td>Largura e profundidade</td><td>Trena, em centímetros</td><td>Desenhar o conjunto sem invadir a área da mão</td></tr>
+    <tr><td>Frascos de gel</td><td>Contar e medir o diâmetro de um</td><td>Número e tamanho dos encaixes do organizador</td></tr>
+    <tr><td>Pincéis e lixas</td><td>Contar os de uso diário</td><td>Quantidade de furos e divisórias</td></tr>
+    <tr><td>Posição da cabine UV</td><td>Onde fica e de que lado ela trabalha</td><td>Organizador do lado da mão que pega o frasco</td></tr>
+    <tr><td>Cor e nome</td><td>Foto do logo ou do cartão</td><td>Filamento e texto da plaquinha</td></tr>
+  </table>
+  </div>
+  <p>A trena na mão muda a conversa: de "quanto custa esse organizador" para "como fica o meu projeto". Peça licença, meça em dois minutos e anote na frente dela.</p>
+
+  <h3>Quando visitar e o que oferecer: o calendário do studio</h3>
+  <div class="calendario" aria-label="Meses bons para visitar e vender">
+    <div class="mes pico"><b>Jan</b><span>Studio abre ou muda no começo do ano</span></div>
+    <div class="mes"><b>Fev</b><span>Carnaval: agenda cheia</span></div>
+    <div class="mes medio"><b>Mar</b><span>Coleção outono-inverno</span></div>
+    <div class="mes medio"><b>Abr</b><span>Mostruário da coleção nova</span></div>
+    <div class="mes"><b>Mai</b><span>Dia das Mães: agenda lotada</span></div>
+    <div class="mes medio"><b>Jun</b><span>Agenda normal</span></div>
+    <div class="mes pico"><b>Jul</b><span>Férias: agenda leve, bom para visitar</span></div>
+    <div class="mes pico"><b>Ago</b><span>Coleção primavera-verão</span></div>
+    <div class="mes pico"><b>Set</b><span>Preparar o studio para o fim de ano</span></div>
+    <div class="mes medio"><b>Out</b><span>Última janela antes de dezembro</span></div>
+    <div class="mes"><b>Nov</b><span>Formaturas: agenda cheia</span></div>
+    <div class="mes"><b>Dez</b><span>Agenda lotada: não visite</span></div>
+  </div>
+  <p class="g-nota">Verde escuro: melhor época para visitar e vender. Branco: agenda dela cheia demais para conversar. É hipótese; ajuste na sua região.</p>
+  <p>Aqui a regra é a oposta da confeitaria: você não vende antes do pico dela, vende quando a agenda dela está leve. Com cliente na cadeira, ninguém compra organizador.</p>
+</section>
+
+<!-- ===================== 05 ===================== -->
+<section id="s05">
+  <header class="sec-head l5">
+    <p class="sec-num">05</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Material, limpeza e biossegurança</h2>
+  </header>
+
+  <p class="lead">A bancada de unha tem álcool 70% o dia inteiro e acetona por perto. A peça que você vende precisa aguentar a limpeza que a vigilância sanitária exige dela.</p>
+
+  <div class="split">
+    <div>
+      <h3 style="margin-top:0">PETG na bancada, PLA fosco no mostruário</h3>
+      <p>Organizador e porta-pincéis levam álcool todo dia e podem receber respingo de acetona. PETG aguenta bem a limpeza com álcool 70% e imprime peça resistente a queda.</p>
+      <p>O mostruário fica em pé, longe da acetona, e precisa de acabamento bonito para o vídeo. PLA fosco esconde as linhas de camada; PLA silk dá o brilho que combina com esmalte.</p>
+      <p>Nunca use ABS ou ASA nesta bancada: acetona dissolve os dois.</p>
+    </div>
+    <div class="painel">
+      <p class="ficha-tab">Perfil de fatiamento · PETG</p>
+      <dl>
+        <dt>Bico</dt><dd>235–245 °C</dd>
+        <dt>Mesa</dt><dd>75–85 °C</dd>
+        <dt>Camada</dt><dd>0,20 mm</dd>
+        <dt>Paredes</dt><dd>3</dd>
+        <dt>Preenchimento</dt><dd>15%</dd>
+        <dt>Encaixe do frasco</dt><dd>+0,4 mm de folga</dd>
+        <dt>Fenda do tip</dt><dd>1,2 mm</dd>
+      </dl>
+    </div>
+  </div>
+
+  <h3>O que cada material aguenta</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Material</th><th>Álcool 70%</th><th>Respingo de acetona</th><th>Imersão em acetona</th><th>Autoclave ou estufa</th></tr>
+    <tr><td>PETG</td><td class="n">Sim</td><td class="n">Limpe na hora</td><td class="n">Não</td><td class="n">Nunca</td></tr>
+    <tr><td>PLA fosco ou silk</td><td class="n">Sim</td><td class="n">Limpe na hora</td><td class="n">Não</td><td class="n">Nunca</td></tr>
+    <tr><td>ABS e ASA</td><td class="n">Sim</td><td class="n">Não</td><td class="n">Não</td><td class="n">Nunca</td></tr>
+  </table>
+  </div>
+  <p class="g-nota">Filamentos variam por fabricante. Faça o teste de acetona abaixo com o seu rolo antes da primeira venda.</p>
+
+  <div class="ficha">
+    <p class="ficha-tab">Teste de 10 minutos com o seu filamento</p>
+    <ul class="check">
+      <li>Imprima um quadrado de 3 × 3 cm com o mesmo perfil da peça</li>
+      <li>Pingue três gotas de acetona e espere 10 minutos</li>
+      <li>Limpe com papel e passe a unha na superfície</li>
+      <li>Superfície pegajosa, esbranquiçada ou mole: esse filamento não vai para a bancada</li>
+    </ul>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="bancada" role="img" aria-label="Vista de cima de uma bancada de 90 por 45 centímetros: organizador de gel, cabine UV e mostruário no fundo; porta-pincéis na lateral; área livre na frente para a mão da cliente"></div>
+    <figcaption>Tudo no fundo e na lateral. A frente da bancada é da mão da cliente.</figcaption>
+  </figure>
+
+  <div class="split">
+    <div class="aviso">
+      <p class="ficha-tab">Risco 1 · Biossegurança</p>
+      <p>Organizador não esteriliza nada. Alicate e espátula de metal vão para a autoclave e voltam para o organizador dentro do envelope lacrado. Diga isso na venda, com essas palavras.</p>
+      <p>Nunca desenhe peça que encoste na pele da cliente, como apoio de mão ou separador de dedos. Plástico impresso tem linhas de camada que acumulam resíduo e não esterilizam.</p>
+    </div>
+    <div class="aviso">
+      <p class="ficha-tab">Risco 2 · Marca de terceiros</p>
+      <p>Não imprima logo de marca de esmalte, de gel ou de curso no mostruário, mesmo que ela peça. É reprodução de marca registrada sem autorização.</p>
+      <p>O mostruário leva o nome e o logo do studio dela. As marcas que ela usa ficam nos frascos, que é onde já estão.</p>
+    </div>
+  </div>
+
+  <h3>Antes de entregar: conferência da peça</h3>
+  <div class="ficha">
+    <ul class="check">
+      <li>Frasco real encaixado em cada furo do organizador, sem forçar e sem folga</li>
+      <li>Tip entrando e saindo da fenda do mostruário sem arranhar o esmalte</li>
+      <li>Nome e logo conferidos contra a foto que ela mandou</li>
+      <li>Cor do filamento conferida com a cor da marca, lado a lado, com luz do dia</li>
+      <li>Peça limpa com álcool 70% e seca antes de embalar, como ela vai limpar depois</li>
+      <li>Cartão com a instrução: álcool sim, acetona só respingo, nunca na autoclave</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== 06 ===================== -->
+<section id="s06">
+  <header class="sec-head l6">
+    <p class="sec-num">06</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Kit de amostra: o que imprimir hoje à noite</h2>
+  </header>
+
+  <p class="lead">Três peças pequenas que mostram o acabamento e o nome, mais uma trena. O kit não precisa ser a bancada inteira: precisa fazer ela imaginar a dela.</p>
+
+  <h3 style="margin-top:0">Uma noite de máquina</h3>
+  <div class="mesa">
+    <div class="mesa-bar" role="img" aria-label="Tempo de impressão: mini mostruário 100 minutos, porta-pincéis 45 minutos, plaquinha 35 minutos">
+      <div style="flex:100">1h40</div>
+      <div style="flex:45">45 min</div>
+      <div style="flex:35">35 min</div>
+    </div>
+    <ul class="mesa-leg">
+      <li><b>Mini mostruário de 12 tips</b>8 cm, PLA silk · 30 g</li>
+      <li><b>Porta-pincéis de 5 furos</b>6 cm, PETG · 18 g</li>
+      <li><b>Plaquinha "Studio" 10 × 3 cm</b>Duas cores, PLA · 12 g</li>
+    </ul>
+  </div>
+  <div class="totais">
+    <div><b>3h00</b><span>de máquina</span></div>
+    <div><b>60 g</b><span>de filamento</span></div>
+    <div><b>R$ 7,20</b><span>de filamento</span></div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="kit" role="img" aria-label="Kit de amostra em escala sobre régua: mini mostruário de 8 cm com 12 tips coloridos, porta-pincéis de 6 cm e plaquinha de 10 por 3 cm"></div>
+    <figcaption>O kit em escala real, sobre régua em centímetros.</figcaption>
+  </figure>
+
+  <div class="split">
+    <div class="ficha escura">
+      <p class="ficha-tab">Detalhe que fecha venda</p>
+      <p>Encaixe no mini mostruário 12 tips de unha postiça pintados com as cores da estação. Um pacote de tips e três esmaltes resolvem. Mostruário vazio é peça de plástico; com cor, é ferramenta de trabalho.</p>
+      <p>Leve uma trena de bolso. O kit mostra o acabamento; a trena mostra que o produto é dela.</p>
+    </div>
+    <div>
+      <div class="ficha">
+        <p class="ficha-tab">Apresentação</p>
+        <p>Leve as peças numa bandeja rasa forrada com papel de seda branco, do jeito que ela arruma a própria bancada. Sem caixa fechada: ela precisa ver o conjunto de uma vez.</p>
+      </div>
+      <h3 style="margin-top:18px">Quanto custa sair para a rua</h3>
+      <div class="tabela">
+      <table>
+        <tr><th>Item</th><th>Quantidade</th><th>Valor</th></tr>
+        <tr><td>Kit de amostra impresso</td><td>2 jogos</td><td class="n">R$ 14,40</td></tr>
+        <tr><td>Tips e esmaltes para pintar</td><td>1 pacote, 3 cores</td><td class="n">R$ 25,00</td></tr>
+        <tr><td>Trena de bolso</td><td>1 un</td><td class="n">R$ 10,00</td></tr>
+        <tr class="total"><td>Total para 10 visitas</td><td>—</td><td class="n">R$ 49,40</td></tr>
+      </table>
+      </div>
+      <p>Estimativa para você refazer com os preços da sua região. Tips, esmaltes e trena servem para as próximas levas.</p>
+    </div>
+  </div>
+
+  <h3>A proposta desenhada que você manda no dia 3</h3>
+  <ol class="perguntas passos">
+    <li><span>Na visita, peça licença para fotografar a bancada de cima, do lado da cliente.</span></li>
+    <li><span>No Canva ou num app de edição, desenhe por cima retângulos na cor da marca dela onde vão ficar mostruário, organizador e porta-pincéis.</span></li>
+    <li><span>Escreva as medidas que você tirou com a trena. Elas provam que o projeto é dela.</span></li>
+    <li><span>Embaixo, os três níveis com preço e o Padrão destacado. O Arsenal de Fechamento traz esse modelo pronto.</span></li>
+    <li><span>Mande por WhatsApp com uma frase só: "Assim ficaria a sua bancada. Qual dos três faz mais sentido pra você?"</span></li>
+  </ol>
+</section>
+
+<!-- ===================== 07 ===================== -->
+<section id="s07">
+  <header class="sec-head l7">
+    <p class="sec-num">07</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Precificação</h2>
+  </header>
+
+  <p class="lead">Aqui o piso de R$ 15/h não é teoria: é a linha que você cruza se aceitar o preço que ela vai propor. Faça a conta antes de responder qualquer pedido.</p>
+
+  <h3 style="margin-top:0">Retorno por hora, nível por nível</h3>
+  <div class="grafico g40" role="img" aria-label="Gráfico de barras do retorno por hora de máquina por nível e preço, com a linha do piso em R$ 15 por hora">
+    <div class="g-row"><span class="g-lab">Padrão<small>a R$ 280 · 10h</small></span><div class="g-track"><div class="g-bar top" style="--v:25">R$ 25/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Entrada<small>a R$ 120 · 4h30</small></span><div class="g-track"><div class="g-bar" style="--v:23">R$ 23/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Padrão<small>a R$ 250 · 10h</small></span><div class="g-track"><div class="g-bar" style="--v:21">R$ 21/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Entrada<small>a R$ 100 · 4h30</small></span><div class="g-track"><div class="g-bar" style="--v:19">R$ 19/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Padrão<small>a R$ 220 · 10h</small></span><div class="g-track"><div class="g-bar" style="--v:18">R$ 18/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Completo<small>a R$ 300 · 16h</small></span><div class="g-track"><div class="g-bar baixo" style="--v:15">R$ 15/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Entrada<small>a R$ 80 · 4h30</small></span><div class="g-track"><div class="g-bar baixo" style="--v:14">R$ 14/h</div></div></div>
+    <div class="g-axis"><span></span><div class="g-ticks"><span style="left:0">0</span><span style="left:25%">10</span><span class="piso" style="left:37.5%">piso R$ 15</span><span style="left:75%">30</span><span style="left:100%;transform:translateX(-100%)">40</span></div></div>
+  </div>
+  <p class="g-nota">Escala até R$ 40/h, não R$ 70 como nos outros G-Codes. Margem = preço menos custo real; retorno/h = margem dividida pelas horas de máquina.</p>
+  <p>A R$ 80, que é o preço que ela vai sugerir para o mostruário, você trabalha abaixo do piso. O Completo, que parece a venda maior, é o que paga menos por hora. Venda o Padrão no meio ou no topo da faixa.</p>
+
+  <h3>Custo real da bancada Padrão</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Item</th><th>Cálculo</th><th>Valor</th></tr>
+    <tr><td>Filamento PETG e PLA</td><td>220 g a R$ 120/kg</td><td class="n">R$ 26,40</td></tr>
+    <tr><td>Energia</td><td>10h de impressão</td><td class="n">R$ 2,00</td></tr>
+    <tr><td>Embalagem e cartão</td><td>—</td><td class="n">R$ 3,00</td></tr>
+    <tr><td>Desgaste e perda</td><td>15% sobre filamento</td><td class="n">R$ 4,00</td></tr>
+    <tr class="total"><td>Custo total</td><td>3 peças sob medida</td><td class="n">R$ 35,40</td></tr>
+  </table>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Seu piso</p>
+    <p class="aviso-grande">R$ 15 por hora de máquina. Na bancada Padrão, isso é R$ 185.</p>
+    <p>Dez horas de máquina vezes R$ 15, mais R$ 35 de custo. Abaixo de R$ 185 você paga para trabalhar. Na Entrada, o piso é R$ 83.</p>
+  </div>
+
+  <div class="junto">
+    <h3>A conta de um pedido real, passo a passo</h3>
+    <p>A dona de um salão com três manicures quer a bancada Padrão nas três estações. Antes de responder, faça esta conta:</p>
+    <div class="tabela">
+    <table>
+      <tr><th>Passo</th><th>Conta</th><th>Resultado</th></tr>
+      <tr><td>1 · Máquina</td><td>3 bancadas × 10h</td><td class="n">30h</td></tr>
+      <tr><td>2 · Custo</td><td>3 × R$ 35,40</td><td class="n">R$ 106,20</td></tr>
+      <tr><td>3 · Preço</td><td>3 × R$ 250</td><td class="n">R$ 750</td></tr>
+      <tr><td>4 · Margem</td><td>R$ 750 − R$ 106,20</td><td class="n">R$ 643,80</td></tr>
+      <tr><td>5 · Retorno</td><td>R$ 643,80 ÷ 30 h</td><td class="n">R$ 21/h</td></tr>
+      <tr class="total"><td>6 · Prazo</td><td>30h em 2 impressoras, com folga</td><td class="n">10 dias úteis</td></tr>
+    </table>
+    </div>
+  </div>
+  <p>O retorno por hora não muda com a quantidade. O que muda é o prazo: 30 horas de máquina ocupam sua semana. Prometa 10 dias úteis e entregue antes.</p>
+
+  <div class="ficha">
+    <p class="ficha-tab">Condições que vão escritas no orçamento</p>
+    <ul>
+      <li><strong>Prazo:</strong> 7 dias úteis por bancada, a partir das medidas e do logo aprovados</li>
+      <li><strong>Pagamento:</strong> 50% na aprovação, 50% na entrega</li>
+      <li><strong>Várias estações:</strong> mesmo preço por bancada; plaquinha com o nome de cada profissional incluída</li>
+      <li><strong>Troca de mostruário por coleção nova:</strong> base reaproveitada, só as fendas novas</li>
+      <li><strong>Garantia:</strong> 30 dias para defeito de impressão</li>
+      <li><strong>Junto com a peça:</strong> cartão de limpeza e cuidado</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== 08 ===================== -->
+<section id="s08">
+  <header class="sec-head l8">
+    <p class="sec-num">08</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A abordagem em 40 segundos</h2>
+  </header>
+
+  <div class="relogio">
+    <div class="passo">
+      <span class="t">antes</span>
+      <p class="acao">Chegue antes da primeira cliente. Se houver alguém na cadeira, pergunte o horário do próximo intervalo e saia.</p>
+    </div>
+    <div class="passo">
+      <span class="t">0–8 s</span>
+      <p class="fala">"Oi, tudo bem? Eu faço mostruário de cores e organizador de bancada sob medida, com o nome do studio. Trouxe um mostruário pequeno pra você ver o acabamento."</p>
+    </div>
+    <div class="passo cala">
+      <span class="t">8–20 s</span>
+      <p class="acao">Coloque o mini mostruário com os tips pintados na bancada dela, virado para ela. Não fale.</p>
+      <p>Ela vai tirar um tip da fenda e colocar de volta. Esse gesto é o teste de qualidade dela. Deixe ela fazer duas vezes.</p>
+    </div>
+    <div class="passo">
+      <span class="t">20–28 s</span>
+      <p class="fala">"Suas clientes escolhem a cor pelo frasco ou pelo mostruário?"</p>
+    </div>
+    <div class="passo">
+      <span class="t">28–40 s</span>
+      <p>Se a resposta for "pelo frasco", a dor 1 está aberta. Pergunte quantas vezes por semana ela refaz por causa de cor.</p>
+    </div>
+  </div>
+
+  <div class="saidas">
+    <div class="saida">
+      <p class="quando">"Pelo frasco. Às vezes dá problema."</p>
+      <p>"Quer que eu meça sua bancada? Em dois minutos eu te mando como ficaria o mostruário com o organizador." Pegue a trena.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">"Já tenho mostruário."</p>
+      <p>Olhe o dela. "E o resto da bancada, você grava vídeo com ela assim?" Vá para a dor 2 e mostre a plaquinha.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">Ela é funcionária, não dona.</p>
+      <p>"Quem decide as coisas do salão? Que dia ela está?" Deixe a amostra com ela e volte no dia da dona.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">A cliente chegou.</p>
+      <p>"Te mando uma mensagem, qual é o seu Instagram?" Siga na hora, na frente dela, e saia.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 09 ===================== -->
+<section id="s09">
+  <header class="sec-head l9">
+    <p class="sec-num">09</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Objeções</h2>
+  </header>
+
+  <p class="lead">Seis frases de quem compra material toda semana e conhece o preço de tudo. A resposta volta sempre para medida, nome e vídeo.</p>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 1 de 6 · preço</p><p class="obj-q">"Na internet tem organizador de acrílico por R$ 40."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu já pesquisei e sei quanto custa o genérico.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Tem sim, e serve pra quem tem a bancada do tamanho dele. O meu é feito na medida da sua, na cor da sua marca e com o nome do studio. Ele aparece no seu vídeo como parte da sua marca, não como o organizador que todo mundo tem."</p></div>
+    </div>
+    <p class="erro">Erro fatal: falar mal do acrílico. Ela provavelmente tem um, e você acaba de chamar a escolha dela de errada.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 2 de 6 · limpeza</p><p class="obj-q">"Isso aguenta álcool e acetona?"</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu limpo a bancada o dia inteiro e não quero peça manchando.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Álcool 70% pode passar à vontade. Acetona, respingo você limpa na hora e não acontece nada; de molho, não. Eu testo cada rolo de filamento com acetona antes de entregar, e vai junto um cartão explicando a limpeza."</p></div>
+    </div>
+    <p class="erro">Erro fatal: dizer que aguenta tudo. Na primeira mancha de acetona, ela te marca como quem mentiu.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 3 de 6 · espaço</p><p class="obj-q">"Não cabe mais nada na minha bancada."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Não quero mais uma coisa ocupando lugar.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Por isso é sob medida. Eu meço sua bancada e desenho pra ocupar menos lugar do que o que está aí solto hoje. Tudo vai pro fundo e pra lateral, e a frente fica livre pra mão da cliente."</p>
+      <p class="acao">Pegue a trena e meça enquanto fala. Anote na frente dela.</p></div>
+    </div>
+    <p class="erro">Erro fatal: insistir no produto de catálogo. Aqui a objeção é o argumento de venda.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 4 de 6 · valor</p><p class="obj-q">"R$ 250 num organizador?"</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu não liguei isso ao preço que eu cobro.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Quanto você cobra num alongamento? Então a bancada se paga com dois. Depois disso, ela fica em todo vídeo que você posta, e toda cliente nova vê seu nome antes de sentar."</p>
+      <p class="acao">Se ainda não couber: ofereça começar pelo mostruário, a Entrada, e completar a bancada no mês seguinte.</p></div>
+    </div>
+    <p class="erro">Erro fatal: baixar o Padrão para R$ 180. Você cruza o piso e trabalha dez horas quase de graça.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 5 de 6 · adiamento</p><p class="obj-q">"Vou deixar pra quando reformar o studio."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Não tenho data, então não vou decidir agora.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Faz sentido fazer junto. Pra quando é a reforma? Eu deixo suas medidas e a cor anotadas, e entrego na semana da inauguração. Assim o primeiro vídeo do studio novo já sai com a bancada pronta."</p></div>
+    </div>
+    <p class="erro">Erro fatal: sair sem a data da reforma. "Quando reformar" sem data é nunca.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 6 de 6 · decisão</p><p class="obj-q">"Isso quem decide é a dona do salão."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu gostei, mas não posso comprar para o espaço dela.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Claro. Que dia ela está aqui? Eu volto com o orçamento das estações todas, e com o seu nome na plaquinha da sua bancada. Posso contar que você gostou?"</p></div>
+    </div>
+    <p class="erro">Erro fatal: deixar a proposta com quem não decide e esperar retorno. Volte no dia da dona.</p>
+  </div>
+</section>
+
+<!-- ===================== 10 ===================== -->
+<section id="s10">
+  <header class="sec-head l10">
+    <p class="sec-num">10</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Follow-up</h2>
+  </header>
+
+  <p class="lead">Ela responde mensagem entre uma cliente e outra, com a mão ocupada. Mensagem curta, com imagem, que ela consiga responder com um polegar.</p>
+
+  <div class="fio">
+    <div class="msg">
+      <p class="quando">48h<small>depois da visita</small></p>
+      <p class="balao">"Oi [nome], aqui é o [você], do mostruário. Desenhei sua bancada com as medidas que tirei: mostruário, organizador de gel e porta-pincéis na sua cor. Te mando a imagem?"</p>
+    </div>
+    <div class="msg">
+      <p class="quando">7 dias<small>coleção</small></p>
+      <p class="balao">"Oi [nome]! Vi que saíram as cores novas da estação. Se quiser o mostruário pronto pra divulgar a coleção, consigo entregar até [data] se fecharmos essa semana."</p>
+    </div>
+    <div class="msg fim">
+      <p class="quando">21 dias<small>desistência</small></p>
+      <p class="balao">"Oi [nome], não vou mais te chamar sobre a bancada. Guardei suas medidas; se um dia quiser, é só me mandar um oi. Sucesso com o studio!"</p>
+    </div>
+  </div>
+
+  <div class="ficha">
+    <p class="ficha-tab">Depois da primeira entrega: o pedido de indicação</p>
+    <p class="balao" style="margin-bottom:12px">"Oi [nome]! Ficou do jeito que você imaginou? Se gravar vídeo com a bancada nova, me marca? E se alguma colega perguntar, me indica: pra cada colega que fechar comigo, te dou uma peça nova pra bancada."</p>
+    <p>É aqui que este G-Code se paga. Defina a recompensa antes: uma plaquinha, um porta-lixas ou um suporte de celular para filmagem. Uma peça pequena sai por poucos reais de filamento e traz uma cliente que chega sem visita fria.</p>
+  </div>
+
+  <p>Reative quem não comprou em janeiro, quando os studios fazem mudança de começo de ano, e em agosto, quando chegam as coleções de primavera e verão.</p>
+</section>
+
+<!-- ===================== 11 ===================== -->
+<section id="s11">
+  <header class="sec-head l11">
+    <p class="sec-num">11</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Depois de entrar: as três perguntas</h2>
+  </header>
+
+  <p class="lead">Com a bancada entregue, você já sabe como ela trabalha. As próximas vendas estão nos detalhes que ela ainda improvisa.</p>
+
+  <p>Na entrega, enquanto ela arruma as peças, faça estas três perguntas:</p>
+
+  <ol class="perguntas">
+    <li><span>"Onde você apoia o celular quando grava o vídeo?"</span></li>
+    <li><span>"Tem alguma coisa na bancada que você ainda guarda em pote ou em caixa de sapato?"</span></li>
+    <li><span>"Quem mais você conhece que atende sozinha, como você?"</span></li>
+  </ol>
+
+  <p class="label">O que costuma aparecer</p>
+  <ul class="chips">
+    <li>Suporte de celular para filmar a bancada</li>
+    <li>Caixa de tips com divisórias numeradas de 0 a 9</li>
+    <li>Porta-cartão e placa com QR do Pix</li>
+    <li>Mostruário novo a cada coleção</li>
+    <li>Plaquinha de cada estação do salão</li>
+    <li class="g01">Indicação da professora da escola de unhas</li>
+  </ul>
+
+  <div class="ficha escura">
+    <p class="ficha-tab">Meta</p>
+    <p>Três oportunidades e duas indicações por cliente atendida. Neste G-Code a indicação vale mais que a oportunidade: uma colega indicada fecha em uma visita, sem objeção de preço.</p>
+  </div>
+</section>
+
+<!-- ===================== 12 ===================== -->
+<section id="s12">
+  <header class="sec-head l12">
+    <p class="sec-num">12</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Missão 72 horas</h2>
+  </header>
+
+  <p class="lead">Em 72 horas, você sai da impressora parada para três propostas entregues na mão de um comerciante. Aqui, proposta é o desenho da bancada dela, com as medidas que você tirou.</p>
+
+  <div class="dias">
+    <div class="dia-col">
+      <p class="dia"><b>1</b> Preparar</p>
+      <ul class="check">
+        <li>Imprimir dois jogos do kit de amostra</li>
+        <li>Pintar e encaixar 12 tips no mini mostruário</li>
+        <li>Listar 20 studios e salões no Google Maps e no Instagram do bairro</li>
+        <li>Mandar mensagem pedindo 10 minutos para 5 studios com agenda fechada</li>
+        <li>Decorar o script de 40 segundos e as seis respostas</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>2</b> Rua</p>
+      <ul class="check">
+        <li>Visitar 10 studios e salões entre 9h e 10h30</li>
+        <li>Medir 3 bancadas com a trena</li>
+        <li>Anotar cor da marca, frascos, pincéis e lado da cabine UV</li>
+        <li>Anotar toda objeção com as palavras exatas</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>3</b> Fechar</p>
+      <ul class="check">
+        <li>Desenhar as 3 bancadas medidas e mandar a imagem com os três níveis</li>
+        <li>Registrar tudo na aba 20 Alvos da planilha</li>
+        <li>Perguntar a cada uma: "tem alguma colega que eu deveria visitar?"</li>
+        <li>Marcar a volta nos salões em que a dona não estava</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Número honesto</p>
+    <div class="funil" role="img" aria-label="De 10 abordagens, 3 bancadas medidas, 3 propostas e 1 venda, mais indicações">
+      <div><span>Abordagens</span><b>10</b></div>
+      <div><span>Bancadas medidas</span><b>3</b></div>
+      <div><span>Propostas com desenho</span><b>3</b></div>
+      <div><span>Venda</span><b>1</b></div>
+    </div>
+    <p>A primeira venda leva de uma a duas semanas, porque ela quer ver o desenho antes. O número que importa é o seguinte: quantas colegas essa primeira cliente te indica. Se forem zero depois de um mês, este nicho não funciona na sua região, e você volta para o G-Code que o Seletor indicou.</p>
+  </div>
+
+  <h3>Depois das 72 horas: a semana 2</h3>
+  <ul class="check">
+    <li>Voltar nos salões em que só estava a funcionária, no dia da dona</li>
+    <li>Fazer a segunda leva de 10 abordagens, começando pelas indicações</li>
+    <li>Produzir o primeiro pedido e conferir com a lista da seção 05</li>
+    <li>Na entrega, fazer as três perguntas da seção 11 e o pedido de indicação</li>
+    <li>Seguir no Instagram todas as colegas que ela marcar</li>
+  </ul>
+
+  <h3>Registro de visitas</h3>
+  <p>Preencha no carro, logo depois de cada visita. À noite, passe para a aba 20 Alvos da planilha.</p>
+  <div class="tabela">
+  <table class="registro">
+    <tr><th>Studio e bairro</th><th>Quem decide</th><th>Medida da bancada</th><th>Objeção, nas palavras dela</th><th>Volto em</th></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================== COLA ===================== -->
+<section id="cola">
+  <header class="sec-head">
+    <p class="sec-num">+</p>
+    <p class="kicker">Anexo · leia no carro, antes de entrar</p>
+    <h2>Cola de balcão</h2>
+  </header>
+
+  <div class="cola">
+    <div class="cola-top"><b>G-02 · Nail designers e salões</b><span>Terça ou quarta · 9h às 10h30</span></div>
+    <div class="cola-grid">
+
+      <div>
+        <h4>Na mão antes de entrar</h4>
+        <ul>
+          <li>Mini mostruário com 12 tips pintados</li>
+          <li>Porta-pincéis e plaquinha "Studio"</li>
+          <li>Trena de bolso</li>
+          <li>Tem cliente na cadeira? Pergunte o intervalo e saia</li>
+        </ul>
+
+        <h4 style="margin-top:18px">Os 40 segundos</h4>
+        <p class="fala">"Eu faço mostruário de cores e organizador de bancada sob medida, com o nome do studio."</p>
+        <p class="acao">Mostruário na bancada dela. Deixe ela tirar um tip.</p>
+        <p class="fala">"Suas clientes escolhem a cor pelo frasco ou pelo mostruário?"</p>
+
+        <h4 style="margin-top:18px">As saídas</h4>
+        <dl>
+          <dt>"Pelo frasco."</dt><dd>Posso medir sua bancada? Pegue a trena.</dd>
+          <dt>"Já tenho mostruário."</dt><dd>E o resto da bancada, aparece no vídeo?</dd>
+          <dt>É funcionária.</dt><dd>Que dia a dona está? Volte nesse dia.</dd>
+          <dt>Cliente chegou.</dt><dd>Siga no Instagram na hora e saia.</dd>
+        </dl>
+      </div>
+
+      <div>
+        <h4>As 6 objeções</h4>
+        <dl>
+          <dt>"Acrílico na internet por R$ 40."</dt><dd>O meu tem a medida da sua bancada e o nome do studio.</dd>
+          <dt>"Aguenta álcool e acetona?"</dt><dd>Álcool sim. Acetona: respingo limpo na hora; de molho, não.</dd>
+          <dt>"Não cabe mais nada."</dt><dd>Por isso é sob medida. Meça ali mesmo.</dd>
+          <dt>"R$ 250 num organizador?"</dt><dd>Se paga com dois alongamentos.</dd>
+          <dt>"Quando reformar."</dt><dd>Pra quando é a reforma? Entrego na inauguração.</dd>
+          <dt>"Quem decide é a dona."</dt><dd>Que dia ela está? Volto com as estações todas.</dd>
+        </dl>
+
+        <h4 style="margin-top:18px">Os números</h4>
+        <table>
+          <tr><th>Nível</th><th>Preço</th><th>Piso</th></tr>
+          <tr><td>Entrada · mostruário</td><td class="n">R$ 90–120</td><td class="n">R$ 83</td></tr>
+          <tr><td>Padrão · bancada</td><td class="n">R$ 220–280</td><td class="n">R$ 185</td></tr>
+          <tr><td>Completo</td><td class="n">R$ 300</td><td class="n">R$ 300</td></tr>
+        </table>
+        <p style="font-family:var(--sans);font-size:13.5px;font-weight:600;margin:8px 0 0">Várias estações: mesmo preço por bancada · indicação vale uma peça</p>
+
+        <h4 style="margin-top:18px">Nunca</h4>
+        <ul class="nunca">
+          <li>Dizer que a peça aguenta acetona de molho</li>
+          <li>Fazer peça que encoste na pele da cliente</li>
+          <li>Imprimir logo de marca de esmalte</li>
+          <li>Baixar a bancada Padrão abaixo de R$ 185</li>
+          <li>Ir embora sem pedir indicação</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <svg class="logo" style="fill:var(--green-neon)" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+  <p><strong>G-Code 02 · Nail designers e salões</strong></p>
+  <p>LR Maker Lab · G-Code 3D. Uso pessoal do comprador. Proibida a revenda ou redistribuição deste material.</p>
+  <p>Todo número deste manual é hipótese a validar: tempos, gramaturas e preços mudam com a sua impressora, o seu filamento e a sua região. Refaça as contas antes da primeira proposta.</p>
+  <p>As orientações sobre limpeza não substituem as normas de biossegurança e da vigilância sanitária local. Não reproduza logotipos ou marcas de terceiros sem autorização do titular.</p>
+</footer>
+
+<script>
+/* Ilustrações do manual, desenhadas em SVG por JavaScript. Tudo em escala e na paleta da marca. */
+(function(){
+  var G="#2d7a4f", GD="#1f5c3b", INK="#14201a", SOFT="#42514a", MUTE="#6b7a72", CAR="#8a5a1e", WHITE="#f7f6f1", F="Archivo, system-ui, sans-serif";
+  function defs(id){
+    return '<defs><pattern id="'+id+'-l" width="6" height="3.2" patternUnits="userSpaceOnUse">'+
+      '<rect width="6" height="3.2" fill="'+G+'"/><rect y="2.55" width="6" height=".65" fill="'+GD+'" opacity=".5"/></pattern></defs>';
+  }
+  function svg(id,w,h,body,bg){
+    return '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+defs(id)+
+      (bg?'<rect width="'+w+'" height="'+h+'" fill="'+bg+'"/>':'')+body+'</svg>';
+  }
+  function txt(x,y,s,o){
+    o=o||{};
+    return '<text x="'+x+'" y="'+y+'" font-family="'+F+'" font-size="'+(o.size||16)+'" font-weight="'+(o.weight||700)+'" fill="'+(o.fill||INK)+'"'+
+      (o.anchor?' text-anchor="'+o.anchor+'"':'')+(o.len?' textLength="'+o.len+'" lengthAdjust="spacingAndGlyphs"':'')+
+      (o.ls?' letter-spacing="'+o.ls+'"':'')+'>'+s+'</text>';
+  }
+  function sombra(x,y,w,h,r){return '<rect x="'+(x+4)+'" y="'+(y+5)+'" width="'+w+'" height="'+h+'" rx="'+(r||0)+'" fill="rgba(20,32,26,.16)"/>';}
+
+  /* peças */
+  function chaveiro(p,x,y,w,h,nome,fundo){
+    var r=h*.22, cx=x+h*.36, tx=x+h*.64;
+    return sombra(x,y,w,h,r)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+r+'" fill="url(#'+p+'-l)"/>'+
+      '<circle cx="'+cx+'" cy="'+(y+h/2)+'" r="'+(h*.13)+'" fill="'+fundo+'"/>'+
+      '<circle cx="'+(x-h*.1)+'" cy="'+(y+h/2)+'" r="'+(h*.34)+'" fill="none" stroke="#98a29d" stroke-width="'+(h*.07)+'"/>'+
+      txt(tx+(x+w-h*.18-tx)/2,y+h*.7,nome,{size:h*.52,weight:800,fill:WHITE,anchor:"middle",len:(x+w-h*.18-tx)*.86});
+  }
+  function plaquinha(p,x,y,w,h,nome){
+    return sombra(x,y,w,h,h*.12)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(h*.12)+'" fill="url(#'+p+'-l)"/>'+
+      txt(x+w/2,y+h*.68,nome,{size:h*.5,weight:800,fill:WHITE,anchor:"middle",len:w*.52});
+  }
+  function topo(p,x,y,w){
+    var h=w*.3, sx=x+h*.46, sy=y+h*.44, R=h*.42, pts=[];
+    for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5, rr=i%2?R*.45:R; pts.push((sx+rr*Math.cos(a)).toFixed(1)+","+(sy+rr*Math.sin(a)).toFixed(1));}
+    var cx=x+w-h*.4, t0=x+h*1.0, t1=cx-h*.46;
+    return '<g opacity=".16" transform="translate(4 5)"><polygon points="'+pts.join(" ")+'" fill="'+INK+'"/><rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" fill="'+INK+'"/></g>'+
+      '<rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" rx="'+(h*.05)+'" fill="url(#'+p+'-l)"/>'+
+      '<polygon points="'+pts.join(" ")+'" fill="url(#'+p+'-l)"/>'+
+      txt(t0+(t1-t0)/2,y+h*.78,"Ísis",{size:h*.66,weight:900,fill:"url(#"+p+"-l)",anchor:"middle",len:t1-t0})+
+      '<circle cx="'+cx+'" cy="'+(y+h*.46)+'" r="'+(h*.36)+'" fill="url(#'+p+'-l)"/>'+
+      txt(cx,y+h*.64,"5",{size:h*.5,weight:900,fill:WHITE,anchor:"middle"});
+  }
+  function bambu(x1,y1,x2,y2,w){
+    w=w||7;
+    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#cfa964" stroke-width="'+w+'" stroke-linecap="round"/>'+
+      '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#ead19c" stroke-width="'+(w*.28)+'" stroke-linecap="round" transform="translate('+(-w*.18)+' 0)"/>';
+  }
+  function caixaMilk(p,x,y,w,h,comPlaca){
+    var t=y+h*.28;
+    var s='<ellipse cx="'+(x+w/2+6)+'" cy="'+(y+h+2)+'" rx="'+(w*.58)+'" ry="'+(h*.035)+'" fill="rgba(20,32,26,.14)"/>'+
+      '<rect x="'+(x+w*.32)+'" y="'+y+'" width="'+(w*.36)+'" height="'+(h*.08)+'" fill="#e9e5da" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<polygon points="'+x+','+t+' '+(x+w/2)+','+(y+h*.07)+' '+(x+w)+','+t+'" fill="#efece4" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+x+'" y="'+t+'" width="'+w+'" height="'+(h*.72)+'" fill="'+WHITE+'" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+(x+w*.82)+'" y="'+t+'" width="'+(w*.18)+'" height="'+(h*.72)+'" fill="rgba(20,32,26,.05)"/>';
+    if(comPlaca) s+=plaquinha(p,x+w*.14,y+h*.52,w*.62,w*.24,"Ísis");
+    return s;
+  }
+  function placa(x,y,w,h){
+    var s='<rect x="'+(x+6)+'" y="'+(y+7)+'" width="'+w+'" height="'+h+'" fill="rgba(20,32,26,.18)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#bdb6a7"/>';
+    for(var i=x+9;i<x+w;i+=9) s+='<line x1="'+i+'" y1="'+y+'" x2="'+i+'" y2="'+(y+h)+'" stroke="rgba(20,32,26,.05)" stroke-width="1"/>';
+    return s;
+  }
+  function elastico(x1,x2,y){return '<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" stroke="#1d1f1e" stroke-width="3.5" stroke-linecap="round" opacity=".88"/>';}
+  function mesa(x,y,s){
+    var m='<rect x="'+(x+6)+'" y="'+(y+8)+'" width="'+s+'" height="'+s+'" rx="10" fill="rgba(20,32,26,.2)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" rx="10" fill="#1b2a22"/>';
+    for(var i=1;i<10;i++){var d=s*i/10;
+      m+='<line x1="'+(x+d)+'" y1="'+(y+6)+'" x2="'+(x+d)+'" y2="'+(y+s-6)+'" stroke="rgba(74,222,128,.1)"/>'+
+         '<line x1="'+(x+6)+'" y1="'+(y+d)+'" x2="'+(x+s-6)+'" y2="'+(y+d)+'" stroke="rgba(74,222,128,.1)"/>';}
+    return m;
+  }
+  function cota(x1,x2,y,rotulo){
+    return '<g stroke="'+MUTE+'" stroke-width="1.5"><line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'"/><line x1="'+x1+'" y1="'+(y-7)+'" x2="'+x1+'" y2="'+(y+7)+'"/><line x1="'+x2+'" y1="'+(y-7)+'" x2="'+x2+'" y2="'+(y+7)+'"/></g>'+
+      '<rect x="'+((x1+x2)/2-(rotulo.length*5+12))+'" y="'+(y-12)+'" width="'+(rotulo.length*10+24)+'" height="24" fill="#eceae4"/>'+
+      txt((x1+x2)/2,y+6,rotulo,{size:15,weight:700,fill:SOFT,anchor:"middle"});
+  }
+
+  /* cenas */
+  /* peças do studio de unha */
+  var CORES=["#c2185b","#e57373","#f3b6c8","#8d6e63","#d9a88b","#6a1b9a","#1565c0","#2e7d32","#f2b635","#212121","#f4f2ec","#d84343"];
+  function tip(cx,by,w,h,cor,rot){
+    var x=cx-w/2, y=by-h;
+    return '<path d="M'+x+' '+by+' L'+x+' '+(y+h*.32)+' Q'+x+' '+y+' '+cx+' '+y+' Q'+(x+w)+' '+y+' '+(x+w)+' '+(y+h*.32)+' L'+(x+w)+' '+by+' Z" fill="'+cor+'" stroke="rgba(20,32,26,.18)" stroke-width="1.2" transform="rotate('+rot+' '+cx+' '+by+')"/>';
+  }
+  function mostruario(p,cx,by,R,n,nome){
+    var o='', tw=R*.2, th=R*.42;
+    for(var i=0;i<n;i++){
+      var a=-58+116*i/(n-1), rad=a*Math.PI/180, dx=Math.sin(rad)*R*.88, t=(dx/(1.02*R)+1)/2;
+      o+=tip(cx+dx, by-1.24*R*t*(1-t)+R*.07, tw, th, CORES[i%CORES.length], a);
+    }
+    o+='<path d="M'+(cx-R*1.02)+' '+by+' Q'+cx+' '+(by-R*.62)+' '+(cx+R*1.02)+' '+by+' Z" fill="url(#'+p+'-l)"/>';
+    o+='<rect x="'+(cx-R*1.08)+'" y="'+by+'" width="'+(R*2.16)+'" height="'+(R*.16)+'" rx="'+(R*.04)+'" fill="url(#'+p+'-l)"/>';
+    if(nome) o+=txt(cx,by-R*.1,nome,{size:R*.16,weight:800,fill:WHITE,anchor:"middle",len:R*.62});
+    return o;
+  }
+  function frasco(x,by,w,cor){
+    var h=w*1.25;
+    return '<rect x="'+(x+w*.3)+'" y="'+(by-h*1.55)+'" width="'+(w*.4)+'" height="'+(h*.62)+'" rx="'+(w*.06)+'" fill="#1d1f1e"/>'+
+      '<rect x="'+x+'" y="'+(by-h)+'" width="'+w+'" height="'+h+'" rx="'+(w*.18)+'" fill="'+cor+'"/>'+
+      '<rect x="'+(x+w*.14)+'" y="'+(by-h*.9)+'" width="'+(w*.14)+'" height="'+(h*.7)+'" rx="'+(w*.07)+'" fill="rgba(255,255,255,.35)"/>';
+  }
+  function rack(p,x,y,cols,cw){
+    var o='', h=cw*.55;
+    for(var r=0;r<2;r++){
+      var ry=y+r*(cw*1.25);
+      o+=sombra(x,ry+cw*.9,cols*cw,h,4)+'<rect x="'+x+'" y="'+(ry+cw*.9)+'" width="'+(cols*cw)+'" height="'+h+'" rx="4" fill="url(#'+p+'-l)"/>';
+      for(var c=0;c<cols;c++) o+=frasco(x+c*cw+cw*.18,ry+cw*.95,cw*.64,CORES[(c+r*cols+3)%CORES.length]);
+    }
+    return o;
+  }
+  function pinceis(p,x,y,w,n){
+    var o='', h=w*.55;
+    for(var i=0;i<n;i++){var px=x+w*(i+.5)/n; o+='<line x1="'+px+'" y1="'+(y-w*.55)+'" x2="'+px+'" y2="'+(y+4)+'" stroke="#2b2b2b" stroke-width="'+(w*.045)+'" stroke-linecap="round"/><rect x="'+(px-w*.03)+'" y="'+(y-w*.66)+'" width="'+(w*.06)+'" height="'+(w*.13)+'" rx="2" fill="#c9a877"/>';}
+    o+=sombra(x,y,w,h,6)+'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="6" fill="url(#'+p+'-l)"/>';
+    return o;
+  }
+
+  var ILL={
+    cor:function(){
+      var b='';
+      b+=frasco(150,250,110,"#9c2f48");
+      b+=txt(205,300,"A cor no frasco",{size:18,weight:800,fill:SOFT,anchor:"middle"});
+      b+=txt(330,165,"≠",{size:64,weight:800,fill:CAR,anchor:"middle"});
+      b+='<rect x="420" y="70" width="120" height="180" rx="50" fill="#eed7c8"/>';
+      b+=tip(480,215,86,130,"#c9566e",0);
+      b+=txt(480,300,"A cor na unha",{size:18,weight:800,fill:SOFT,anchor:"middle"});
+      return svg("oc",620,320,b,"#f2efe7");
+    },
+    niveis:function(){
+      var p="on", b="";
+      b+=mostruario(p,200,300,130,12,"STUDIO");
+      b+=mostruario(p,560,190,86,9,"")+rack(p,420,210,3,52)+pinceis(p,640,270,110,5);
+      b+=mostruario(p,1000,150,110,14,"")+rack(p,850,196,3,48)+pinceis(p,1015,248,100,5)+plaquinha(p,1015,190,110,34,"Studio");
+      [[200,"R$ 90–120","ENTRADA · MOSTRUÁRIO"],[600,"R$ 220–280","PADRÃO · BANCADA COMPLETA"],[1000,"R$ 300","COMPLETO · + MOSTRUÁRIO GRANDE"]].forEach(function(r){
+        b+=txt(r[0],396,r[1],{size:30,weight:900,fill:INK,anchor:"middle"})+txt(r[0],424,r[2],{size:14,weight:700,fill:G,anchor:"middle",ls:1.2});
+      });
+      return svg(p,1200,440,b,"#f2efe7");
+    },
+    bancada:function(){
+      var p="ob", b="";
+      b+='<rect x="106" y="86" width="800" height="400" rx="6" fill="rgba(20,32,26,.12)"/><rect x="100" y="80" width="800" height="400" rx="6" fill="#f7f4ee" stroke="#cfc9bb" stroke-width="2"/>';
+      b+='<rect x="120" y="100" width="230" height="110" rx="6" fill="url(#'+p+'-l)"/>'+txt(235,162,"Organizador de gel",{size:17,weight:800,fill:WHITE,anchor:"middle"});
+      b+='<rect x="400" y="100" width="190" height="140" rx="10" fill="#cfd4d2" stroke="#aab2ae" stroke-width="2"/>'+txt(495,176,"Cabine UV",{size:17,weight:800,fill:SOFT,anchor:"middle"});
+      b+='<rect x="640" y="100" width="240" height="100" rx="6" fill="url(#'+p+'-l)"/>'+txt(760,157,"Mostruário de cores",{size:17,weight:800,fill:WHITE,anchor:"middle"});
+      b+='<rect x="760" y="250" width="120" height="200" rx="6" fill="url(#'+p+'-l)"/>'+txt(820,340,"Pincéis",{size:16,weight:800,fill:WHITE,anchor:"middle"})+txt(820,362,"e lixas",{size:16,weight:800,fill:WHITE,anchor:"middle"});
+      b+='<rect x="330" y="290" width="340" height="170" rx="12" fill="none" stroke="'+CAR+'" stroke-width="2.5" stroke-dasharray="9 7"/>'+txt(500,370,"Área livre",{size:20,weight:800,fill:CAR,anchor:"middle"})+txt(500,396,"apoio da mão da cliente",{size:15,weight:600,fill:CAR,anchor:"middle"});
+      b+=txt(500,520,"Frente da bancada · lado da cliente",{size:15,weight:700,fill:MUTE,anchor:"middle"});
+      b+='<g stroke="'+MUTE+'" stroke-width="1.5"><line x1="100" y1="50" x2="900" y2="50"/><line x1="100" y1="42" x2="100" y2="58"/><line x1="900" y1="42" x2="900" y2="58"/><line x1="60" y1="80" x2="60" y2="480"/><line x1="52" y1="80" x2="68" y2="80"/><line x1="52" y1="480" x2="68" y2="480"/></g>';
+      b+='<rect x="460" y="38" width="80" height="24" fill="#f2efe7"/>'+txt(500,56,"90 cm",{size:15,weight:700,fill:SOFT,anchor:"middle"});
+      b+='<rect x="38" y="266" width="44" height="28" fill="#f2efe7"/>'+txt(60,286,"45 cm",{size:14,weight:700,fill:SOFT,anchor:"middle"});
+      return svg(p,960,540,b,"#f2efe7");
+    },
+    kit:function(){
+      var p="ok", b="", u=36;
+      b+=mostruario(p,40+4*u,300,4*u*0.93,12,"STUDIO")+cota(40,40+8*u,380,"8 cm");
+      b+=pinceis(p,400,226,6*u,5)+cota(400,400+6*u,380,"6 cm");
+      b+=plaquinha(p,680,200,10*u,3*u,"Studio Ana")+cota(680,680+10*u,380,"10 × 3 cm");
+      var rx=30, ry=420;
+      b+='<rect x="'+rx+'" y="'+ry+'" width="'+(28*u+18)+'" height="56" rx="3" fill="#d3d9d6" stroke="#b3bdb8"/>';
+      for(var mm=0;mm<=280;mm++){var x=rx+18+mm*u/10, hh=mm%10===0?20:(mm%5===0?13:7);
+        b+='<line x1="'+x.toFixed(1)+'" y1="'+ry+'" x2="'+x.toFixed(1)+'" y2="'+(ry+hh)+'" stroke="#55615b" stroke-width="'+(mm%10===0?1.4:.8)+'"/>';
+        if(mm%10===0) b+=txt(x,ry+40,String(mm/10),{size:12,weight:600,fill:SOFT,anchor:"middle"});}
+      return svg(p,1080,500,b,"#eceae4");
+    }
+  };
+  var alvos=document.querySelectorAll("[data-ill]");
+  for(var i=0;i<alvos.length;i++){var f=ILL[alvos[i].getAttribute("data-ill")]; if(f) alvos[i].innerHTML=f();}
+})();
+</script>
+
+</body>
+</html>
