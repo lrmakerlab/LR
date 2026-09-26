@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G-Code 05 · Semijoias</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14201a;
+    --ink-soft:#42514a;
+    --ink-mute:#6b7a72;
+    --paper:#fbfaf6;
+    --paper-2:#f2efe7;
+    --rule:#ddd8cc;
+    --green-deep:#2d7a4f;
+    --green-neon:#4ade80;
+    --green-wash:#e4f1e8;
+    --plate:#1b2a22;
+    --caramel:#8a5a1e;
+    --caramel-soft:#f6ecdc;
+    --measure:66ch;
+    --wide:1080px;
+    --gut:clamp(18px,5vw,64px);
+    --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    box-sizing:border-box;
+    color-scheme:light;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 12px);-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%}
+
+  /* =========================================================
+     CAPA — a mesa de impressão
+     ========================================================= */
+  .cover{
+    background-color:var(--plate);
+    background-image:
+      linear-gradient(rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(rgba(74,222,128,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.035) 1px,transparent 1px);
+    background-size:80px 80px,80px 80px,16px 16px,16px 16px;
+    color:var(--paper);
+    padding:clamp(24px,5vw,56px) var(--gut) 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .cover-top{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;
+    font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.02em;
+    margin:0 0 clamp(28px,6vw,56px);
+  }
+  .cover-brand{color:var(--green-neon);margin:0}
+  .cover-level{color:#9fb3a8;margin:0;font-stretch:112%}
+  .cover-code{
+    font-family:var(--sans);
+    font-weight:900;
+    font-stretch:78%;
+    font-size:clamp(110px,31vw,330px);
+    line-height:.78;
+    letter-spacing:-.035em;
+    margin:0 0 0 -.04em;
+    color:var(--green-neon);
+    background:repeating-linear-gradient(180deg,var(--green-neon) 0 .052em,#2fbf63 .052em .062em);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .cover-grid{
+    display:grid;gap:clamp(18px,3vw,40px);
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));
+    align-items:end;
+    margin-top:clamp(14px,2vw,22px);
+  }
+  .cover-market{
+    font-family:var(--sans);
+    font-weight:800;
+    font-stretch:88%;
+    font-size:clamp(30px,5.4vw,58px);
+    line-height:1;
+    letter-spacing:-.025em;
+    margin:0;
+    text-wrap:balance;
+  }
+  .cover-promise{
+    max-width:46ch;
+    margin:0;
+    font-size:clamp(17px,2vw,20px);
+    color:#cdd8d0;
+  }
+  .cover > *{position:relative;z-index:1}
+  .cover > .cover-mark{
+    position:absolute;z-index:0;
+    right:clamp(-120px,-6vw,-30px);top:clamp(90px,10vw,130px);
+    width:clamp(260px,46vw,580px);height:auto;
+    fill:rgba(74,222,128,.07);
+  }
+  .cover-brand{display:flex;align-items:center;gap:10px}
+  .cover-brand .logo{width:26px;height:auto;fill:var(--green-neon);flex:none}
+  .cover-72h{
+    list-style:none;padding:0;margin:clamp(30px,5vw,48px) 0 0;max-width:none;
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;
+  }
+  .cover-72h li{max-width:none;margin:0;padding:14px 16px 16px;background:rgba(20,32,26,.78);border-top:3px solid rgba(74,222,128,.35);font-family:var(--sans)}
+  .cover-72h b{display:block;font-weight:900;font-stretch:78%;font-size:26px;letter-spacing:-.02em;line-height:1;color:var(--paper);margin-bottom:6px}
+  .cover-72h span{display:block;font-size:14px;line-height:1.35;color:#b9c8bf}
+  .cover-72h .fim{background:var(--green-neon);border-top-color:var(--green-neon)}
+  .cover-72h .fim b,.cover-72h .fim span{color:var(--ink)}
+  .cover-72h .fim span{font-weight:700}
+
+  .radar{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px;
+    background:rgba(74,222,128,.22);
+    border-top:1px solid rgba(74,222,128,.22);
+    margin:clamp(28px,5vw,44px) calc(var(--gut) * -1) 0;
+  }
+  .radar div{background:var(--ink);padding:18px var(--gut) 22px}
+  .radar dt{
+    font-family:var(--sans);
+    font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:#8ba296;margin:0 0 6px;
+  }
+  .radar dd{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:85%;font-size:24px;line-height:1.05;letter-spacing:-.02em;
+    margin:0;color:var(--paper);
+  }
+  .radar .hot dd{color:var(--green-neon)}
+
+  /* =========================================================
+     CORPO
+     ========================================================= */
+  main{padding-inline:var(--gut)}
+  section{
+    max-width:var(--wide);
+    margin-inline:auto;
+    padding-block:clamp(56px,8vw,96px) 0;
+  }
+  .sec-head{
+    display:grid;grid-template-columns:auto 1fr;gap:6px clamp(14px,2.4vw,28px);
+    align-items:end;
+    margin:0 0 clamp(22px,3vw,34px);
+    padding-bottom:clamp(16px,2vw,22px);
+    border-bottom:2px solid var(--ink);
+  }
+  .sec-num{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:72%;
+    font-size:clamp(64px,10vw,112px);
+    line-height:.8;letter-spacing:-.04em;
+    color:var(--green-deep);
+    margin:0;
+    grid-row:span 2;
+  }
+  .camadas{display:flex;gap:3px;max-width:260px;margin:0 0 10px}
+  .camadas i{flex:1;height:7px;background:var(--rule)}
+  .l1 i:nth-child(-n+1),.l2 i:nth-child(-n+2),.l3 i:nth-child(-n+3),.l4 i:nth-child(-n+4),
+  .l5 i:nth-child(-n+5),.l6 i:nth-child(-n+6),.l7 i:nth-child(-n+7),.l8 i:nth-child(-n+8),
+  .l9 i:nth-child(-n+9),.l10 i:nth-child(-n+10),.l11 i:nth-child(-n+11),.l12 i:nth-child(-n+12){background:var(--green-deep)}
+  .kicker{
+    font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--ink-mute);margin:0 0 4px;
+  }
+  h2{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;
+    font-size:clamp(28px,4.2vw,44px);
+    line-height:1.02;letter-spacing:-.028em;
+    margin:0;
+    text-wrap:balance;
+  }
+  h3{
+    font-family:var(--sans);
+    font-weight:700;font-size:19px;letter-spacing:-.012em;
+    margin:2.2em 0 .6em;
+    text-wrap:balance;
+  }
+  p,li{max-width:var(--measure)}
+  p{margin:0 0 1em}
+  ul,ol{padding-left:1.1em;margin:0 0 1em}
+  li{margin-bottom:.45em}
+  strong{font-weight:600}
+  .lead{font-size:clamp(19px,2.1vw,22px);line-height:1.5;color:var(--ink-soft);max-width:60ch;margin-bottom:1.4em}
+  .label{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);margin:0 0 10px;
+  }
+
+  .split{display:grid;gap:clamp(16px,2.6vw,28px);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));align-items:start;margin:0 0 20px}
+  .split > *{margin-bottom:0}
+
+  /* ---------- fichas e avisos ---------- */
+  .ficha{
+    border:1px solid var(--rule);
+    background:#fff;
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .ficha-tab{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);
+    margin:0 0 12px;
+  }
+  .ficha p:last-child,.ficha ul:last-child{margin-bottom:0}
+  .ficha.escura{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .ficha.escura .ficha-tab{color:var(--green-neon)}
+
+  .aviso{
+    background:var(--caramel-soft);
+    border-top:4px solid var(--caramel);
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .aviso .ficha-tab{color:var(--caramel)}
+  .aviso p:last-child,.aviso ul:last-child{margin-bottom:0}
+  .aviso-grande{
+    font-family:var(--sans);font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.1;letter-spacing:-.02em;
+    color:var(--caramel);margin:0 0 .5em;
+  }
+
+  /* ---------- fala e ação ---------- */
+  .fala{
+    font-size:clamp(19px,2.2vw,21px);
+    line-height:1.5;
+    border-left:4px solid var(--green-neon);
+    padding:2px 0 2px 18px;
+    margin:0 0 1em;
+    max-width:56ch;
+  }
+  .acao{
+    font-family:var(--sans);
+    font-weight:600;font-size:15px;
+    background:var(--paper-2);
+    padding:12px 16px 12px 44px;
+    margin:0 0 1em;
+    max-width:var(--measure);
+    position:relative;
+  }
+  .acao::before{
+    content:"";position:absolute;left:16px;top:17px;width:14px;height:10px;
+    border:2px solid var(--green-deep);border-radius:2px;
+  }
+
+  /* ---------- tabelas ---------- */
+  .tabela{overflow-x:auto;margin:0 0 20px;max-width:760px}
+  table{
+    border-collapse:collapse;
+    width:100%;
+    font-family:var(--sans);
+    font-size:15px;
+  }
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-weight:700;color:var(--ink-mute);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;border-bottom:2px solid var(--ink)}
+  td.n{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+  tr.total td{border-bottom:0;border-top:2px solid var(--ink);font-weight:800}
+
+  /* =========================================================
+     COMPONENTES VISUAIS POR SEÇÃO
+     ========================================================= */
+
+  /* 01 · filtro */
+  .filtro{list-style:none;padding:0;margin:0 0 28px;max-width:none;border-top:2px solid var(--ink)}
+  .filtro li{
+    display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 16px;align-items:center;
+    max-width:none;margin:0;padding:16px 0;border-bottom:1px solid var(--rule);
+  }
+  .filtro .ok{width:22px;height:22px;background:var(--green-deep);position:relative}
+  .filtro .ok::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid var(--green-neon);border-width:0 3px 3px 0;transform:rotate(45deg)}
+  .filtro .crit{font-family:var(--sans);font-weight:700;font-size:16px;line-height:1.25}
+  .filtro .crit small{display:block;font-family:var(--serif);font-weight:400;font-size:15px;color:var(--ink-soft);margin-top:2px}
+  .filtro .val{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.02em;text-align:right;white-space:nowrap;color:var(--green-deep)}
+
+  .conta{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:1px;
+    background:var(--ink);border:1px solid var(--ink);margin:0 0 22px;
+  }
+  .conta div{background:var(--paper);padding:18px 20px}
+  .conta div:last-child{background:var(--ink);color:var(--paper)}
+  .conta .big{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,50px);line-height:1;letter-spacing:-.03em}
+  .conta div:last-child .big{color:var(--green-neon)}
+  .conta .cap{display:block;font-family:var(--sans);font-size:14px;font-weight:600;margin-top:8px;color:var(--ink-soft)}
+  .conta div:last-child .cap{color:#b9c8bf}
+  .conta .op{font-family:var(--sans);font-weight:700;color:var(--ink-mute);font-size:13px;display:block;margin-bottom:6px}
+
+  /* 02 · tipos de cliente + semana */
+  .tipos{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));margin:0 0 22px}
+  .tipo{border-top:4px solid var(--green-deep);background:#fff;padding:16px 18px 18px;border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .tipo.principal{border-top-color:var(--green-neon);background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .tipo h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:20px;line-height:1.1;letter-spacing:-.015em;margin:0 0 6px}
+  .tipo .tag{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 10px}
+  .tipo.principal .tag{color:var(--green-neon)}
+  .tipo p{font-size:15.5px;line-height:1.5;margin:0}
+
+  .semana{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:0 0 20px;max-width:760px}
+  .dia-sem{padding:12px 8px 14px;background:var(--paper-2);min-height:112px;display:flex;flex-direction:column;gap:6px}
+  .dia-sem b{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:22px;letter-spacing:-.02em;line-height:1}
+  .dia-sem span{font-family:var(--sans);font-size:12.5px;line-height:1.3;color:var(--ink-soft)}
+  .dia-sem.ir{background:var(--green-deep);color:#fff}
+  .dia-sem.ir span{color:#e4f1e8}
+  .dia-sem.ir em{font-style:normal;font-family:var(--sans);font-weight:800;font-size:15px;color:var(--green-neon)}
+  .dia-sem.nao{background:repeating-linear-gradient(135deg,var(--paper-2) 0 8px,#e8e3d8 8px 10px)}
+
+  /* 03 · dores */
+  .dores{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 20px}
+  .dor{background:#fff;border:1px solid var(--rule);padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px}
+  .dor .dn{font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:54px;line-height:.8;color:var(--rule)}
+  .dor h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:21px;line-height:1.1;letter-spacing:-.015em;margin:0}
+  .dor p{font-size:15.5px;line-height:1.52;margin:0}
+  .dor.fecha{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .dor.fecha .dn{color:var(--green-neon)}
+  .dor.fecha h4{color:#fff}
+
+  /* 04 · níveis */
+  .niveis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));align-items:stretch;margin:0 0 24px}
+  .ficha.nivel{margin:0;display:flex;flex-direction:column;border-top:4px solid var(--rule)}
+  .nivel .preco{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:78%;font-size:clamp(30px,3.6vw,38px);line-height:1;letter-spacing:-.03em;
+    margin:.1em 0 .5em;
+  }
+  .nivel p:not(.preco):not(.ficha-tab){font-size:15.5px;line-height:1.52}
+  .ficha.nivel.meio{background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .ficha.nivel.meio .ficha-tab{color:var(--green-neon)}
+  .ficha.nivel.meio .preco{color:var(--green-neon)}
+  .selo{align-self:flex-start;font-family:var(--sans);font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--green-neon);color:var(--ink);padding:4px 8px;margin:0 0 12px}
+
+  .prazo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:6px 0 18px}
+  .prazo div{background:rgba(255,255,255,.7);padding:10px 6px;text-align:center;font-family:var(--sans)}
+  .prazo b{display:block;font-weight:800;font-size:14px}
+  .prazo span{display:block;font-size:11.5px;line-height:1.25;color:var(--ink-soft);margin-top:3px}
+  .prazo .p-ok{background:var(--green-deep);color:#fff}
+  .prazo .p-ok span{color:#e4f1e8}
+  .prazo .p-festa{background:var(--caramel);color:#fff}
+  .prazo .p-festa span{color:#f6ecdc}
+
+  /* 05 · material */
+  .cores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 20px;max-width:640px}
+  .cor{font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.25}
+  .cor i{display:block;aspect-ratio:1;max-width:100%;border:1px solid rgba(20,32,26,.18);margin-bottom:8px;
+    background-image:repeating-linear-gradient(180deg,rgba(0,0,0,.05) 0 2px,transparent 2px 5px)}
+  .painel{background:var(--plate);color:#dfe8e2;padding:18px 20px;font-family:var(--sans);font-size:14.5px}
+  .painel .ficha-tab{color:var(--green-neon)}
+  .painel dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0}
+  .painel dt,.painel dd{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1);margin:0}
+  .painel dt{color:#9fb3a8}
+  .painel dd{font-family:var(--mono);color:var(--green-neon);text-align:right;padding-left:12px}
+  .letra{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:0 0 20px}
+  .letra div{background:#fff;padding:16px 18px}
+  .letra b{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:44px;line-height:1;letter-spacing:-.03em;color:var(--green-deep)}
+  .letra span{font-family:var(--sans);font-size:13.5px;color:var(--ink-soft)}
+  .grafia{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .grafia span{font-family:var(--sans);font-weight:800;font-stretch:85%;font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;line-height:1;padding:10px 16px 12px;border:2px solid var(--ink);background:#fff}
+  .grafia span.certo{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+
+  /* 06 · kit */
+  .mesa{margin:0 0 10px;max-width:760px}
+  .mesa-bar{display:flex;gap:3px;height:64px}
+  .mesa-bar div{background:var(--green-deep);color:#fff;font-family:var(--sans);font-weight:800;font-size:15px;padding:10px 12px;display:flex;align-items:flex-end;min-width:0;overflow:hidden;white-space:nowrap}
+  .mesa-bar div:nth-child(2){background:var(--ink)}
+  .mesa-bar div:nth-child(3){background:#3d9a66}
+  .mesa-leg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px;margin:14px 0 0;padding:0;list-style:none;max-width:none}
+  .mesa-leg li{max-width:none;margin:0;font-family:var(--sans);font-size:14px;line-height:1.35;padding-left:18px;position:relative}
+  .mesa-leg li::before{content:"";position:absolute;left:0;top:4px;width:10px;height:10px;background:var(--green-deep)}
+  .mesa-leg li:nth-child(2)::before{background:var(--ink)}
+  .mesa-leg li:nth-child(3)::before{background:#3d9a66}
+  .mesa-leg b{display:block;font-size:15px}
+  .totais{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;margin:22px 0 24px;padding:16px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+  .totais div{font-family:var(--sans)}
+  .totais b{display:block;font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,48px);line-height:1;letter-spacing:-.03em}
+  .totais span{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute)}
+
+  /* 07 · gráfico de retorno por hora */
+  .grafico{margin:8px 0 12px;max-width:820px;font-family:var(--sans)}
+  .g-row{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:6px 16px;align-items:center;padding:7px 0}
+  .g-lab{font-size:14px;line-height:1.25;font-weight:600}
+  .g-lab small{display:block;font-weight:500;color:var(--ink-mute);font-size:12.5px}
+  .g-track{position:relative;height:30px;background:
+    linear-gradient(90deg,transparent calc(21.43% - 1px),var(--caramel) calc(21.43% - 1px) calc(21.43% + 1px),transparent calc(21.43% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(14.2857% - 1px),#e6e1d6 calc(14.2857% - 1px) 14.2857%)}
+  .g-bar{height:100%;width:calc(var(--v) / 70 * 100%);background:var(--green-deep);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-weight:800;font-size:13.5px;white-space:nowrap;min-width:64px}
+  .g-bar.baixo{background:var(--caramel)}
+  .g-bar.top{background:var(--green-neon);color:var(--ink)}
+  .g-axis{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:16px;font-size:11.5px;color:var(--ink-mute);font-weight:600}
+  .g-ticks{position:relative;height:18px}
+  .g-ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+  .g-ticks span:first-child{transform:none}
+  .g-ticks span.piso{color:var(--caramel);font-weight:800}
+  .g-nota{font-family:var(--sans);font-size:13px;color:var(--ink-mute);margin:6px 0 24px}
+
+
+  .folha{background:#fff;border:1px solid var(--rule);box-shadow:6px 6px 0 var(--paper-2);padding:clamp(18px,3vw,28px);margin:0 0 22px;max-width:780px}
+  .folha-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:4px}
+  .folha-top b{font-family:var(--sans);font-weight:900;font-stretch:80%;font-size:26px;letter-spacing:-.02em}
+  .folha-top span{font-family:var(--sans);font-size:13px;color:var(--ink-mute);font-weight:600}
+  .folha .tabela{margin:0;max-width:none}
+  .folha td.revende{color:var(--green-deep)}
+
+  /* 08 · os 40 segundos */
+  .relogio{position:relative;margin:6px 0 26px;padding-left:92px;max-width:780px}
+  .relogio::before{content:"";position:absolute;left:70px;top:6px;bottom:6px;width:2px;background:var(--rule)}
+  .passo{position:relative;margin:0 0 18px}
+  .passo:last-child{margin-bottom:0}
+  .passo .t{position:absolute;left:-92px;top:2px;width:60px;text-align:right;font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:17px;color:var(--green-deep);white-space:nowrap}
+  .passo::before{content:"";position:absolute;left:-27px;top:8px;width:12px;height:12px;background:var(--paper);border:3px solid var(--green-deep)}
+  .passo.cala::before{background:var(--green-neon);border-color:var(--ink)}
+  .passo .fala,.passo .acao,.passo p{margin-bottom:.6em}
+  .saidas{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0 0 18px}
+  .saida{background:#fff;border:1px solid var(--rule);padding:18px 20px}
+  .saida .quando{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:18px;line-height:1.2;letter-spacing:-.01em;margin:0 0 8px}
+  .saida p{font-size:15.5px;line-height:1.52;margin:0}
+
+  /* 09 · objeções */
+  .obj{border:1px solid var(--rule);background:#fff;margin:0 0 18px;display:grid;grid-template-columns:minmax(0,1fr)}
+  .obj-head{background:var(--ink);color:#fff;padding:clamp(18px,3vw,26px)}
+  .obj-n{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-neon);margin:0 0 8px}
+  .obj-q{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.12;letter-spacing:-.02em;
+    margin:0;text-wrap:balance;max-width:none;
+  }
+  .obj-body{padding:clamp(18px,3vw,26px);display:grid;gap:4px 28px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+  .obj-body > *{margin:0}
+  .obj-real{color:var(--ink-soft);font-style:italic;font-size:16px}
+  .obj-real::before{content:"O que ela quer dizer";display:block;font-style:normal;font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:6px}
+  .obj-resp{grid-column:1/-1}
+  .obj-resp .label{margin-top:12px}
+  .erro{
+    grid-column:1/-1;
+    color:var(--caramel);font-weight:700;font-family:var(--sans);font-size:15px;
+    background:var(--caramel-soft);margin:0;padding:12px clamp(18px,3vw,26px);
+  }
+
+  /* 10 · follow-up */
+  .fio{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 22px;align-items:start}
+  .msg{position:relative}
+  .msg .quando{font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:40px;line-height:1;letter-spacing:-.03em;color:var(--green-deep);margin:0 0 10px}
+  .msg .quando small{font-size:14px;font-weight:700;font-stretch:100%;letter-spacing:0;color:var(--ink-mute);margin-left:6px}
+  .balao{background:var(--green-wash);border-radius:14px 14px 14px 3px;padding:14px 16px;font-size:16px;line-height:1.5;margin:0}
+  .msg.fim .quando{color:var(--caramel)}
+  .msg.fim .balao{background:var(--caramel-soft)}
+  .msg .obs{font-family:var(--sans);font-size:13.5px;color:var(--ink-mute);margin:10px 0 0}
+
+  /* 11 · perguntas */
+  .perguntas{list-style:none;padding:0;margin:0 0 22px;counter-reset:q;max-width:none}
+  .perguntas li{counter-increment:q;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:baseline;max-width:none;padding:14px 0;border-bottom:1px solid var(--rule);margin:0}
+  .perguntas li::before{content:counter(q);font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:48px;line-height:.8;color:var(--green-deep)}
+  .perguntas span{font-family:var(--sans);font-weight:700;font-stretch:92%;font-size:clamp(20px,2.6vw,26px);line-height:1.2;letter-spacing:-.015em}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;padding:0;list-style:none;max-width:none}
+  .chips li{margin:0;max-width:none;font-family:var(--sans);font-size:14px;font-weight:600;border:1.5px solid var(--green-deep);color:var(--green-deep);padding:6px 12px}
+  .chips li.g01{background:var(--green-deep);color:#fff}
+
+  /* 12 · missão */
+  .dias{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));margin:0 0 26px;align-items:start}
+  .dia-col{background:#fff;border:1px solid var(--rule);padding:0 20px 8px}
+  .dia{
+    font-family:var(--sans);
+    font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);
+    margin:0 -20px 16px;padding:16px 20px 14px;border-bottom:2px solid var(--ink);
+    display:flex;align-items:baseline;gap:12px;
+  }
+  .dia b{font-weight:900;font-stretch:72%;font-size:56px;line-height:.8;letter-spacing:-.04em;color:var(--ink)}
+  .check{list-style:none;padding:0;max-width:none}
+  .check li{position:relative;padding-left:30px;margin-bottom:.75em;font-size:15.5px;line-height:1.45;max-width:none}
+  .check li::before{content:"";position:absolute;left:0;top:.2em;width:17px;height:17px;border:2px solid var(--green-deep);background:#fff}
+
+  .funil{display:grid;gap:4px;margin:6px 0 16px;font-family:var(--sans)}
+  .funil div{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(138,90,30,.14);padding:10px 14px;font-weight:600;font-size:14.5px;min-width:0}
+  .funil div b{font-weight:900;font-stretch:78%;font-size:24px;letter-spacing:-.02em;white-space:nowrap}
+  .funil div:nth-child(1){width:100%}
+  .funil div:nth-child(2){width:78%}
+  .funil div:nth-child(3){width:58%;background:rgba(138,90,30,.28)}
+  .funil div:nth-child(4){width:44%;background:var(--caramel);color:#fff}
+
+  .g100 .g-bar{width:calc(var(--v) / 100 * 100%)}
+  .g100 .g-track{background:
+    linear-gradient(90deg,transparent calc(15% - 1px),var(--caramel) calc(15% - 1px) calc(15% + 1px),transparent calc(15% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(10% - 1px),#e6e1d6 calc(10% - 1px) 10%)}
+  /* ---------- etiqueta e passos ---------- */
+  .etiqueta{border:2px dashed var(--ink);background:#fff;padding:16px 18px;font-family:var(--sans);font-size:13.5px;line-height:1.4;align-self:start}
+  .etiqueta .etq-top{font-weight:900;font-stretch:85%;font-size:18px;letter-spacing:-.01em;margin:0 0 8px;padding-bottom:8px;border-bottom:2px solid var(--green-deep);color:var(--green-deep)}
+  .etiqueta ul{margin:0 0 8px;padding-left:1em}
+  .etiqueta li{margin-bottom:.25em;max-width:none}
+  .etiqueta .etq-pe{font-size:11.5px;color:var(--ink-mute);margin:0}
+  .perguntas.passos span{font-size:clamp(16px,2vw,19px);font-weight:600;font-stretch:100%}
+  .perguntas.passos li::before{font-size:38px}
+
+  .g40 .g-bar{width:calc(var(--v) / 40 * 100%)}
+  .g40 .g-track{background:
+    linear-gradient(90deg,transparent calc(37.5% - 1px),var(--caramel) calc(37.5% - 1px) calc(37.5% + 1px),transparent calc(37.5% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(12.5% - 1px),#e6e1d6 calc(12.5% - 1px) 12.5%)}
+  .filtro .ok.meio{background:var(--caramel-soft);box-shadow:inset 0 0 0 2px var(--caramel)}
+  .filtro .ok.meio::after{left:5px;top:9px;width:12px;height:3px;border:0;background:var(--caramel);transform:none}
+  .filtro li.parcial .val{color:var(--caramel)}
+  /* ---------- calendário e registro ---------- */
+  .calendario{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;margin:0 0 8px;max-width:820px}
+  .mes{background:var(--paper-2);padding:10px 8px 12px;font-family:var(--sans)}
+  .mes b{display:block;font-weight:800;font-size:15px;margin-bottom:4px}
+  .mes span{display:block;font-size:12px;line-height:1.3;color:var(--ink-soft)}
+  .mes.medio{background:var(--green-wash)}
+  .mes.pico{background:var(--green-deep);color:#fff}
+  .mes.pico span{color:#e4f1e8}
+  .registro td{height:34px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
+  .registro td:last-child{border-right:0}
+
+  /* ---------- cola de balcão ---------- */
+  .cola{background:#fff;border:2px dashed var(--ink);padding:clamp(18px,3vw,30px);font-size:15px;line-height:1.45}
+  .cola-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 20px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin:0 0 18px}
+  .cola-top b{font-family:var(--sans);font-weight:900;font-stretch:78%;font-size:clamp(30px,4.4vw,44px);letter-spacing:-.03em;line-height:1}
+  .cola-top span{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-mute)}
+  .cola-grid{display:grid;gap:20px 30px;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr))}
+  .cola h4{font-family:var(--sans);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 8px}
+  .cola p,.cola li{max-width:none}
+  .cola ul{margin:0;padding-left:1em}
+  .cola li{margin-bottom:.3em}
+  .cola .fala{font-size:16px;margin:0 0 .6em;padding-left:12px;border-left-width:3px}
+  .cola .acao{font-size:13.5px;padding:8px 12px 8px 36px;margin:0 0 .6em}
+  .cola .acao::before{left:12px;top:12px}
+  .cola dl{margin:0}
+  .cola dt{font-family:var(--sans);font-weight:800;font-size:14.5px;margin:10px 0 2px}
+  .cola dt:first-child{margin-top:0}
+  .cola dd{margin:0;color:var(--ink-soft)}
+  .cola table{font-size:13.5px}
+  .cola th,.cola td{padding:6px 8px}
+  .cola .nunca li{color:var(--caramel);font-family:var(--sans);font-weight:600;font-size:14px}
+
+  /* ---------- ilustrações ---------- */
+  figure{margin:0 0 26px;max-width:860px}
+  .ill-art svg{display:block;width:100%;height:auto}
+  .ill figcaption{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink-mute);margin-top:10px}
+
+  footer{
+    background:var(--ink);color:#9fb3a8;
+    margin-top:clamp(64px,9vw,110px);
+    padding:clamp(28px,5vw,44px) var(--gut);
+    font-family:var(--sans);font-size:14px;
+  }
+  footer p{max-width:62ch;margin:0 0 .6em}
+  footer .logo{display:block;width:44px;height:auto;margin-bottom:18px}
+  footer strong{color:var(--green-neon);font-weight:700}
+
+  :focus-visible{outline:3px solid var(--green-neon);outline-offset:2px}
+
+
+  @media (max-width:560px){
+    .calendario{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .cover-72h{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .radar div:last-child:nth-child(odd){grid-column:1/-1}
+    .semana{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .prazo{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .cores{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .g-row,.g-axis{grid-template-columns:minmax(0,1fr)}
+    .g-axis > span:first-child{display:none}
+    .relogio{padding-left:30px}
+    .relogio::before{left:8px}
+    .passo .t{position:static;display:block;text-align:left;width:auto;margin-bottom:4px}
+    .passo::before{left:-30px;top:6px}
+    .funil div:nth-child(n){width:100%}
+    .filtro li{grid-template-columns:28px minmax(0,1fr)}
+    .filtro .val{grid-column:2;text-align:left}
+  }
+
+  @media print{
+    .radar{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .radar div{padding:12px 14px 14px}
+    .radar dd{font-size:14pt}
+    #cola .cola{font-size:9pt;padding:12px}
+    #cola .cola .fala{font-size:10pt}
+    #cola .cola-grid{gap:8px 18px;grid-template-columns:1fr 1fr}
+    #cola .sec-head{margin-bottom:8px;padding-bottom:6px}
+    #cola .sec-num{font-size:40pt}
+    #cola .cola-top{margin-bottom:8px;padding-bottom:6px}
+    #cola .cola-top b{font-size:18pt}
+    #cola .cola h4{font-size:7.5pt;margin-bottom:4px}
+    #cola .cola h4[style]{margin-top:10px!important}
+    #cola .cola dt{font-size:8.5pt;margin-top:5px}
+    #cola .cola dd,#cola .cola li{font-size:8.5pt;margin-bottom:1px}
+    #cola .cola .fala{font-size:9pt;margin-bottom:4px}
+    #cola .cola .acao{font-size:8pt;padding:5px 8px 5px 30px;margin-bottom:4px}
+    #cola .cola .acao::before{left:9px;top:7px}
+    #cola .cola table{font-size:8pt}
+    #cola .cola th,#cola .cola td{padding:3px 5px}
+    #cola .cola .nunca li{font-size:8.5pt}
+    .cola{break-inside:avoid}
+    @page{size:A4;margin:14mm 15mm}
+    @page capa{margin:0}
+    @page contracapa{margin:0}
+    :root{--paper:#ffffff;--gut:15mm}
+    body{font-size:10pt;line-height:1.5}
+    main{padding-inline:0}
+    section{max-width:none}
+    .lead{font-size:12pt;margin-bottom:1em}
+    .sec-head{margin-bottom:14px;padding-bottom:10px}
+    .sec-num{font-size:52pt}
+    h2{font-size:24pt}
+    h3{margin-top:1.4em;font-size:12.5pt}
+
+    /* capa e contracapa ocupam a folha inteira */
+    .cover{page:capa;height:297mm;box-sizing:border-box;width:210mm;display:flex;flex-direction:column;padding:18mm 15mm 0;overflow:hidden}
+    .cover > .cover-mark{right:-30mm;top:40mm;width:150mm}
+    .cover-code{font-size:210pt;margin-top:24mm;background:none;-webkit-text-fill-color:var(--green-neon)}
+    .cover-market{font-size:30pt}
+    .cover-promise{font-size:13pt}
+    .cover-grid{grid-template-columns:1.1fr 1fr;margin-top:8mm}
+    .cover-72h{margin-top:20mm}
+    .radar{margin:auto -15mm 0}
+    .radar div{padding-left:15mm}
+    footer{page:contracapa;break-before:page;height:297mm;overflow:hidden;box-sizing:border-box;margin:0;padding:0 15mm 22mm;display:flex;flex-direction:column;justify-content:flex-end;font-size:10pt}
+
+    /* colunas fixas no papel */
+    .tipos,.dores,.niveis,.fio,.dias{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .split,.saidas{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .conta{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .obj{display:block;margin-bottom:12px}
+    .filtro li{padding:8px 0}
+    .funil div{padding:6px 12px}
+    .funil div b{font-size:16pt}
+    .conta div{padding:12px 14px}
+    .etiqueta{font-size:9pt}
+    .perguntas li{padding:8px 0}
+    .perguntas.passos span{font-size:10.5pt}
+    table{font-size:9pt}
+    th,td{padding:5px 8px}
+    .junto{break-inside:avoid}
+    .calendario{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .mes span{font-size:8pt}
+    .registro td{height:9mm}
+    .obj-head{padding:10px 16px}
+    .obj-q{font-size:15pt}
+    .obj-body{padding:10px 16px;gap:2px 20px}
+    .obj-body .fala{font-size:10.5pt;line-height:1.42}
+    .obj-real{font-size:9.5pt}
+    .erro{font-size:9pt;padding:7px 16px}
+    .dia-col{break-inside:auto}
+    .check li{font-size:9.5pt;margin-bottom:.45em}
+    .tipo p,.dor p,.nivel p:not(.preco):not(.ficha-tab),.saida p{font-size:9.5pt;line-height:1.45}
+    .dia-sem{min-height:78px}
+    p,li{orphans:3;widows:3}
+    footer .logo{width:22mm;margin-bottom:8mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    section{break-before:page;padding-top:0}
+    main > section:first-of-type{break-before:page}
+    .ficha,.aviso,.obj,figure,.ill,table,.saida,.dor,.tipo,.msg,.dia-col,.grafico,.folha,.conta,.semana,.prazo,.passo{break-inside:avoid}
+    h2,h3,.sec-head{break-after:avoid}
+    .ill-art svg{max-height:92mm;width:auto;max-width:100%;margin:0 auto}
+    .tabela{overflow:visible}
+    .folha{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <svg class="cover-mark" viewBox="370 340 640 650" aria-hidden="true"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+
+  <div class="cover-top">
+    <p class="cover-brand"><svg class="logo" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>LR Maker Lab · G-Code 3D</p>
+    <p class="cover-level">Nível 2 · ticket maior</p>
+  </div>
+
+  <p class="cover-code">G-05</p>
+
+  <div class="cover-grid">
+    <h1 class="cover-market">Semijoias e acessórios</h1>
+    <p class="cover-promise">Expositores sob medida, na cor de cada coleção e com a logo da loja. Aqui o acabamento é o produto: a peça que você entrega fica em toda foto de joia que ela posta.</p>
+  </div>
+
+  <ol class="cover-72h" aria-label="Missão 72 horas">
+    <li><b>Dia 1</b><span>Imprimir o kit em PLA fosco e silk</span></li>
+    <li><b>Dia 2</b><span>10 lojas, com uma joia montada no expositor</span></li>
+    <li><b>Dia 3</b><span>Proposta da vitrine da próxima coleção</span></li>
+    <li class="fim"><b>72h</b><span>Três propostas entregues na mão de um comerciante</span></li>
+  </ol>
+
+  <dl class="radar">
+    <div><dt>Ticket do 1º pedido</dt><dd>R$ 150 a 700</dd></div>
+    <div><dt>Retorno por hora</dt><dd>~R$ 25/h</dd></div>
+    <div class="hot"><dt>Recompra</dt><dd>A cada coleção</dd></div>
+    <div><dt>Ciclo de venda</dt><dd>1 a 2 visitas</dd></div>
+    <div><dt>Nota no filtro</dt><dd>4 de 5</dd></div>
+  </dl>
+</header>
+
+<main>
+
+<!-- ===================== 01 ===================== -->
+<section id="s01">
+  <header class="sec-head l1">
+    <p class="sec-num">01</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Por que este G-Code funciona</h2>
+  </header>
+
+  <p class="lead">Loja de semijoia vende por foto. Toda peça nova vai para o Instagram em cima de um expositor, e a coleção seguinte pede vitrine nova. Você vende o palco da joia, e ele troca a cada lançamento.</p>
+
+  <ul class="filtro">
+    <li><span class="ok"></span><span class="crit">Ticket do primeiro pedido<small>O conjunto de balcão já passa o piso; a vitrine de coleção vai a R$ 550</small></span><span class="val">R$ 150–700</span></li>
+    <li><span class="ok"></span><span class="crit">Retorno por hora de máquina<small>Passa, mas peça de foto pede camada fina e ocupa a máquina muitas horas</small></span><span class="val">~R$ 25/h</span></li>
+    <li><span class="ok"></span><span class="crit">Recompra<small>Coleção nova, Dia das Mães, Namorados, Natal: a vitrine muda com elas</small></span><span class="val">A cada coleção</span></li>
+    <li><span class="ok"></span><span class="crit">Decisor<small>A dona da loja, ou a supervisora que compra para a equipe de revendedoras</small></span><span class="val">No balcão</span></li>
+    <li class="parcial"><span class="ok meio"></span><span class="crit">Insubstituível<small>Acrílico e veludo prontos concorrem. Você vence na medida, na cor e na logo</small></span><span class="val">Com acabamento</span></li>
+  </ul>
+
+  <h3>A conta da recompra por coleção</h3>
+  <div class="conta">
+    <div><span class="op">coleções</span><span class="big">4</span><span class="cap">lançamentos ou datas por ano</span></div>
+    <div><span class="op">×</span><span class="big">R$ 200</span><span class="cap">em expositores na cor de cada uma</span></div>
+    <div><span class="op">+</span><span class="big">R$ 550</span><span class="cap">da primeira vitrine completa</span></div>
+    <div><span class="op">=</span><span class="big">R$ 1.350</span><span class="cap">no primeiro ano, de uma única loja</span></div>
+  </div>
+  <p>A primeira vitrine paga pouco por hora, porque tem busto, e busto é a peça mais lenta. O que sustenta este G-Code é a troca de cor a cada coleção, feita sobre desenhos que você já tem.</p>
+
+  <div class="aviso">
+    <p class="ficha-tab">O acabamento decide</p>
+    <p>Joia é fotografada de perto. Linha de camada grossa, rebarba e brilho de plástico aparecem na foto e fazem a joia parecer bijuteria. Se você não consegue imprimir liso em PLA fosco com camada de 0,12 mm, resolva isso antes da primeira visita.</p>
+  </div>
+</section>
+
+<!-- ===================== 02 ===================== -->
+<section id="s02">
+  <header class="sec-head l2">
+    <p class="sec-num">02</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Quem é a cliente</h2>
+  </header>
+
+  <p class="lead">Quem vende semijoia pela aparência: vitrine arrumada, foto caprichada, coleção com nome e data de lançamento.</p>
+
+  <div class="tipos">
+    <div class="tipo principal">
+      <p class="tag">Cliente principal</p>
+      <h4>Loja de semijoias de rua ou galeria</h4>
+      <p>Vitrine, balcão e Instagram com lançamento por coleção. A dona decide e fotografa.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Compra para a equipe</p>
+      <h4>Supervisora de revendedoras</h4>
+      <p>Coordena dezenas de revendedoras com maleta. Um expositor de maleta aprovado vira pedido para a equipe toda.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Peça autoral</p>
+      <h4>Ateliê de joia artesanal</h4>
+      <p>Faz a própria joia e vende em feira e loja online. Quer expositor que combine com o trabalho dela.</p>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="ficha">
+      <p class="ficha-tab">Como reconhecer</p>
+      <ul>
+        <li>Instagram com foto de produto sobre expositor, não só na mão</li>
+        <li>Post de lançamento com nome de coleção e data</li>
+        <li>Vitrine com veludo preto genérico, igual à da loja vizinha</li>
+      </ul>
+    </div>
+    <div class="ficha">
+      <p class="ficha-tab">Quem não é cliente</p>
+      <ul>
+        <li>Joalheria de rede, com vitrine padrão da marca</li>
+        <li>Banca de bijuteria de preço único, sem foto nem coleção</li>
+        <li>Loja que só vende online e fotografa em fundo infinito</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Quando aparecer</h3>
+  <div class="semana">
+    <div class="dia-sem"><b>Seg</b><span>Recebendo mercadoria</span></div>
+    <div class="dia-sem ir"><b>Ter</b><em>10h–12h</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Qua</b><em>10h–12h</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Qui</b><em>10h–12h</em><span>Vá</span></div>
+    <div class="dia-sem nao"><b>Sex</b><span>Movimento de fim de semana</span></div>
+    <div class="dia-sem nao"><b>Sáb</b><span>Dia mais cheio</span></div>
+  </div>
+  <p>Loja de galeria abre às 10h e fica vazia até o almoço. É quando a dona arruma vitrine e fotografa: a hora certa para mostrar expositor.</p>
+  <p>Supervisora de revendedoras não tem loja. Chegue pela indicação de uma revendedora, ou pelo Instagram, pedindo 15 minutos no dia da reunião da equipe.</p>
+</section>
+
+<!-- ===================== 03 ===================== -->
+<section id="s03">
+  <header class="sec-head l3">
+    <p class="sec-num">03</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A dor que ela já paga para resolver</h2>
+  </header>
+
+  <p class="lead">Ela não quer mais um suporte. Quer que a coleção nova pareça nova, na vitrine e no celular da cliente.</p>
+
+  <div class="dores">
+    <div class="dor">
+      <span class="dn">1</span>
+      <h4>A vitrine igual à do vizinho</h4>
+      <p>Veludo preto, busto de acrílico, cartela branca. É o mesmo expositor do atacado, em todas as lojas da galeria. A joia dela some no meio das outras.</p>
+    </div>
+    <div class="dor">
+      <span class="dn">2</span>
+      <h4>A foto que não vende</h4>
+      <p>Toda peça vai para o Instagram em cima de um expositor. Se o expositor é genérico, a foto é genérica, e a seguidora passa direto.</p>
+    </div>
+    <div class="dor fecha">
+      <span class="dn">3</span>
+      <h4>O lançamento que ninguém percebe</h4>
+      <p>A coleção nova chega, entra na mesma vitrine, e a cliente de sempre não nota que tem coisa nova. Vitrine na cor da coleção avisa sem ninguém falar.</p>
+    </div>
+  </div>
+
+  <p>A terceira é a que vende a recompra. Mostre a joia dela em cima do seu expositor e pergunte quando é o próximo lançamento.</p>
+
+  <div class="split">
+    <figure class="ill">
+      <div class="ill-art" data-ill="foto" role="img" aria-label="A mesma joia fotografada em veludo preto genérico e num expositor na cor da coleção com a logo da loja"></div>
+      <figcaption>A mesma joia, duas fotos.</figcaption>
+    </figure>
+    <div>
+      <h3 style="margin-top:0">Antes de visitar: três sinais no Instagram dela</h3>
+      <div class="ficha">
+        <ul class="check">
+          <li><strong>Lançamento de coleção com nome e data.</strong> Ela pensa em coleção, e você vende por coleção.</li>
+          <li><strong>Foto de produto sobre expositor genérico.</strong> A dor 2 está no feed dela.</li>
+          <li><strong>Paleta de cor definida nas postagens.</strong> Ela vai querer o expositor nessas cores.</li>
+        </ul>
+        <p>Anote a cor da coleção atual e a data do próximo lançamento, se ela anunciou.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 ===================== -->
+<section id="s04">
+  <header class="sec-head l4">
+    <p class="sec-num">04</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A oferta, em três níveis</h2>
+  </header>
+
+  <p class="lead">Venda por coleção, não por peça. Cada nível é um jeito de a coleção nova aparecer na loja.</p>
+
+  <div class="niveis">
+    <div class="ficha nivel">
+      <p class="ficha-tab">Entrada · conjunto de balcão</p>
+      <p class="preco">R$ 150 a 180</p>
+      <p>Porta-brincos de 12 pares, suporte de 6 anéis e T de pulseiras, na cor da coleção e com a logo em relevo. Cabe no balcão e em toda foto.</p>
+    </div>
+    <div class="ficha nivel meio">
+      <span class="selo">O que você quer vender</span>
+      <p class="ficha-tab">Padrão · vitrine da coleção</p>
+      <p class="preco">R$ 450 a 550</p>
+      <p>Dois bustos de colar, dois porta-brincos, dois suportes de anel, dois T de pulseira e a placa da coleção com o nome dela. A vitrine inteira muda de cor no dia do lançamento.</p>
+    </div>
+    <div class="ficha nivel">
+      <p class="ficha-tab">Completo · vitrine e estoque</p>
+      <p class="preco">R$ 600 a 700</p>
+      <p>A vitrine Padrão mais uma bandeja com divisórias sob medida para o estoque ou para a maleta de revenda, na mesma cor.</p>
+    </div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="niveis" role="img" aria-label="Os três níveis: conjunto de balcão com porta-brincos, anéis e pulseiras; vitrine com bustos de colar; vitrine com bandeja de estoque"></div>
+    <figcaption>Entrada, Padrão e Completo lado a lado.</figcaption>
+  </figure>
+
+  <div class="aviso">
+    <p class="ficha-tab">Troca de coleção</p>
+    <p class="aviso-grande">Os desenhos são dela, a cor é da coleção. Na próxima, você só reimprime.</p>
+    <p>Guarde os arquivos de cada cliente com as medidas das peças dela. Na coleção seguinte, ofereça a troca de cor do conjunto de balcão ou da placa da coleção. Sem desenho novo, o pedido sai em dois dias.</p>
+  </div>
+
+  <h3>Qual expositor para cada peça</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Peça</th><th>Expositor</th><th>Medida que decide</th></tr>
+    <tr><td>Brinco de pino</td><td>Porta-brincos com furos em par</td><td>Furo de 1,2 mm, par a 12 mm de distância</td></tr>
+    <tr><td>Brinco de argola</td><td>Barra com fendas</td><td>Fenda de 1,5 mm, uma por argola</td></tr>
+    <tr><td>Anel</td><td>Bloco com fendas</td><td>Fenda de 2,5 mm, bordas arredondadas</td></tr>
+    <tr><td>Colar</td><td>Busto</td><td>18 cm de altura, pescoço de 5 cm de largura</td></tr>
+    <tr><td>Pulseira</td><td>T de pulseiras</td><td>Barra de 2 cm de diâmetro, 20 cm de largura</td></tr>
+  </table>
+  </div>
+  <p class="g-nota">Medidas de partida. Teste com as peças dela antes de imprimir a coleção inteira.</p>
+
+  <h3>Quando o pedido chega: o calendário das coleções</h3>
+  <div class="calendario" aria-label="Meses de maior procura">
+    <div class="mes"><b>Jan</b><span>Liquidação de verão</span></div>
+    <div class="mes medio"><b>Fev</b><span>Coleção outono-inverno</span></div>
+    <div class="mes pico"><b>Mar</b><span>Ofereça a vitrine do Dia das Mães</span></div>
+    <div class="mes pico"><b>Abr</b><span>Vitrine de Mães montada</span></div>
+    <div class="mes pico"><b>Mai</b><span>Dia das Mães; ofereça Namorados</span></div>
+    <div class="mes medio"><b>Jun</b><span>Dia dos Namorados</span></div>
+    <div class="mes pico"><b>Jul</b><span>Coleção primavera-verão</span></div>
+    <div class="mes medio"><b>Ago</b><span>Lançamento de primavera</span></div>
+    <div class="mes"><b>Set</b><span>Movimento normal</span></div>
+    <div class="mes pico"><b>Out</b><span>Ofereça a vitrine de Natal</span></div>
+    <div class="mes medio"><b>Nov</b><span>Vitrine de Natal montada</span></div>
+    <div class="mes"><b>Dez</b><span>Loja cheia: não visite</span></div>
+  </div>
+  <p class="g-nota">Verde escuro: meses de venda mais provável, de 30 a 45 dias antes de cada data. É hipótese; ajuste pelo calendário de lançamentos de cada loja.</p>
+
+  <h3>A cor da coleção: leve a cartela</h3>
+  <p>Ela não descreve cor por nome, ela aponta. Imprima oito quadrados de 3 × 3 cm nas cores foscas que você tem e leve numa argola, como cartela de tinta.</p>
+  <div class="cores" style="max-width:none;grid-template-columns:repeat(8,minmax(0,1fr))">
+    <div class="cor"><i style="background-color:#f3ece2"></i>Off-white</div>
+    <div class="cor"><i style="background-color:#e4c2a8"></i>Nude</div>
+    <div class="cor"><i style="background-color:#d9a3a0"></i>Rosé</div>
+    <div class="cor"><i style="background-color:#a9b89c"></i>Verde sálvia</div>
+    <div class="cor"><i style="background-color:#b8674a"></i>Terracota</div>
+    <div class="cor"><i style="background-color:#8a8f96"></i>Cinza</div>
+    <div class="cor"><i style="background-color:#2d7a4f"></i>Verde escuro</div>
+    <div class="cor"><i style="background-color:#1e1e1e"></i>Preto fosco</div>
+  </div>
+  <p>Se a cor da coleção não estiver na cartela, a compra do rolo entra no primeiro pedido dela. Nunca aceite "parecido" por telefone: mande foto do rolo ao lado do post da coleção.</p>
+</section>
+
+<!-- ===================== 05 ===================== -->
+<section id="s05">
+  <header class="sec-head l5">
+    <p class="sec-num">05</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Material e acabamento</h2>
+  </header>
+
+  <p class="lead">Neste G-Code, o parâmetro de impressão é argumento de venda. A joia só parece cara em cima de uma superfície que não parece plástico.</p>
+
+  <div class="split">
+    <div>
+      <h3 style="margin-top:0">PLA fosco para o fundo, silk para o detalhe</h3>
+      <p>PLA fosco apaga as linhas de camada na foto e não reflete o flash. É o material do corpo do expositor: busto, porta-brincos, bandeja.</p>
+      <p>PLA silk brilha como cetim. Use só em detalhe, como a logo em relevo ou a placa da coleção. Um busto inteiro em silk compete com o brilho da joia.</p>
+      <p>Imprima as peças de foto com camada de 0,12 mm e a face que aparece virada para cima, nunca apoiada em suporte.</p>
+    </div>
+    <div class="painel">
+      <p class="ficha-tab">Perfil de fatiamento · PLA fosco</p>
+      <dl>
+        <dt>Bico</dt><dd>205–215 °C</dd>
+        <dt>Mesa</dt><dd>55–60 °C</dd>
+        <dt>Camada · peça de foto</dt><dd>0,12 mm</dd>
+        <dt>Camada · busto e bandeja</dt><dd>0,16 mm</dd>
+        <dt>Paredes</dt><dd>3</dd>
+        <dt>Preenchimento</dt><dd>15% · base do busto 40%</dd>
+        <dt>Velocidade externa</dt><dd>40 mm/s</dd>
+      </dl>
+    </div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="medidas" role="img" aria-label="Porta-brincos com furos de 1,2 mm em pares a 12 mm e suporte de anéis com fendas de 2,5 mm e bordas arredondadas"></div>
+    <figcaption>As medidas que decidem se a joia fica firme sem riscar.</figcaption>
+  </figure>
+
+  <div class="split">
+    <div class="aviso">
+      <p class="ficha-tab">Risco 1 · Prazo de lançamento</p>
+      <p>Lançamento de coleção tem data anunciada no Instagram. Vitrine que chega depois do lançamento não serve para nada, e ela não esquece.</p>
+      <p>Entregue a vitrine Padrão com cinco dias úteis de folga antes da data. Com busto, isso significa fechar o pedido pelo menos duas semanas antes.</p>
+    </div>
+    <div class="aviso">
+      <p class="ficha-tab">Risco 2 · Marca e desenho de terceiros</p>
+      <p>Não imprima logo de grife de joia, nem copie expositor de uma marca conhecida, mesmo que ela mostre a foto e peça igual.</p>
+      <p>O expositor leva a logo da loja dela e a cor da coleção dela. É isso que faz a vitrine ser dela.</p>
+    </div>
+  </div>
+
+  <h3>Antes de entregar: conferência da vitrine</h3>
+  <div class="ficha">
+    <ul class="check">
+      <li>Uma peça real dela em cada furo e cada fenda: entra firme, sai sem esforço</li>
+      <li>Fendas e furos sem rebarba: rebarba risca o banho da joia</li>
+      <li>Busto em pé com um colar pesado pendurado, sem tombar</li>
+      <li>Cor conferida com a paleta da coleção, lado a lado, com a luz da loja</li>
+      <li>Foto de teste com o celular dela, de perto, antes de embalar</li>
+      <li>Peças embrulhadas separadas em papel de seda, para o fosco não marcar</li>
+    </ul>
+  </div>
+
+  <div class="ficha">
+    <p class="ficha-tab">Vitrine com sol ou lâmpada quente</p>
+    <p>Vitrine de vidro virada para a rua, com sol da tarde ou lâmpada halógena, esquenta o bastante para PLA amolecer e o busto entortar com o colar pendurado.</p>
+    <ul>
+      <li>Pergunte se a vitrine pega sol e que lâmpada usa</li>
+      <li>Com sol direto ou halógena, faça as peças da vitrine em PETG fosco e cobre o tempo a mais de impressão</li>
+      <li>Balcão interno e iluminação de LED: PLA fosco resolve</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== 06 ===================== -->
+<section id="s06">
+  <header class="sec-head l6">
+    <p class="sec-num">06</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Kit de amostra: o que imprimir hoje à noite</h2>
+  </header>
+
+  <p class="lead">Três peças pequenas, com joia montada. Ninguém avalia expositor vazio: ela avalia como a joia fica em cima dele.</p>
+
+  <h3 style="margin-top:0">Uma noite de máquina</h3>
+  <div class="mesa">
+    <div class="mesa-bar" role="img" aria-label="Tempo de impressão: porta-brincos 60 minutos, suporte de anéis 40 minutos, T de pulseiras 60 minutos">
+      <div style="flex:60">1h00</div>
+      <div style="flex:40">40 min</div>
+      <div style="flex:60">1h00</div>
+    </div>
+    <ul class="mesa-leg">
+      <li><b>Mini porta-brincos 6 pares</b>8 × 10 cm, PLA fosco · 20 g</li>
+      <li><b>Suporte de 3 anéis</b>6 × 3 cm, logo em silk · 12 g</li>
+      <li><b>Mini T de pulseiras</b>12 cm de largura, PLA fosco · 28 g</li>
+    </ul>
+  </div>
+  <div class="totais">
+    <div><b>2h40</b><span>de máquina</span></div>
+    <div><b>60 g</b><span>de PLA</span></div>
+    <div><b>R$ 7,80</b><span>de filamento</span></div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="kit" role="img" aria-label="Kit de amostra em escala sobre régua: mini porta-brincos de 8 cm com brincos, suporte de anéis de 6 cm e mini T de pulseiras de 12 cm"></div>
+    <figcaption>O kit em escala real, com peças de bijuteria montadas.</figcaption>
+  </figure>
+
+  <div class="split">
+    <div class="ficha escura">
+      <p class="ficha-tab">Detalhe que fecha venda</p>
+      <p>Na visita, peça licença para pôr uma peça dela no seu expositor e fotografe com o celular dela. Depois, fotografe a mesma peça no veludo da vitrine. Mostre as duas fotos lado a lado, na tela dela.</p>
+      <p>Imprima o kit na cor da coleção atual da loja, que você viu no Instagram.</p>
+    </div>
+    <div>
+      <div class="ficha">
+        <p class="ficha-tab">Apresentação</p>
+        <p>Leve o kit montado com três pares de brinco, três anéis e duas pulseiras de bijuteria, numa bandeja forrada de papel de seda. Expositor vazio parece peça de plástico; com brilho em cima, parece vitrine.</p>
+      </div>
+      <h3 style="margin-top:18px">Quanto custa sair para a rua</h3>
+      <div class="tabela">
+      <table>
+        <tr><th>Item</th><th>Quantidade</th><th>Valor</th></tr>
+        <tr><td>Kit de amostra</td><td>2 jogos</td><td class="n">R$ 15,60</td></tr>
+        <tr><td>Bijuterias para montar</td><td>3 brincos, 3 anéis, 2 pulseiras</td><td class="n">R$ 30,00</td></tr>
+        <tr><td>Papel de seda e bandeja</td><td>1 un</td><td class="n">R$ 12,00</td></tr>
+        <tr class="total"><td>Total para 10 visitas</td><td>—</td><td class="n">R$ 57,60</td></tr>
+      </table>
+      </div>
+      <p>Estimativa. As bijuterias e a bandeja servem para todas as levas.</p>
+    </div>
+  </div>
+
+  <h3>A foto comparada que fecha a venda</h3>
+  <ol class="perguntas passos">
+    <li><span>Mesma peça, mesmo celular (o dela), mesma distância: um palmo.</span></li>
+    <li><span>Luz da loja, sem flash. Flash estoura o brilho da joia e do fosco.</span></li>
+    <li><span>Primeiro a foto no seu expositor, depois na vitrine dela, sem mexer na posição do celular.</span></li>
+    <li><span>Abra as duas lado a lado na galeria e entregue o celular na mão dela. Não comente.</span></li>
+  </ol>
+</section>
+
+<!-- ===================== 07 ===================== -->
+<section id="s07">
+  <header class="sec-head l7">
+    <p class="sec-num">07</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Precificação</h2>
+  </header>
+
+  <p class="lead">Aqui a camada fina custa horas, e o busto custa mais horas que qualquer outra peça. Cobre pelo tempo de máquina, não pelo tamanho da peça.</p>
+
+  <h3 style="margin-top:0">Retorno por hora, nível por nível</h3>
+  <div class="grafico g40" role="img" aria-label="Gráfico de barras do retorno por hora de máquina por nível e peça, com a linha do piso em R$ 15 por hora">
+    <div class="g-row"><span class="g-lab">Entrada<small>a R$ 180 · 5h50</small></span><div class="g-track"><div class="g-bar top" style="--v:28">R$ 28/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Completo<small>a R$ 700 · 24h10</small></span><div class="g-track"><div class="g-bar" style="--v:26">R$ 26/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Padrão<small>a R$ 550 · 20h10</small></span><div class="g-track"><div class="g-bar" style="--v:24">R$ 24/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Entrada<small>a R$ 150 · 5h50</small></span><div class="g-track"><div class="g-bar" style="--v:22">R$ 22/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Busto avulso<small>a R$ 80 · 3h30</small></span><div class="g-track"><div class="g-bar" style="--v:19">R$ 19/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Padrão<small>a R$ 450 · 20h10</small></span><div class="g-track"><div class="g-bar" style="--v:19">R$ 19/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Busto avulso<small>a R$ 60 · 3h30</small></span><div class="g-track"><div class="g-bar baixo" style="--v:14">R$ 14/h</div></div></div>
+    <div class="g-axis"><span></span><div class="g-ticks"><span style="left:0">0</span><span style="left:25%">10</span><span class="piso" style="left:37.5%">piso R$ 15</span><span style="left:75%">30</span><span style="left:100%;transform:translateX(-100%)">40</span></div></div>
+  </div>
+  <p class="g-nota">Escala até R$ 40/h. Margem = preço menos custo real; retorno/h = margem dividida pelas horas de máquina.</p>
+  <p>O busto é a peça que ela mais pede e a que menos paga. Nunca venda busto avulso abaixo de R$ 65. Na vitrine, ele vem junto com as peças rápidas, que compensam a hora dele.</p>
+
+  <h3>Custo real da vitrine Padrão</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Item</th><th>Cálculo</th><th>Valor</th></tr>
+    <tr><td>Filamento PLA fosco e silk</td><td>370 g a R$ 130/kg</td><td class="n">R$ 48,10</td></tr>
+    <tr><td>Energia</td><td>20h10 de impressão</td><td class="n">R$ 4,60</td></tr>
+    <tr><td>Embalagem e papel de seda</td><td>—</td><td class="n">R$ 5,00</td></tr>
+    <tr><td>Desgaste e perda</td><td>15% sobre filamento</td><td class="n">R$ 7,20</td></tr>
+    <tr class="total"><td>Custo total</td><td>9 peças</td><td class="n">R$ 64,90</td></tr>
+  </table>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Seu piso</p>
+    <p class="aviso-grande">R$ 15 por hora de máquina. Na vitrine Padrão, isso é R$ 368.</p>
+    <p>Vinte horas de máquina vezes R$ 15, mais R$ 65 de custo. No conjunto de balcão, o piso é R$ 106; no busto avulso, R$ 65.</p>
+  </div>
+
+  <div class="junto">
+    <h3>A conta de um pedido real, passo a passo</h3>
+    <p>A supervisora quer um porta-brincos de maleta para cada uma das 15 revendedoras da equipe. Antes de responder, faça esta conta:</p>
+    <div class="tabela">
+    <table>
+      <tr><th>Passo</th><th>Conta</th><th>Resultado</th></tr>
+      <tr><td>1 · Máquina</td><td>15 × 1h20, em mesas de 3</td><td class="n">20h</td></tr>
+      <tr><td>2 · Custo</td><td>15 × R$ 5,20</td><td class="n">R$ 78</td></tr>
+      <tr><td>3 · Preço</td><td>15 × R$ 45</td><td class="n">R$ 675</td></tr>
+      <tr><td>4 · Margem</td><td>R$ 675 − R$ 78</td><td class="n">R$ 597</td></tr>
+      <tr><td>5 · Retorno</td><td>R$ 597 ÷ 20 h</td><td class="n">R$ 30/h</td></tr>
+      <tr class="total"><td>6 · Prazo</td><td>20h em 2 impressoras</td><td class="n">7 dias úteis</td></tr>
+    </table>
+    </div>
+  </div>
+  <p>O mesmo desenho repetido quinze vezes paga melhor que uma vitrine sob medida, porque você desenha uma vez só. É por isso que a supervisora de revendedoras vale mais que uma loja.</p>
+
+  <div class="ficha">
+    <p class="ficha-tab">Condições que vão escritas na proposta</p>
+    <ul>
+      <li><strong>Prazo:</strong> 10 dias úteis para a vitrine com busto; 5 para o conjunto de balcão</li>
+      <li><strong>Lançamento:</strong> pedido fechado até 15 dias antes da data anunciada</li>
+      <li><strong>Pagamento:</strong> 50% na aprovação da cor, 50% na entrega</li>
+      <li><strong>Troca de coleção:</strong> reimpressão na cor nova sobre os desenhos já aprovados</li>
+      <li><strong>Busto avulso:</strong> a partir de R$ 65</li>
+      <li><strong>Arquivos:</strong> guardados por você, com as medidas das peças dela</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== 08 ===================== -->
+<section id="s08">
+  <header class="sec-head l8">
+    <p class="sec-num">08</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A abordagem em 40 segundos</h2>
+  </header>
+
+  <div class="relogio">
+    <div class="passo">
+      <span class="t">antes</span>
+      <p class="acao">Entre com a bandeja montada nas mãos, coberta com papel de seda. Se houver cliente no balcão, olhe a vitrine e espere.</p>
+    </div>
+    <div class="passo">
+      <span class="t">0–8 s</span>
+      <p class="fala">"Oi, tudo bem? Eu faço expositor sob medida pra semijoia, na cor da coleção e com a logo da loja. Trouxe um montado pra você ver."</p>
+    </div>
+    <div class="passo cala">
+      <span class="t">8–20 s</span>
+      <p class="acao">Tire o papel de seda e ponha a bandeja no balcão, virada para ela. Não fale.</p>
+      <p>Ela vai olhar primeiro a joia, depois o expositor, depois passar o dedo na superfície para sentir se é plástico. Deixe ela fazer isso.</p>
+    </div>
+    <div class="passo">
+      <span class="t">20–28 s</span>
+      <p class="fala">"Quando você lança coleção nova, a vitrine muda junto?"</p>
+    </div>
+    <div class="passo">
+      <span class="t">28–40 s</span>
+      <p>Quase sempre a resposta é "não, é a mesma". Peça licença para montar uma peça dela e fotografar.</p>
+    </div>
+  </div>
+
+  <div class="saidas">
+    <div class="saida">
+      <p class="quando">"Não, a vitrine é sempre a mesma."</p>
+      <p>"Posso pôr uma peça sua aqui e tirar uma foto no seu celular? Depois tiro uma da mesma peça na vitrine." Mostre as duas.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">"Compro expositor no atacado."</p>
+      <p>"E ele tem a cor da sua coleção?" Aponte a vitrine dela e a da loja ao lado, se forem iguais.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">"Quando é pra próxima coleção?"</p>
+      <p>Ótimo sinal. Pergunte a data, a cor e quantas peças vão para a vitrine. Anote na frente dela.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">A dona não está.</p>
+      <p>Deixe o mini porta-brincos montado com a vendedora, com seu cartão. "Volto quinta às 10h pra falar com ela."</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 09 ===================== -->
+<section id="s09">
+  <header class="sec-head l9">
+    <p class="sec-num">09</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Objeções</h2>
+  </header>
+
+  <p class="lead">Seis frases de quem trabalha com aparência e percebe acabamento ruim antes de você terminar de falar.</p>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 1 de 6 · fornecedor</p><p class="obj-q">"Eu compro expositor no atacado."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Já tenho de onde comprar e não vejo motivo para mudar.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Compra, e serve bem pra vitrine de todo dia. O meu é pra coleção: na cor que você escolheu pra ela, com a sua logo e na medida das suas peças. É o expositor que faz a cliente perceber que tem coisa nova."</p></div>
+    </div>
+    <p class="erro">Erro fatal: pedir que ela troque toda a vitrine. Ofereça a vitrine da próxima coleção, não a substituição do que ela já tem.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 2 de 6 · aparência</p><p class="obj-q">"Plástico não combina com joia."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Tenho medo de a minha peça parecer bijuteria.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Concordo com você: plástico brilhante não combina. Por isso eu imprimo em fosco, que parece cerâmica na foto. Passa o dedo aqui. E olha a foto da sua peça em cima dele."</p>
+      <p class="acao">Entregue o suporte de anéis na mão dela e mostre a foto que você tirou.</p></div>
+    </div>
+    <p class="erro">Erro fatal: discutir. Mostre a superfície e a foto; a opinião dela muda com a mão, não com argumento.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 3 de 6 · cuidado</p><p class="obj-q">"Isso risca o banho das peças?"</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Já perdi peça arranhada em expositor ruim.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Pergunta certa. Cada furo e cada fenda sai sem rebarba, e antes de entregar eu testo com peças suas, uma por uma. Se alguma coisa prender ou riscar, eu refaço antes de você receber."</p></div>
+    </div>
+    <p class="erro">Erro fatal: dizer "não risca" sem testar. Teste na frente dela com uma peça da vitrine.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 4 de 6 · coleção</p><p class="obj-q">"Minha coleção muda toda estação."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Não quero gastar em algo que vou trocar em três meses.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"É exatamente por isso. Eu guardo os desenhos com as medidas das suas peças. Na próxima coleção, reimprimo na cor nova em dois dias, sem desenhar de novo. A vitrine acompanha a coleção."</p></div>
+    </div>
+    <p class="erro">Erro fatal: prometer expositor neutro que serve pra tudo. Ela quer justamente o contrário.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 5 de 6 · valor</p><p class="obj-q">"R$ 500 em expositor?"</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Não liguei a vitrine à venda da coleção.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Quanto você espera vender da coleção nova no primeiro mês? A vitrine é o que faz a cliente de sempre perceber que ela chegou. E ela aparece em toda foto que você posta até a próxima."</p>
+      <p class="acao">Se ainda hesitar: comece pelo conjunto de balcão, na cor da coleção.</p></div>
+    </div>
+    <p class="erro">Erro fatal: tirar o busto para baixar o preço sem refazer a conta. Sem as peças rápidas, o busto fica abaixo do piso.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 6 de 6 · adiamento</p><p class="obj-q">"Vou deixar para o próximo lançamento."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Sem data, eu não decido.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Perfeito, é o melhor momento. Qual é a data e a cor? Com busto, eu preciso fechar duas semanas antes. Deixo a data anotada e te mando a imagem da vitrine na cor nova até sexta."</p></div>
+    </div>
+    <p class="erro">Erro fatal: sair sem a data do lançamento. "Próximo lançamento" sem data é nunca.</p>
+  </div>
+</section>
+
+<!-- ===================== 10 ===================== -->
+<section id="s10">
+  <header class="sec-head l10">
+    <p class="sec-num">10</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Follow-up</h2>
+  </header>
+
+  <p class="lead">Ela responde por imagem. Toda mensagem leva uma foto ou uma imagem da vitrine dela, e uma data.</p>
+
+  <div class="fio">
+    <div class="msg">
+      <p class="quando">48h<small>depois da visita</small></p>
+      <p class="balao">"Oi [nome], aqui é o [você], do expositor. Te mando as duas fotos da sua peça que tiramos, e a imagem da vitrine na cor da coleção nova. Quer ver?"</p>
+    </div>
+    <div class="msg">
+      <p class="quando">7 dias<small>lançamento</small></p>
+      <p class="balao">"Oi [nome]! Pra vitrine ficar pronta antes do lançamento de [data], preciso fechar até [data menos 15 dias]. Separo a máquina pra você?"</p>
+    </div>
+    <div class="msg fim">
+      <p class="quando">21 dias<small>desistência</small></p>
+      <p class="balao">"Oi [nome], não vou mais insistir na vitrine. Guardei suas medidas; se quiser pra alguma coleção, é só me chamar. Sucesso nos lançamentos!"</p>
+    </div>
+  </div>
+
+  <div class="ficha">
+    <p class="ficha-tab">Depois da primeira entrega</p>
+    <p class="balao" style="margin-bottom:12px">"Oi [nome]! Como ficou a vitrine? Se postar a coleção com os expositores, me marca? E já me conta a cor da próxima, que eu deixo reservado."</p>
+    <p>A marcação no post da coleção é a melhor amostra para a próxima loja, e a cor da próxima coleção já é o próximo pedido. Anote a data na planilha no mesmo dia.</p>
+  </div>
+
+  <p>Reative quem não comprou em março, antes do Dia das Mães, e em outubro, antes do Natal.</p>
+</section>
+
+<!-- ===================== 11 ===================== -->
+<section id="s11">
+  <header class="sec-head l11">
+    <p class="sec-num">11</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Depois de entrar: as três perguntas</h2>
+  </header>
+
+  <p class="lead">Na montagem da vitrine, você vê o estoque, a maleta e o canto onde ela fotografa. É lá que estão as próximas vendas.</p>
+
+  <ol class="perguntas">
+    <li><span>"Onde você fotografa as peças novas?"</span></li>
+    <li><span>"Como as suas revendedoras levam as peças na maleta?"</span></li>
+    <li><span>"De quem você compra as peças, e quem mais compra dele por aqui?"</span></li>
+  </ol>
+
+  <p class="label">O que costuma aparecer</p>
+  <ul class="chips">
+    <li>Suporte de celular para live de vendas</li>
+    <li>Mini cenário de fotografia na cor da coleção</li>
+    <li>Bandeja de maleta para toda a equipe</li>
+    <li>Placa "a partir de R$" para o balcão</li>
+    <li>Porta-embalagem com a logo</li>
+    <li class="g01">Indicação da supervisora de revendedoras</li>
+  </ul>
+
+  <div class="ficha escura">
+    <p class="ficha-tab">Meta</p>
+    <p>Três oportunidades por loja atendida e a data da próxima coleção anotada. Com a data, o pedido seguinte chega sem visita nova.</p>
+  </div>
+</section>
+
+<!-- ===================== 12 ===================== -->
+<section id="s12">
+  <header class="sec-head l12">
+    <p class="sec-num">12</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Missão 72 horas</h2>
+  </header>
+
+  <p class="lead">Em 72 horas, você sai da impressora parada para três propostas entregues na mão de um comerciante. Aqui, proposta é a imagem da vitrine na cor da próxima coleção dela, com os três níveis.</p>
+
+  <div class="dias">
+    <div class="dia-col">
+      <p class="dia"><b>1</b> Preparar</p>
+      <ul class="check">
+        <li>Listar 20 lojas de semijoias no Google Maps e no Instagram</li>
+        <li>Anotar a cor da coleção atual e a data do próximo lançamento</li>
+        <li>Imprimir o kit em PLA fosco, com camada de 0,12 mm</li>
+        <li>Montar as bijuterias na bandeja</li>
+        <li>Decorar o script de 40 segundos e as seis respostas</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>2</b> Rua</p>
+      <ul class="check">
+        <li>Visitar 10 lojas entre 10h e 12h</li>
+        <li>Fotografar uma peça de cada uma no seu expositor e na vitrine</li>
+        <li>Anotar a data e a cor da próxima coleção de cada loja</li>
+        <li>Anotar toda objeção com as palavras exatas</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>3</b> Fechar</p>
+      <ul class="check">
+        <li>Mandar as duas fotos e a imagem da vitrine na cor nova</li>
+        <li>Registrar tudo na aba 20 Alvos da planilha</li>
+        <li>Pedir a cada uma o contato de uma revendedora ou supervisora</li>
+        <li>Marcar na agenda a data-limite de cada lançamento</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Número honesto</p>
+    <div class="funil" role="img" aria-label="De 10 visitas, 4 fotos comparadas, 3 propostas e 1 venda até o próximo lançamento">
+      <div><span>Visitas</span><b>10</b></div>
+      <div><span>Fotos comparadas</span><b>4</b></div>
+      <div><span>Propostas com a cor nova</span><b>3</b></div>
+      <div><span>Venda até o lançamento</span><b>1</b></div>
+    </div>
+    <p>Aqui a venda anda no ritmo do calendário dela. Quem tem lançamento em três semanas fecha agora; quem acabou de lançar fecha na próxima coleção. As duas contam: anote a data e volte nela.</p>
+  </div>
+
+  <h3>Depois das 72 horas: a semana 2</h3>
+  <ul class="check">
+    <li>Voltar nas lojas onde deixou o mini porta-brincos, no dia combinado</li>
+    <li>Fazer a segunda leva de 10 visitas, em outra galeria</li>
+    <li>Imprimir a prova de cor da primeira vitrine e conferir com a lista da seção 05</li>
+    <li>Na entrega, fazer as três perguntas da seção 11</li>
+    <li>Mandar mensagem para a supervisora que alguma loja indicou</li>
+  </ul>
+
+  <h3>Registro de visitas</h3>
+  <p>Preencha no carro, logo depois de cada visita. À noite, passe para a aba 20 Alvos da planilha.</p>
+  <div class="tabela">
+  <table class="registro">
+    <tr><th>Loja e bairro</th><th>Quem decide</th><th>Próxima coleção: data e cor</th><th>Objeção, nas palavras dela</th><th>Volto em</th></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================== COLA ===================== -->
+<section id="cola">
+  <header class="sec-head">
+    <p class="sec-num">+</p>
+    <p class="kicker">Anexo · leia no carro, antes de entrar</p>
+    <h2>Cola de balcão</h2>
+  </header>
+
+  <div class="cola">
+    <div class="cola-top"><b>G-05 · Semijoias e acessórios</b><span>Terça a quinta · 10h às 12h</span></div>
+    <div class="cola-grid">
+
+      <div>
+        <h4>Na mão antes de entrar</h4>
+        <ul>
+          <li>Bandeja com o kit montado, coberta com papel de seda</li>
+          <li>Kit na cor da coleção atual da loja</li>
+          <li>Data do próximo lançamento, se ela anunciou</li>
+          <li>Celular pronto para as duas fotos</li>
+        </ul>
+
+        <h4 style="margin-top:18px">Os 40 segundos</h4>
+        <p class="fala">"Eu faço expositor sob medida pra semijoia, na cor da coleção e com a logo da loja."</p>
+        <p class="acao">Tire o papel de seda. Deixe ela passar o dedo na superfície.</p>
+        <p class="fala">"Quando você lança coleção nova, a vitrine muda junto?"</p>
+
+        <h4 style="margin-top:18px">As saídas</h4>
+        <dl>
+          <dt>"É sempre a mesma."</dt><dd>Posso fotografar uma peça sua aqui e na vitrine?</dd>
+          <dt>"Compro no atacado."</dt><dd>E ele tem a cor da sua coleção?</dd>
+          <dt>"Pra próxima coleção?"</dt><dd>Data, cor e quantas peças. Anote.</dd>
+          <dt>Dona ausente.</dt><dd>Deixe o mini porta-brincos; volto quinta 10h.</dd>
+        </dl>
+      </div>
+
+      <div>
+        <h4>As 6 objeções</h4>
+        <dl>
+          <dt>"Compro no atacado."</dt><dd>Aquele é pra todo dia; o meu é pra coleção.</dd>
+          <dt>"Plástico não combina."</dt><dd>Fosco parece cerâmica. Passa o dedo; olha a foto.</dd>
+          <dt>"Risca o banho?"</dt><dd>Sem rebarba; testo com suas peças antes.</dd>
+          <dt>"A coleção muda."</dt><dd>Guardo os desenhos; cor nova em dois dias.</dd>
+          <dt>"R$ 500 em expositor?"</dt><dd>Quanto vende a coleção no primeiro mês?</dd>
+          <dt>"Próximo lançamento."</dt><dd>Qual data? Com busto, fecho duas semanas antes.</dd>
+        </dl>
+
+        <h4 style="margin-top:18px">Os números</h4>
+        <table>
+          <tr><th>Nível</th><th>Preço</th><th>Piso</th></tr>
+          <tr><td>Entrada · balcão</td><td class="n">R$ 150–180</td><td class="n">R$ 106</td></tr>
+          <tr><td>Padrão · vitrine</td><td class="n">R$ 450–550</td><td class="n">R$ 368</td></tr>
+          <tr><td>Completo</td><td class="n">R$ 600–700</td><td class="n">R$ 440</td></tr>
+        </table>
+        <p style="font-family:var(--sans);font-size:13.5px;font-weight:600;margin:8px 0 0">Busto avulso a partir de R$ 65 · lançamento: fechar 15 dias antes</p>
+
+        <h4 style="margin-top:18px">Nunca</h4>
+        <ul class="nunca">
+          <li>Imprimir peça de foto com camada grossa</li>
+          <li>Entregar sem testar com as peças dela</li>
+          <li>Copiar logo ou expositor de grife</li>
+          <li>Aceitar vitrine com prazo depois do lançamento</li>
+          <li>Vender busto avulso abaixo de R$ 65</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <svg class="logo" style="fill:var(--green-neon)" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+  <p><strong>G-Code 05 · Semijoias e acessórios</strong></p>
+  <p>LR Maker Lab · G-Code 3D. Uso pessoal do comprador. Proibida a revenda ou redistribuição deste material.</p>
+  <p>Todo número deste manual é hipótese a validar: tempos, gramaturas, medidas de furos e preços mudam com a sua impressora, o seu filamento, as peças da cliente e a sua região. Refaça as contas antes da primeira proposta.</p>
+  <p>Não reproduza logotipos, marcas ou desenhos de expositores de terceiros sem autorização do titular.</p>
+</footer>
+
+<script>
+/* Ilustrações do manual, desenhadas em SVG por JavaScript. Tudo em escala e na paleta da marca. */
+(function(){
+  var G="#2d7a4f", GD="#1f5c3b", INK="#14201a", SOFT="#42514a", MUTE="#6b7a72", CAR="#8a5a1e", WHITE="#f7f6f1", F="Archivo, system-ui, sans-serif";
+  function defs(id){
+    return '<defs><pattern id="'+id+'-l" width="6" height="3.2" patternUnits="userSpaceOnUse">'+
+      '<rect width="6" height="3.2" fill="'+G+'"/><rect y="2.55" width="6" height=".65" fill="'+GD+'" opacity=".5"/></pattern></defs>';
+  }
+  function svg(id,w,h,body,bg){
+    return '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+defs(id)+
+      (bg?'<rect width="'+w+'" height="'+h+'" fill="'+bg+'"/>':'')+body+'</svg>';
+  }
+  function txt(x,y,s,o){
+    o=o||{};
+    return '<text x="'+x+'" y="'+y+'" font-family="'+F+'" font-size="'+(o.size||16)+'" font-weight="'+(o.weight||700)+'" fill="'+(o.fill||INK)+'"'+
+      (o.anchor?' text-anchor="'+o.anchor+'"':'')+(o.len?' textLength="'+o.len+'" lengthAdjust="spacingAndGlyphs"':'')+
+      (o.ls?' letter-spacing="'+o.ls+'"':'')+'>'+s+'</text>';
+  }
+  function sombra(x,y,w,h,r){return '<rect x="'+(x+4)+'" y="'+(y+5)+'" width="'+w+'" height="'+h+'" rx="'+(r||0)+'" fill="rgba(20,32,26,.16)"/>';}
+
+  /* peças */
+  function chaveiro(p,x,y,w,h,nome,fundo){
+    var r=h*.22, cx=x+h*.36, tx=x+h*.64;
+    return sombra(x,y,w,h,r)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+r+'" fill="url(#'+p+'-l)"/>'+
+      '<circle cx="'+cx+'" cy="'+(y+h/2)+'" r="'+(h*.13)+'" fill="'+fundo+'"/>'+
+      '<circle cx="'+(x-h*.1)+'" cy="'+(y+h/2)+'" r="'+(h*.34)+'" fill="none" stroke="#98a29d" stroke-width="'+(h*.07)+'"/>'+
+      txt(tx+(x+w-h*.18-tx)/2,y+h*.7,nome,{size:h*.52,weight:800,fill:WHITE,anchor:"middle",len:(x+w-h*.18-tx)*.86});
+  }
+  function plaquinha(p,x,y,w,h,nome){
+    return sombra(x,y,w,h,h*.12)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(h*.12)+'" fill="url(#'+p+'-l)"/>'+
+      txt(x+w/2,y+h*.68,nome,{size:h*.5,weight:800,fill:WHITE,anchor:"middle",len:w*.52});
+  }
+  function topo(p,x,y,w){
+    var h=w*.3, sx=x+h*.46, sy=y+h*.44, R=h*.42, pts=[];
+    for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5, rr=i%2?R*.45:R; pts.push((sx+rr*Math.cos(a)).toFixed(1)+","+(sy+rr*Math.sin(a)).toFixed(1));}
+    var cx=x+w-h*.4, t0=x+h*1.0, t1=cx-h*.46;
+    return '<g opacity=".16" transform="translate(4 5)"><polygon points="'+pts.join(" ")+'" fill="'+INK+'"/><rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" fill="'+INK+'"/></g>'+
+      '<rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" rx="'+(h*.05)+'" fill="url(#'+p+'-l)"/>'+
+      '<polygon points="'+pts.join(" ")+'" fill="url(#'+p+'-l)"/>'+
+      txt(t0+(t1-t0)/2,y+h*.78,"Ísis",{size:h*.66,weight:900,fill:"url(#"+p+"-l)",anchor:"middle",len:t1-t0})+
+      '<circle cx="'+cx+'" cy="'+(y+h*.46)+'" r="'+(h*.36)+'" fill="url(#'+p+'-l)"/>'+
+      txt(cx,y+h*.64,"5",{size:h*.5,weight:900,fill:WHITE,anchor:"middle"});
+  }
+  function bambu(x1,y1,x2,y2,w){
+    w=w||7;
+    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#cfa964" stroke-width="'+w+'" stroke-linecap="round"/>'+
+      '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#ead19c" stroke-width="'+(w*.28)+'" stroke-linecap="round" transform="translate('+(-w*.18)+' 0)"/>';
+  }
+  function caixaMilk(p,x,y,w,h,comPlaca){
+    var t=y+h*.28;
+    var s='<ellipse cx="'+(x+w/2+6)+'" cy="'+(y+h+2)+'" rx="'+(w*.58)+'" ry="'+(h*.035)+'" fill="rgba(20,32,26,.14)"/>'+
+      '<rect x="'+(x+w*.32)+'" y="'+y+'" width="'+(w*.36)+'" height="'+(h*.08)+'" fill="#e9e5da" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<polygon points="'+x+','+t+' '+(x+w/2)+','+(y+h*.07)+' '+(x+w)+','+t+'" fill="#efece4" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+x+'" y="'+t+'" width="'+w+'" height="'+(h*.72)+'" fill="'+WHITE+'" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+(x+w*.82)+'" y="'+t+'" width="'+(w*.18)+'" height="'+(h*.72)+'" fill="rgba(20,32,26,.05)"/>';
+    if(comPlaca) s+=plaquinha(p,x+w*.14,y+h*.52,w*.62,w*.24,"Ísis");
+    return s;
+  }
+  function placa(x,y,w,h){
+    var s='<rect x="'+(x+6)+'" y="'+(y+7)+'" width="'+w+'" height="'+h+'" fill="rgba(20,32,26,.18)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#bdb6a7"/>';
+    for(var i=x+9;i<x+w;i+=9) s+='<line x1="'+i+'" y1="'+y+'" x2="'+i+'" y2="'+(y+h)+'" stroke="rgba(20,32,26,.05)" stroke-width="1"/>';
+    return s;
+  }
+  function elastico(x1,x2,y){return '<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" stroke="#1d1f1e" stroke-width="3.5" stroke-linecap="round" opacity=".88"/>';}
+  function mesa(x,y,s){
+    var m='<rect x="'+(x+6)+'" y="'+(y+8)+'" width="'+s+'" height="'+s+'" rx="10" fill="rgba(20,32,26,.2)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" rx="10" fill="#1b2a22"/>';
+    for(var i=1;i<10;i++){var d=s*i/10;
+      m+='<line x1="'+(x+d)+'" y1="'+(y+6)+'" x2="'+(x+d)+'" y2="'+(y+s-6)+'" stroke="rgba(74,222,128,.1)"/>'+
+         '<line x1="'+(x+6)+'" y1="'+(y+d)+'" x2="'+(x+s-6)+'" y2="'+(y+d)+'" stroke="rgba(74,222,128,.1)"/>';}
+    return m;
+  }
+  function cota(x1,x2,y,rotulo){
+    return '<g stroke="'+MUTE+'" stroke-width="1.5"><line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'"/><line x1="'+x1+'" y1="'+(y-7)+'" x2="'+x1+'" y2="'+(y+7)+'"/><line x1="'+x2+'" y1="'+(y-7)+'" x2="'+x2+'" y2="'+(y+7)+'"/></g>'+
+      '<rect x="'+((x1+x2)/2-(rotulo.length*5+12))+'" y="'+(y-12)+'" width="'+(rotulo.length*10+24)+'" height="24" fill="#eceae4"/>'+
+      txt((x1+x2)/2,y+6,rotulo,{size:15,weight:700,fill:SOFT,anchor:"middle"});
+  }
+
+  /* cenas */
+  /* peças de vitrine de semijoia */
+  var OURO="#d4a72c", OURO2="#f3d77a";
+  function brinco(cx,cy,r){return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+OURO+'"/><circle cx="'+(cx-r*.3)+'" cy="'+(cy-r*.3)+'" r="'+(r*.35)+'" fill="'+OURO2+'"/>';}
+  function gota(cx,cy,r){return '<line x1="'+cx+'" y1="'+cy+'" x2="'+cx+'" y2="'+(cy+r*1.2)+'" stroke="'+OURO+'" stroke-width="'+(r*.25)+'"/><ellipse cx="'+cx+'" cy="'+(cy+r*2)+'" rx="'+(r*.7)+'" ry="'+r+'" fill="'+OURO+'"/><ellipse cx="'+(cx-r*.2)+'" cy="'+(cy+r*1.7)+'" rx="'+(r*.25)+'" ry="'+(r*.4)+'" fill="'+OURO2+'"/>';}
+  function portaBrinco(p,x,y,w,h,pares,joias){
+    var s=sombra(x,y,w,h,w*.05)+'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(w*.05)+'" fill="url(#'+p+'-l)"/>';
+    s+='<rect x="'+(x-w*.08)+'" y="'+(y+h)+'" width="'+(w*1.16)+'" height="'+(h*.06)+'" rx="3" fill="url(#'+p+'-l)"/>';
+    var cols=pares>6?3:2, rows=Math.ceil(pares/cols);
+    for(var i=0;i<pares;i++){
+      var c=i%cols, r=Math.floor(i/cols), cx=x+w*(c+.5)/cols, cy=y+h*(r+.45)/rows, d=w*.06;
+      if(joias){ s+=(i%2?gota(cx-d,cy,w*.02)+gota(cx+d,cy,w*.02):brinco(cx-d,cy,w*.022)+brinco(cx+d,cy,w*.022)); }
+      else { s+='<circle cx="'+(cx-d)+'" cy="'+cy+'" r="'+(w*.008)+'" fill="#123a26"/><circle cx="'+(cx+d)+'" cy="'+cy+'" r="'+(w*.008)+'" fill="#123a26"/>'; }
+    }
+    return s;
+  }
+  function aneis(p,x,y,w,n,joias){
+    var h=w*.36, s=sombra(x,y,w,h,h*.3)+'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(h*.3)+'" fill="url(#'+p+'-l)"/>';
+    for(var i=0;i<n;i++){
+      var cx=x+w*(i+.5)/n;
+      s+='<rect x="'+(cx-w*.012)+'" y="'+y+'" width="'+(w*.024)+'" height="'+(h*.55)+'" fill="#123a26"/>';
+      if(joias) s+='<ellipse cx="'+cx+'" cy="'+(y-h*.12)+'" rx="'+(w*.05)+'" ry="'+(h*.34)+'" fill="none" stroke="'+OURO+'" stroke-width="'+(w*.018)+'"/><circle cx="'+cx+'" cy="'+(y-h*.46)+'" r="'+(w*.022)+'" fill="#e9f2f7" stroke="'+OURO+'" stroke-width="2"/>';
+    }
+    return s;
+  }
+  function tbar(p,x,y,w,joias){
+    var h=w*.9, s='';
+    s+='<rect x="'+(x+w*.47)+'" y="'+(y+w*.06)+'" width="'+(w*.06)+'" height="'+h+'" fill="url(#'+p+'-l)"/>';
+    s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+(w*.08)+'" rx="'+(w*.04)+'" fill="url(#'+p+'-l)"/>';
+    s+='<ellipse cx="'+(x+w/2)+'" cy="'+(y+h+w*.06)+'" rx="'+(w*.3)+'" ry="'+(w*.05)+'" fill="url(#'+p+'-l)"/>';
+    if(joias) [.18,.36,.64,.82].forEach(function(f){s+='<ellipse cx="'+(x+w*f)+'" cy="'+(y+w*.2)+'" rx="'+(w*.07)+'" ry="'+(w*.14)+'" fill="none" stroke="'+OURO+'" stroke-width="'+(w*.015)+'"/>';});
+    return s;
+  }
+  function busto(p,x,y,w,joia){
+    var h=w*1.5, cx=x+w/2, s='';
+    var d='M'+(cx-w*.14)+' '+y+' L'+(cx+w*.14)+' '+y+' L'+(cx+w*.14)+' '+(y+h*.28)+' Q'+(cx+w*.5)+' '+(y+h*.36)+' '+(cx+w*.5)+' '+(y+h*.62)+' L'+(cx+w*.2)+' '+(y+h*.92)+' L'+(cx-w*.2)+' '+(y+h*.92)+' L'+(cx-w*.5)+' '+(y+h*.62)+' Q'+(cx-w*.5)+' '+(y+h*.36)+' '+(cx-w*.14)+' '+(y+h*.28)+' Z';
+    s+='<path d="'+d+'" fill="rgba(20,32,26,.16)" transform="translate(5 6)"/><path d="'+d+'" fill="url(#'+p+'-l)"/>';
+    s+='<rect x="'+(cx-w*.28)+'" y="'+(y+h*.92)+'" width="'+(w*.56)+'" height="'+(h*.08)+'" rx="4" fill="url(#'+p+'-l)"/>';
+    if(joia){ s+='<path d="M'+(cx-w*.14)+' '+(y+h*.3)+' Q'+cx+' '+(y+h*.56)+' '+(cx+w*.14)+' '+(y+h*.3)+'" fill="none" stroke="'+OURO+'" stroke-width="'+(w*.02)+'"/>'+gota(cx,y+h*.43,w*.035); }
+    return s;
+  }
+  function bandeja(p,x,y,w,h){
+    var s=sombra(x,y,w,h,8)+'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="8" fill="url(#'+p+'-l)"/>';
+    for(var i=1;i<4;i++) s+='<rect x="'+(x+w*i/4-2)+'" y="'+(y+6)+'" width="4" height="'+(h-12)+'" fill="#123a26" opacity=".5"/>';
+    s+='<rect x="'+(x+6)+'" y="'+(y+h/2-2)+'" width="'+(w-12)+'" height="4" fill="#123a26" opacity=".5"/>';
+    return s;
+  }
+
+  var ILL={
+    foto:function(){
+      var p="jf", b='';
+      b+='<rect x="30" y="30" width="240" height="240" rx="8" fill="#141414"/>'+'<rect x="30" y="30" width="240" height="240" rx="8" fill="url(#jf-v)"/>';
+      b+='<defs><radialGradient id="jf-v" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0d0d0d" stop-opacity="0"/></radialGradient></defs>';
+      b+=gota(135,120,14)+gota(165,120,14);
+      b+=txt(150,300,"Veludo preto genérico",{size:17,weight:800,fill:SOFT,anchor:"middle"});
+      b+='<rect x="330" y="30" width="240" height="240" rx="8" fill="#efe6dc"/>';
+      b+=portaBrinco(p,380,60,140,170,2,false)+gota(422,128,14)+gota(478,128,14);
+      b+=txt(450,205,"SUA LOJA",{size:14,weight:900,fill:WHITE,anchor:"middle"});
+      b+=txt(450,300,"Na cor da coleção, com logo",{size:17,weight:800,fill:G,anchor:"middle"});
+      return svg(p,600,320,b,"#f2efe7");
+    },
+    niveis:function(){
+      var p="jn", b='';
+      b+=portaBrinco(p,70,60,120,170,6,true)+aneis(p,205,200,110,4,true)+tbar(p,200,60,120,true);
+      b+=busto(p,420,40,100,true)+busto(p,530,40,100,true)+portaBrinco(p,650,90,90,130,4,true)+aneis(p,420,250,120,4,true);
+      b+=plaquinha(p,560,250,140,40,"Coleção Aurora");
+      b+=busto(p,850,40,90,true)+portaBrinco(p,955,80,80,120,4,true)+tbar(p,1045,60,100,true)+bandeja(p,860,230,280,60);
+      [[200,"R$ 150–180","ENTRADA · CONJUNTO DE BALCÃO"],[580,"R$ 450–550","PADRÃO · VITRINE DA COLEÇÃO"],[1000,"R$ 600–700","COMPLETO · VITRINE E ESTOQUE"]].forEach(function(r){
+        b+=txt(r[0],356,r[1],{size:30,weight:900,fill:INK,anchor:"middle"})+txt(r[0],384,r[2],{size:14,weight:700,fill:G,anchor:"middle",ls:1.2});
+      });
+      return svg(p,1200,400,b,"#f2efe7");
+    },
+    medidas:function(){
+      var p="jm", b='';
+      b+=portaBrinco(p,60,40,240,240,2,false);
+      b+='<g stroke="#fff" stroke-width="1.5"><line x1="105.6" y1="128" x2="134.4" y2="128"/><line x1="105.6" y1="122" x2="105.6" y2="134"/><line x1="134.4" y1="122" x2="134.4" y2="134"/></g>'+txt(120,116,"12 mm",{size:14,weight:800,fill:"#fff",anchor:"middle"});
+      b+='<line x1="138" y1="148" x2="316" y2="148" stroke="'+CAR+'" stroke-width="1.5"/><circle cx="134.4" cy="148" r="5" fill="none" stroke="'+CAR+'" stroke-width="1.5"/>'+txt(322,153,"furo de 1,2 mm",{size:14,weight:800,fill:CAR});
+      b+=aneis(p,480,150,300,3,false);
+      b+='<line x1="530" y1="150" x2="530" y2="100" stroke="'+CAR+'" stroke-width="1.5"/>'+txt(530,92,"fenda de 2,5 mm",{size:14,weight:800,fill:CAR,anchor:"middle"});
+      b+='<line x1="776" y1="175" x2="800" y2="130" stroke="'+CAR+'" stroke-width="1.5"/>'+txt(720,120,"bordas arredondadas",{size:14,weight:800,fill:CAR});
+      b+=txt(180,330,"Porta-brincos",{size:17,weight:800,fill:SOFT,anchor:"middle"})+txt(630,330,"Suporte de anéis",{size:17,weight:800,fill:SOFT,anchor:"middle"});
+      return svg(p,900,350,b,"#f2efe7");
+    },
+    kit:function(){
+      var p="jk", b='', u=36;
+      b+=portaBrinco(p,60,80,8*u,10*u,6,true)+cota(60,60+8*u,480,"8 cm");
+      b+=aneis(p,420,300,6*u,3,true)+cota(420,420+6*u,480,"6 cm");
+      b+=tbar(p,700,80,12*u*.95,true)+cota(700,700+12*u*.95,480,"12 cm");
+      var rx=30, ry=510;
+      b+='<rect x="'+rx+'" y="'+ry+'" width="'+(31*u+18)+'" height="56" rx="3" fill="#d3d9d6" stroke="#b3bdb8"/>';
+      for(var mm=0;mm<=310;mm++){var x=rx+18+mm*u/10, hh=mm%10===0?20:(mm%5===0?13:7);
+        b+='<line x1="'+x.toFixed(1)+'" y1="'+ry+'" x2="'+x.toFixed(1)+'" y2="'+(ry+hh)+'" stroke="#55615b" stroke-width="'+(mm%10===0?1.4:.8)+'"/>';
+        if(mm%10===0) b+=txt(x,ry+40,String(mm/10),{size:12,weight:600,fill:SOFT,anchor:"middle"});}
+      return svg(p,1190,590,b,"#eceae4");
+    }
+  };
+  var alvos=document.querySelectorAll("[data-ill]");
+  for(var i=0;i<alvos.length;i++){var f=ILL[alvos[i].getAttribute("data-ill")]; if(f) alvos[i].innerHTML=f();}
+})();
+</script>
+
+</body>
+</html>
