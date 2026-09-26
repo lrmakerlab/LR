@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G-Code 01 · Confeitarias</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14201a;
+    --ink-soft:#42514a;
+    --ink-mute:#6b7a72;
+    --paper:#fbfaf6;
+    --paper-2:#f2efe7;
+    --rule:#ddd8cc;
+    --green-deep:#2d7a4f;
+    --green-neon:#4ade80;
+    --green-wash:#e4f1e8;
+    --plate:#1b2a22;
+    --caramel:#8a5a1e;
+    --caramel-soft:#f6ecdc;
+    --measure:66ch;
+    --wide:1080px;
+    --gut:clamp(18px,5vw,64px);
+    --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    box-sizing:border-box;
+    color-scheme:light;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 12px);-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%}
+
+  /* =========================================================
+     CAPA — a mesa de impressão
+     ========================================================= */
+  .cover{
+    background-color:var(--plate);
+    background-image:
+      linear-gradient(rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(rgba(74,222,128,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.035) 1px,transparent 1px);
+    background-size:80px 80px,80px 80px,16px 16px,16px 16px;
+    color:var(--paper);
+    padding:clamp(24px,5vw,56px) var(--gut) 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .cover-top{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;
+    font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.02em;
+    margin:0 0 clamp(28px,6vw,56px);
+  }
+  .cover-brand{color:var(--green-neon);margin:0}
+  .cover-level{color:#9fb3a8;margin:0;font-stretch:112%}
+  .cover-code{
+    font-family:var(--sans);
+    font-weight:900;
+    font-stretch:78%;
+    font-size:clamp(110px,31vw,330px);
+    line-height:.78;
+    letter-spacing:-.035em;
+    margin:0 0 0 -.04em;
+    color:var(--green-neon);
+    background:repeating-linear-gradient(180deg,var(--green-neon) 0 .052em,#2fbf63 .052em .062em);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .cover-grid{
+    display:grid;gap:clamp(18px,3vw,40px);
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));
+    align-items:end;
+    margin-top:clamp(14px,2vw,22px);
+  }
+  .cover-market{
+    font-family:var(--sans);
+    font-weight:800;
+    font-stretch:88%;
+    font-size:clamp(30px,5.4vw,58px);
+    line-height:1;
+    letter-spacing:-.025em;
+    margin:0;
+    text-wrap:balance;
+  }
+  .cover-promise{
+    max-width:46ch;
+    margin:0;
+    font-size:clamp(17px,2vw,20px);
+    color:#cdd8d0;
+  }
+  .cover > *{position:relative;z-index:1}
+  .cover > .cover-mark{
+    position:absolute;z-index:0;
+    right:clamp(-120px,-6vw,-30px);top:clamp(90px,10vw,130px);
+    width:clamp(260px,46vw,580px);height:auto;
+    fill:rgba(74,222,128,.07);
+  }
+  .cover-brand{display:flex;align-items:center;gap:10px}
+  .cover-brand .logo{width:26px;height:auto;fill:var(--green-neon);flex:none}
+  .cover-72h{
+    list-style:none;padding:0;margin:clamp(30px,5vw,48px) 0 0;max-width:none;
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;
+  }
+  .cover-72h li{max-width:none;margin:0;padding:14px 16px 16px;background:rgba(20,32,26,.78);border-top:3px solid rgba(74,222,128,.35);font-family:var(--sans)}
+  .cover-72h b{display:block;font-weight:900;font-stretch:78%;font-size:26px;letter-spacing:-.02em;line-height:1;color:var(--paper);margin-bottom:6px}
+  .cover-72h span{display:block;font-size:14px;line-height:1.35;color:#b9c8bf}
+  .cover-72h .fim{background:var(--green-neon);border-top-color:var(--green-neon)}
+  .cover-72h .fim b,.cover-72h .fim span{color:var(--ink)}
+  .cover-72h .fim span{font-weight:700}
+
+  .radar{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px;
+    background:rgba(74,222,128,.22);
+    border-top:1px solid rgba(74,222,128,.22);
+    margin:clamp(28px,5vw,44px) calc(var(--gut) * -1) 0;
+  }
+  .radar div{background:var(--ink);padding:18px var(--gut) 22px}
+  .radar dt{
+    font-family:var(--sans);
+    font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:#8ba296;margin:0 0 6px;
+  }
+  .radar dd{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:85%;font-size:24px;line-height:1.05;letter-spacing:-.02em;
+    margin:0;color:var(--paper);
+  }
+  .radar .hot dd{color:var(--green-neon)}
+
+  /* =========================================================
+     CORPO
+     ========================================================= */
+  main{padding-inline:var(--gut)}
+  section{
+    max-width:var(--wide);
+    margin-inline:auto;
+    padding-block:clamp(56px,8vw,96px) 0;
+  }
+  .sec-head{
+    display:grid;grid-template-columns:auto 1fr;gap:6px clamp(14px,2.4vw,28px);
+    align-items:end;
+    margin:0 0 clamp(22px,3vw,34px);
+    padding-bottom:clamp(16px,2vw,22px);
+    border-bottom:2px solid var(--ink);
+  }
+  .sec-num{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:72%;
+    font-size:clamp(64px,10vw,112px);
+    line-height:.8;letter-spacing:-.04em;
+    color:var(--green-deep);
+    margin:0;
+    grid-row:span 2;
+  }
+  .camadas{display:flex;gap:3px;max-width:260px;margin:0 0 10px}
+  .camadas i{flex:1;height:7px;background:var(--rule)}
+  .l1 i:nth-child(-n+1),.l2 i:nth-child(-n+2),.l3 i:nth-child(-n+3),.l4 i:nth-child(-n+4),
+  .l5 i:nth-child(-n+5),.l6 i:nth-child(-n+6),.l7 i:nth-child(-n+7),.l8 i:nth-child(-n+8),
+  .l9 i:nth-child(-n+9),.l10 i:nth-child(-n+10),.l11 i:nth-child(-n+11),.l12 i:nth-child(-n+12){background:var(--green-deep)}
+  .kicker{
+    font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--ink-mute);margin:0 0 4px;
+  }
+  h2{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;
+    font-size:clamp(28px,4.2vw,44px);
+    line-height:1.02;letter-spacing:-.028em;
+    margin:0;
+    text-wrap:balance;
+  }
+  h3{
+    font-family:var(--sans);
+    font-weight:700;font-size:19px;letter-spacing:-.012em;
+    margin:2.2em 0 .6em;
+    text-wrap:balance;
+  }
+  p,li{max-width:var(--measure)}
+  p{margin:0 0 1em}
+  ul,ol{padding-left:1.1em;margin:0 0 1em}
+  li{margin-bottom:.45em}
+  strong{font-weight:600}
+  .lead{font-size:clamp(19px,2.1vw,22px);line-height:1.5;color:var(--ink-soft);max-width:60ch;margin-bottom:1.4em}
+  .label{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);margin:0 0 10px;
+  }
+
+  .split{display:grid;gap:clamp(16px,2.6vw,28px);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));align-items:start;margin:0 0 20px}
+  .split > *{margin-bottom:0}
+
+  /* ---------- fichas e avisos ---------- */
+  .ficha{
+    border:1px solid var(--rule);
+    background:#fff;
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .ficha-tab{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);
+    margin:0 0 12px;
+  }
+  .ficha p:last-child,.ficha ul:last-child{margin-bottom:0}
+  .ficha.escura{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .ficha.escura .ficha-tab{color:var(--green-neon)}
+
+  .aviso{
+    background:var(--caramel-soft);
+    border-top:4px solid var(--caramel);
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .aviso .ficha-tab{color:var(--caramel)}
+  .aviso p:last-child,.aviso ul:last-child{margin-bottom:0}
+  .aviso-grande{
+    font-family:var(--sans);font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.1;letter-spacing:-.02em;
+    color:var(--caramel);margin:0 0 .5em;
+  }
+
+  /* ---------- fala e ação ---------- */
+  .fala{
+    font-size:clamp(19px,2.2vw,21px);
+    line-height:1.5;
+    border-left:4px solid var(--green-neon);
+    padding:2px 0 2px 18px;
+    margin:0 0 1em;
+    max-width:56ch;
+  }
+  .acao{
+    font-family:var(--sans);
+    font-weight:600;font-size:15px;
+    background:var(--paper-2);
+    padding:12px 16px 12px 44px;
+    margin:0 0 1em;
+    max-width:var(--measure);
+    position:relative;
+  }
+  .acao::before{
+    content:"";position:absolute;left:16px;top:17px;width:14px;height:10px;
+    border:2px solid var(--green-deep);border-radius:2px;
+  }
+
+  /* ---------- tabelas ---------- */
+  .tabela{overflow-x:auto;margin:0 0 20px;max-width:760px}
+  table{
+    border-collapse:collapse;
+    width:100%;
+    font-family:var(--sans);
+    font-size:15px;
+  }
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-weight:700;color:var(--ink-mute);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;border-bottom:2px solid var(--ink)}
+  td.n{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+  tr.total td{border-bottom:0;border-top:2px solid var(--ink);font-weight:800}
+
+  /* =========================================================
+     COMPONENTES VISUAIS POR SEÇÃO
+     ========================================================= */
+
+  /* 01 · filtro */
+  .filtro{list-style:none;padding:0;margin:0 0 28px;max-width:none;border-top:2px solid var(--ink)}
+  .filtro li{
+    display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 16px;align-items:center;
+    max-width:none;margin:0;padding:16px 0;border-bottom:1px solid var(--rule);
+  }
+  .filtro .ok{width:22px;height:22px;background:var(--green-deep);position:relative}
+  .filtro .ok::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid var(--green-neon);border-width:0 3px 3px 0;transform:rotate(45deg)}
+  .filtro .crit{font-family:var(--sans);font-weight:700;font-size:16px;line-height:1.25}
+  .filtro .crit small{display:block;font-family:var(--serif);font-weight:400;font-size:15px;color:var(--ink-soft);margin-top:2px}
+  .filtro .val{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.02em;text-align:right;white-space:nowrap;color:var(--green-deep)}
+
+  .conta{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:1px;
+    background:var(--ink);border:1px solid var(--ink);margin:0 0 22px;
+  }
+  .conta div{background:var(--paper);padding:18px 20px}
+  .conta div:last-child{background:var(--ink);color:var(--paper)}
+  .conta .big{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,50px);line-height:1;letter-spacing:-.03em}
+  .conta div:last-child .big{color:var(--green-neon)}
+  .conta .cap{display:block;font-family:var(--sans);font-size:14px;font-weight:600;margin-top:8px;color:var(--ink-soft)}
+  .conta div:last-child .cap{color:#b9c8bf}
+  .conta .op{font-family:var(--sans);font-weight:700;color:var(--ink-mute);font-size:13px;display:block;margin-bottom:6px}
+
+  /* 02 · tipos de cliente + semana */
+  .tipos{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));margin:0 0 22px}
+  .tipo{border-top:4px solid var(--green-deep);background:#fff;padding:16px 18px 18px;border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .tipo.principal{border-top-color:var(--green-neon);background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .tipo h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:20px;line-height:1.1;letter-spacing:-.015em;margin:0 0 6px}
+  .tipo .tag{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 10px}
+  .tipo.principal .tag{color:var(--green-neon)}
+  .tipo p{font-size:15.5px;line-height:1.5;margin:0}
+
+  .semana{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:0 0 20px;max-width:760px}
+  .dia-sem{padding:12px 8px 14px;background:var(--paper-2);min-height:112px;display:flex;flex-direction:column;gap:6px}
+  .dia-sem b{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:22px;letter-spacing:-.02em;line-height:1}
+  .dia-sem span{font-family:var(--sans);font-size:12.5px;line-height:1.3;color:var(--ink-soft)}
+  .dia-sem.ir{background:var(--green-deep);color:#fff}
+  .dia-sem.ir span{color:#e4f1e8}
+  .dia-sem.ir em{font-style:normal;font-family:var(--sans);font-weight:800;font-size:15px;color:var(--green-neon)}
+  .dia-sem.nao{background:repeating-linear-gradient(135deg,var(--paper-2) 0 8px,#e8e3d8 8px 10px)}
+
+  /* 03 · dores */
+  .dores{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 20px}
+  .dor{background:#fff;border:1px solid var(--rule);padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px}
+  .dor .dn{font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:54px;line-height:.8;color:var(--rule)}
+  .dor h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:21px;line-height:1.1;letter-spacing:-.015em;margin:0}
+  .dor p{font-size:15.5px;line-height:1.52;margin:0}
+  .dor.fecha{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .dor.fecha .dn{color:var(--green-neon)}
+  .dor.fecha h4{color:#fff}
+
+  /* 04 · níveis */
+  .niveis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));align-items:stretch;margin:0 0 24px}
+  .ficha.nivel{margin:0;display:flex;flex-direction:column;border-top:4px solid var(--rule)}
+  .nivel .preco{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:78%;font-size:clamp(30px,3.6vw,38px);line-height:1;letter-spacing:-.03em;
+    margin:.1em 0 .5em;
+  }
+  .nivel p:not(.preco):not(.ficha-tab){font-size:15.5px;line-height:1.52}
+  .ficha.nivel.meio{background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .ficha.nivel.meio .ficha-tab{color:var(--green-neon)}
+  .ficha.nivel.meio .preco{color:var(--green-neon)}
+  .selo{align-self:flex-start;font-family:var(--sans);font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--green-neon);color:var(--ink);padding:4px 8px;margin:0 0 12px}
+
+  .prazo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:6px 0 18px}
+  .prazo div{background:rgba(255,255,255,.7);padding:10px 6px;text-align:center;font-family:var(--sans)}
+  .prazo b{display:block;font-weight:800;font-size:14px}
+  .prazo span{display:block;font-size:11.5px;line-height:1.25;color:var(--ink-soft);margin-top:3px}
+  .prazo .p-ok{background:var(--green-deep);color:#fff}
+  .prazo .p-ok span{color:#e4f1e8}
+  .prazo .p-festa{background:var(--caramel);color:#fff}
+  .prazo .p-festa span{color:#f6ecdc}
+
+  /* 05 · material */
+  .cores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 20px;max-width:640px}
+  .cor{font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.25}
+  .cor i{display:block;aspect-ratio:1;max-width:100%;border:1px solid rgba(20,32,26,.18);margin-bottom:8px;
+    background-image:repeating-linear-gradient(180deg,rgba(0,0,0,.05) 0 2px,transparent 2px 5px)}
+  .painel{background:var(--plate);color:#dfe8e2;padding:18px 20px;font-family:var(--sans);font-size:14.5px}
+  .painel .ficha-tab{color:var(--green-neon)}
+  .painel dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0}
+  .painel dt,.painel dd{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1);margin:0}
+  .painel dt{color:#9fb3a8}
+  .painel dd{font-family:var(--mono);color:var(--green-neon);text-align:right;padding-left:12px}
+  .letra{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:0 0 20px}
+  .letra div{background:#fff;padding:16px 18px}
+  .letra b{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:44px;line-height:1;letter-spacing:-.03em;color:var(--green-deep)}
+  .letra span{font-family:var(--sans);font-size:13.5px;color:var(--ink-soft)}
+  .grafia{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .grafia span{font-family:var(--sans);font-weight:800;font-stretch:85%;font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;line-height:1;padding:10px 16px 12px;border:2px solid var(--ink);background:#fff}
+  .grafia span.certo{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+
+  /* 06 · kit */
+  .mesa{margin:0 0 10px;max-width:760px}
+  .mesa-bar{display:flex;gap:3px;height:64px}
+  .mesa-bar div{background:var(--green-deep);color:#fff;font-family:var(--sans);font-weight:800;font-size:15px;padding:10px 12px;display:flex;align-items:flex-end;min-width:0;overflow:hidden;white-space:nowrap}
+  .mesa-bar div:nth-child(2){background:var(--ink)}
+  .mesa-bar div:nth-child(3){background:#3d9a66}
+  .mesa-leg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px;margin:14px 0 0;padding:0;list-style:none;max-width:none}
+  .mesa-leg li{max-width:none;margin:0;font-family:var(--sans);font-size:14px;line-height:1.35;padding-left:18px;position:relative}
+  .mesa-leg li::before{content:"";position:absolute;left:0;top:4px;width:10px;height:10px;background:var(--green-deep)}
+  .mesa-leg li:nth-child(2)::before{background:var(--ink)}
+  .mesa-leg li:nth-child(3)::before{background:#3d9a66}
+  .mesa-leg b{display:block;font-size:15px}
+  .totais{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;margin:22px 0 24px;padding:16px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+  .totais div{font-family:var(--sans)}
+  .totais b{display:block;font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,48px);line-height:1;letter-spacing:-.03em}
+  .totais span{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute)}
+
+  /* 07 · gráfico de retorno por hora */
+  .grafico{margin:8px 0 12px;max-width:820px;font-family:var(--sans)}
+  .g-row{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:6px 16px;align-items:center;padding:7px 0}
+  .g-lab{font-size:14px;line-height:1.25;font-weight:600}
+  .g-lab small{display:block;font-weight:500;color:var(--ink-mute);font-size:12.5px}
+  .g-track{position:relative;height:30px;background:
+    linear-gradient(90deg,transparent calc(21.43% - 1px),var(--caramel) calc(21.43% - 1px) calc(21.43% + 1px),transparent calc(21.43% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(14.2857% - 1px),#e6e1d6 calc(14.2857% - 1px) 14.2857%)}
+  .g-bar{height:100%;width:calc(var(--v) / 70 * 100%);background:var(--green-deep);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-weight:800;font-size:13.5px;white-space:nowrap;min-width:64px}
+  .g-bar.baixo{background:var(--caramel)}
+  .g-bar.top{background:var(--green-neon);color:var(--ink)}
+  .g-axis{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:16px;font-size:11.5px;color:var(--ink-mute);font-weight:600}
+  .g-ticks{position:relative;height:18px}
+  .g-ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+  .g-ticks span:first-child{transform:none}
+  .g-ticks span.piso{color:var(--caramel);font-weight:800}
+  .g-nota{font-family:var(--sans);font-size:13px;color:var(--ink-mute);margin:6px 0 24px}
+
+
+  .folha{background:#fff;border:1px solid var(--rule);box-shadow:6px 6px 0 var(--paper-2);padding:clamp(18px,3vw,28px);margin:0 0 22px;max-width:780px}
+  .folha-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:4px}
+  .folha-top b{font-family:var(--sans);font-weight:900;font-stretch:80%;font-size:26px;letter-spacing:-.02em}
+  .folha-top span{font-family:var(--sans);font-size:13px;color:var(--ink-mute);font-weight:600}
+  .folha .tabela{margin:0;max-width:none}
+  .folha td.revende{color:var(--green-deep)}
+
+  /* 08 · os 40 segundos */
+  .relogio{position:relative;margin:6px 0 26px;padding-left:92px;max-width:780px}
+  .relogio::before{content:"";position:absolute;left:70px;top:6px;bottom:6px;width:2px;background:var(--rule)}
+  .passo{position:relative;margin:0 0 18px}
+  .passo:last-child{margin-bottom:0}
+  .passo .t{position:absolute;left:-92px;top:2px;width:60px;text-align:right;font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:17px;color:var(--green-deep);white-space:nowrap}
+  .passo::before{content:"";position:absolute;left:-27px;top:8px;width:12px;height:12px;background:var(--paper);border:3px solid var(--green-deep)}
+  .passo.cala::before{background:var(--green-neon);border-color:var(--ink)}
+  .passo .fala,.passo .acao,.passo p{margin-bottom:.6em}
+  .saidas{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0 0 18px}
+  .saida{background:#fff;border:1px solid var(--rule);padding:18px 20px}
+  .saida .quando{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:18px;line-height:1.2;letter-spacing:-.01em;margin:0 0 8px}
+  .saida p{font-size:15.5px;line-height:1.52;margin:0}
+
+  /* 09 · objeções */
+  .obj{border:1px solid var(--rule);background:#fff;margin:0 0 18px;display:grid;grid-template-columns:minmax(0,1fr)}
+  .obj-head{background:var(--ink);color:#fff;padding:clamp(18px,3vw,26px)}
+  .obj-n{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-neon);margin:0 0 8px}
+  .obj-q{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.12;letter-spacing:-.02em;
+    margin:0;text-wrap:balance;max-width:none;
+  }
+  .obj-body{padding:clamp(18px,3vw,26px);display:grid;gap:4px 28px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+  .obj-body > *{margin:0}
+  .obj-real{color:var(--ink-soft);font-style:italic;font-size:16px}
+  .obj-real::before{content:"O que ela quer dizer";display:block;font-style:normal;font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:6px}
+  .obj-resp{grid-column:1/-1}
+  .obj-resp .label{margin-top:12px}
+  .erro{
+    grid-column:1/-1;
+    color:var(--caramel);font-weight:700;font-family:var(--sans);font-size:15px;
+    background:var(--caramel-soft);margin:0;padding:12px clamp(18px,3vw,26px);
+  }
+
+  /* 10 · follow-up */
+  .fio{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 22px;align-items:start}
+  .msg{position:relative}
+  .msg .quando{font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:40px;line-height:1;letter-spacing:-.03em;color:var(--green-deep);margin:0 0 10px}
+  .msg .quando small{font-size:14px;font-weight:700;font-stretch:100%;letter-spacing:0;color:var(--ink-mute);margin-left:6px}
+  .balao{background:var(--green-wash);border-radius:14px 14px 14px 3px;padding:14px 16px;font-size:16px;line-height:1.5;margin:0}
+  .msg.fim .quando{color:var(--caramel)}
+  .msg.fim .balao{background:var(--caramel-soft)}
+  .msg .obs{font-family:var(--sans);font-size:13.5px;color:var(--ink-mute);margin:10px 0 0}
+
+  /* 11 · perguntas */
+  .perguntas{list-style:none;padding:0;margin:0 0 22px;counter-reset:q;max-width:none}
+  .perguntas li{counter-increment:q;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:baseline;max-width:none;padding:14px 0;border-bottom:1px solid var(--rule);margin:0}
+  .perguntas li::before{content:counter(q);font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:48px;line-height:.8;color:var(--green-deep)}
+  .perguntas span{font-family:var(--sans);font-weight:700;font-stretch:92%;font-size:clamp(20px,2.6vw,26px);line-height:1.2;letter-spacing:-.015em}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;padding:0;list-style:none;max-width:none}
+  .chips li{margin:0;max-width:none;font-family:var(--sans);font-size:14px;font-weight:600;border:1.5px solid var(--green-deep);color:var(--green-deep);padding:6px 12px}
+  .chips li.g01{background:var(--green-deep);color:#fff}
+
+  /* 12 · missão */
+  .dias{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));margin:0 0 26px;align-items:start}
+  .dia-col{background:#fff;border:1px solid var(--rule);padding:0 20px 8px}
+  .dia{
+    font-family:var(--sans);
+    font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);
+    margin:0 -20px 16px;padding:16px 20px 14px;border-bottom:2px solid var(--ink);
+    display:flex;align-items:baseline;gap:12px;
+  }
+  .dia b{font-weight:900;font-stretch:72%;font-size:56px;line-height:.8;letter-spacing:-.04em;color:var(--ink)}
+  .check{list-style:none;padding:0;max-width:none}
+  .check li{position:relative;padding-left:30px;margin-bottom:.75em;font-size:15.5px;line-height:1.45;max-width:none}
+  .check li::before{content:"";position:absolute;left:0;top:.2em;width:17px;height:17px;border:2px solid var(--green-deep);background:#fff}
+
+  .funil{display:grid;gap:4px;margin:6px 0 16px;font-family:var(--sans)}
+  .funil div{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(138,90,30,.14);padding:10px 14px;font-weight:600;font-size:14.5px;min-width:0}
+  .funil div b{font-weight:900;font-stretch:78%;font-size:24px;letter-spacing:-.02em;white-space:nowrap}
+  .funil div:nth-child(1){width:100%}
+  .funil div:nth-child(2){width:78%}
+  .funil div:nth-child(3){width:58%;background:rgba(138,90,30,.28)}
+  .funil div:nth-child(4){width:44%;background:var(--caramel);color:#fff}
+
+  .g100 .g-bar{width:calc(var(--v) / 100 * 100%)}
+  .g100 .g-track{background:
+    linear-gradient(90deg,transparent calc(15% - 1px),var(--caramel) calc(15% - 1px) calc(15% + 1px),transparent calc(15% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(10% - 1px),#e6e1d6 calc(10% - 1px) 10%)}
+  /* ---------- etiqueta e passos ---------- */
+  .etiqueta{border:2px dashed var(--ink);background:#fff;padding:16px 18px;font-family:var(--sans);font-size:13.5px;line-height:1.4;align-self:start}
+  .etiqueta .etq-top{font-weight:900;font-stretch:85%;font-size:18px;letter-spacing:-.01em;margin:0 0 8px;padding-bottom:8px;border-bottom:2px solid var(--green-deep);color:var(--green-deep)}
+  .etiqueta ul{margin:0 0 8px;padding-left:1em}
+  .etiqueta li{margin-bottom:.25em;max-width:none}
+  .etiqueta .etq-pe{font-size:11.5px;color:var(--ink-mute);margin:0}
+  .perguntas.passos span{font-size:clamp(16px,2vw,19px);font-weight:600;font-stretch:100%}
+  .perguntas.passos li::before{font-size:38px}
+
+  /* ---------- calendário e registro ---------- */
+  .calendario{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;margin:0 0 8px;max-width:820px}
+  .mes{background:var(--paper-2);padding:10px 8px 12px;font-family:var(--sans)}
+  .mes b{display:block;font-weight:800;font-size:15px;margin-bottom:4px}
+  .mes span{display:block;font-size:12px;line-height:1.3;color:var(--ink-soft)}
+  .mes.medio{background:var(--green-wash)}
+  .mes.pico{background:var(--green-deep);color:#fff}
+  .mes.pico span{color:#e4f1e8}
+  .registro td{height:34px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
+  .registro td:last-child{border-right:0}
+
+  /* ---------- cola de balcão ---------- */
+  .cola{background:#fff;border:2px dashed var(--ink);padding:clamp(18px,3vw,30px);font-size:15px;line-height:1.45}
+  .cola-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 20px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin:0 0 18px}
+  .cola-top b{font-family:var(--sans);font-weight:900;font-stretch:78%;font-size:clamp(30px,4.4vw,44px);letter-spacing:-.03em;line-height:1}
+  .cola-top span{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-mute)}
+  .cola-grid{display:grid;gap:20px 30px;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr))}
+  .cola h4{font-family:var(--sans);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 8px}
+  .cola p,.cola li{max-width:none}
+  .cola ul{margin:0;padding-left:1em}
+  .cola li{margin-bottom:.3em}
+  .cola .fala{font-size:16px;margin:0 0 .6em;padding-left:12px;border-left-width:3px}
+  .cola .acao{font-size:13.5px;padding:8px 12px 8px 36px;margin:0 0 .6em}
+  .cola .acao::before{left:12px;top:12px}
+  .cola dl{margin:0}
+  .cola dt{font-family:var(--sans);font-weight:800;font-size:14.5px;margin:10px 0 2px}
+  .cola dt:first-child{margin-top:0}
+  .cola dd{margin:0;color:var(--ink-soft)}
+  .cola table{font-size:13.5px}
+  .cola th,.cola td{padding:6px 8px}
+  .cola .nunca li{color:var(--caramel);font-family:var(--sans);font-weight:600;font-size:14px}
+
+  /* ---------- ilustrações ---------- */
+  figure{margin:0 0 26px;max-width:860px}
+  .ill-art svg{display:block;width:100%;height:auto}
+  .ill figcaption{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink-mute);margin-top:10px}
+
+  footer{
+    background:var(--ink);color:#9fb3a8;
+    margin-top:clamp(64px,9vw,110px);
+    padding:clamp(28px,5vw,44px) var(--gut);
+    font-family:var(--sans);font-size:14px;
+  }
+  footer p{max-width:62ch;margin:0 0 .6em}
+  footer .logo{display:block;width:44px;height:auto;margin-bottom:18px}
+  footer strong{color:var(--green-neon);font-weight:700}
+
+  :focus-visible{outline:3px solid var(--green-neon);outline-offset:2px}
+
+
+  @media (max-width:560px){
+    .calendario{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .cover-72h{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .radar div:last-child:nth-child(odd){grid-column:1/-1}
+    .semana{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .prazo{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .cores{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .g-row,.g-axis{grid-template-columns:minmax(0,1fr)}
+    .g-axis > span:first-child{display:none}
+    .relogio{padding-left:30px}
+    .relogio::before{left:8px}
+    .passo .t{position:static;display:block;text-align:left;width:auto;margin-bottom:4px}
+    .passo::before{left:-30px;top:6px}
+    .funil div:nth-child(n){width:100%}
+    .filtro li{grid-template-columns:28px minmax(0,1fr)}
+    .filtro .val{grid-column:2;text-align:left}
+  }
+
+  @media print{
+    .radar{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .radar div{padding:12px 14px 14px}
+    .radar dd{font-size:14pt}
+    #cola .cola{font-size:9pt;padding:12px}
+    #cola .cola .fala{font-size:10pt}
+    #cola .cola-grid{gap:8px 18px;grid-template-columns:1fr 1fr}
+    #cola .sec-head{margin-bottom:8px;padding-bottom:6px}
+    #cola .sec-num{font-size:40pt}
+    #cola .cola-top{margin-bottom:8px;padding-bottom:6px}
+    #cola .cola-top b{font-size:18pt}
+    #cola .cola h4{font-size:7.5pt;margin-bottom:4px}
+    #cola .cola h4[style]{margin-top:10px!important}
+    #cola .cola dt{font-size:8.5pt;margin-top:5px}
+    #cola .cola dd,#cola .cola li{font-size:8.5pt;margin-bottom:1px}
+    #cola .cola .fala{font-size:9pt;margin-bottom:4px}
+    #cola .cola .acao{font-size:8pt;padding:5px 8px 5px 30px;margin-bottom:4px}
+    #cola .cola .acao::before{left:9px;top:7px}
+    #cola .cola table{font-size:8pt}
+    #cola .cola th,#cola .cola td{padding:3px 5px}
+    #cola .cola .nunca li{font-size:8.5pt}
+    .cola{break-inside:avoid}
+    @page{size:A4;margin:14mm 15mm}
+    @page capa{margin:0}
+    @page contracapa{margin:0}
+    :root{--paper:#ffffff;--gut:15mm}
+    body{font-size:10pt;line-height:1.5}
+    main{padding-inline:0}
+    section{max-width:none}
+    .lead{font-size:12pt;margin-bottom:1em}
+    .sec-head{margin-bottom:14px;padding-bottom:10px}
+    .sec-num{font-size:52pt}
+    h2{font-size:24pt}
+    h3{margin-top:1.4em;font-size:12.5pt}
+
+    /* capa e contracapa ocupam a folha inteira */
+    .cover{page:capa;height:297mm;box-sizing:border-box;width:210mm;display:flex;flex-direction:column;padding:18mm 15mm 0;overflow:hidden}
+    .cover > .cover-mark{right:-30mm;top:40mm;width:150mm}
+    .cover-code{font-size:210pt;margin-top:24mm;background:none;-webkit-text-fill-color:var(--green-neon)}
+    .cover-market{font-size:30pt}
+    .cover-promise{font-size:13pt}
+    .cover-grid{grid-template-columns:1.1fr 1fr;margin-top:8mm}
+    .cover-72h{margin-top:20mm}
+    .radar{margin:auto -15mm 0}
+    .radar div{padding-left:15mm}
+    footer{page:contracapa;break-before:page;height:297mm;overflow:hidden;box-sizing:border-box;margin:0;padding:0 15mm 22mm;display:flex;flex-direction:column;justify-content:flex-end;font-size:10pt}
+
+    /* colunas fixas no papel */
+    .tipos,.dores,.niveis,.fio,.dias{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .split,.saidas{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .conta{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .obj{display:block;margin-bottom:12px}
+    .etiqueta{font-size:9pt}
+    .perguntas li{padding:8px 0}
+    .perguntas.passos span{font-size:10.5pt}
+    table{font-size:9pt}
+    th,td{padding:5px 8px}
+    .junto{break-inside:avoid}
+    .calendario{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .mes span{font-size:8pt}
+    .registro td{height:9mm}
+    .obj-head{padding:10px 16px}
+    .obj-q{font-size:15pt}
+    .obj-body{padding:10px 16px;gap:2px 20px}
+    .obj-body .fala{font-size:10.5pt;line-height:1.42}
+    .obj-real{font-size:9.5pt}
+    .erro{font-size:9pt;padding:7px 16px}
+    .dia-col{break-inside:auto}
+    .check li{font-size:9.5pt;margin-bottom:.45em}
+    .tipo p,.dor p,.nivel p:not(.preco):not(.ficha-tab),.saida p{font-size:9.5pt;line-height:1.45}
+    .dia-sem{min-height:78px}
+    p,li{orphans:3;widows:3}
+    footer .logo{width:22mm;margin-bottom:8mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    section{break-before:page;padding-top:0}
+    main > section:first-of-type{break-before:page}
+    .ficha,.aviso,.obj,figure,.ill,table,.saida,.dor,.tipo,.msg,.dia-col,.grafico,.folha,.conta,.semana,.prazo,.passo{break-inside:avoid}
+    h2,h3,.sec-head{break-after:avoid}
+    .ill-art svg{max-height:92mm;width:auto;max-width:100%;margin:0 auto}
+    .tabela{overflow:visible}
+    .folha{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <svg class="cover-mark" viewBox="370 340 640 650" aria-hidden="true"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+
+  <div class="cover-top">
+    <p class="cover-brand"><svg class="logo" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>LR Maker Lab · G-Code 3D</p>
+    <p class="cover-level">Nível 1 · primeira venda rápida</p>
+  </div>
+
+  <p class="cover-code">G-01</p>
+
+  <div class="cover-grid">
+    <h1 class="cover-market">Confeitarias e docerias</h1>
+    <p class="cover-promise">Cortadores e carimbos sob medida para quem já vende doce e não consegue entregar o formato que o cliente pede. Ela decide no balcão, e a próxima compra já está marcada no calendário.</p>
+  </div>
+
+  <ol class="cover-72h" aria-label="Missão 72 horas">
+    <li><b>Dia 1</b><span>Imprimir as três peças em PETG</span></li>
+    <li><b>Dia 2</b><span>10 confeitarias entre 14h e 16h</span></li>
+    <li><b>Dia 3</b><span>Orçamento do formato que ela recusou</span></li>
+    <li class="fim"><b>72h</b><span>Três propostas entregues na mão de um comerciante</span></li>
+  </ol>
+
+  <dl class="radar">
+    <div><dt>Ticket do 1º pedido</dt><dd>R$ 90 a 400</dd></div>
+    <div><dt>Retorno por hora</dt><dd>~R$ 65/h</dd></div>
+    <div class="hot"><dt>Recompra</dt><dd>A cada tema novo</dd></div>
+    <div><dt>Ciclo de venda</dt><dd>1 visita</dd></div>
+    <div><dt>Nota no filtro</dt><dd>5 de 5</dd></div>
+  </dl>
+</header>
+
+<main>
+
+<!-- ===================== 01 ===================== -->
+<section id="s01">
+  <header class="sec-head l1">
+    <p class="sec-num">01</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Por que este G-Code funciona</h2>
+  </header>
+
+  <p class="lead">Confeitaria é o único nicho do kit em que o cliente decide no balcão, o pedido cabe em uma noite de impressão e a próxima compra já está marcada no calendário.</p>
+
+  <ul class="filtro">
+    <li><span class="ok"></span><span class="crit">Ticket do primeiro pedido<small>O nível de entrada já paga a visita; o Padrão passa o piso do filtro</small></span><span class="val">R$ 90–400</span></li>
+    <li><span class="ok"></span><span class="crit">Retorno por hora de máquina<small>Mais de quatro vezes o piso de R$ 15/h</small></span><span class="val">~R$ 65/h</span></li>
+    <li><span class="ok"></span><span class="crit">Recompra<small>Páscoa, Dia das Mães, Natal, cada tema de festa novo</small></span><span class="val">Alta</span></li>
+    <li><span class="ok"></span><span class="crit">Decisor<small>Quem faz o doce decide sozinha, sem aprovação de ninguém</small></span><span class="val">No balcão</span></li>
+    <li><span class="ok"></span><span class="crit">Insubstituível<small>Laser não faz relevo na massa; marketplace não faz sob medida</small></span><span class="val">Alto</span></li>
+  </ul>
+
+  <h3>A conta de uma cliente por ano</h3>
+  <div class="conta">
+    <div><span class="op">cliente</span><span class="big">1</span><span class="cap">confeitaria atendida</span></div>
+    <div><span class="op">×</span><span class="big">5</span><span class="cap">datas no ano: Páscoa, Mães, junina, Crianças, Natal</span></div>
+    <div><span class="op">×</span><span class="big">R$ 300</span><span class="cap">um kit temático por data</span></div>
+    <div><span class="op">=</span><span class="big">R$ 1.500</span><span class="cap">por ano, da mesma cliente</span></div>
+  </div>
+  <p>O kit de amostra consome 1h35 de máquina e menos de R$ 5 de material. Uma única venda de nível Padrão devolve isso 40 vezes.</p>
+  <p>O que pesa aqui é a confiança. Ela coloca a sua peça dentro do produto dela, e responde pela cozinha. Este manual trata segurança de alimento com a mesma seriedade que ela trata.</p>
+</section>
+
+<!-- ===================== 02 ===================== -->
+<section id="s02">
+  <header class="sec-head l2">
+    <p class="sec-num">02</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Quem é a cliente</h2>
+  </header>
+
+  <p class="lead">Quem faz doce sob encomenda e se importa com a aparência dele. O ponto pode ser uma vitrine no bairro ou a cozinha de casa.</p>
+
+  <div class="tipos">
+    <div class="tipo principal">
+      <p class="tag">Cliente principal</p>
+      <h4>Confeitaria de bairro</h4>
+      <p>Ponto fixo, vitrine e encomenda de festa. Quem faz os bolos é quem decide a compra.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Visita com hora marcada</p>
+      <h4>Doceira de encomenda</h4>
+      <p>Produz em casa e vende pelo Instagram. Mande mensagem e marque dez minutos.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Usa cortador toda semana</p>
+      <h4>Biscoiteira e pão de mel</h4>
+      <p>Biscoito decorado, pão de mel, lembrancinha de doce. Compra formato novo a cada tema.</p>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="ficha">
+      <p class="ficha-tab">Como reconhecer</p>
+      <ul>
+        <li>Instagram ativo, com foto do próprio produto e não de banco de imagens</li>
+        <li>Atende encomenda de festa, não só a vitrine do dia</li>
+        <li>Posta biscoito ou bolo com tema, nome ou data</li>
+      </ul>
+    </div>
+    <div class="ficha">
+      <p class="ficha-tab">Quem não é cliente</p>
+      <ul>
+        <li>Padaria industrial e rede com compra centralizada</li>
+        <li>Quem só revende doce pronto de terceiro</li>
+        <li>Quem não tem nenhuma encomenda personalizada</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Quando aparecer</h3>
+  <div class="semana">
+    <div class="dia-sem nao"><b>Seg</b><span>Folga na maioria</span></div>
+    <div class="dia-sem ir"><b>Ter</b><em>14h–16h</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Qua</b><em>14h–16h</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Qui</b><em>14h–16h</em><span>Vá</span></div>
+    <div class="dia-sem nao"><b>Sex</b><span>Dia mais corrido</span></div>
+    <div class="dia-sem nao"><b>Sáb</b><span>Entrega de encomenda</span></div>
+  </div>
+  <p>Antes das 14h ela está na produção. Depois das 16h, está fechando encomenda e atendendo quem busca.</p>
+  <p>Pergunte pela pessoa que faz os bolos. Se você perguntar pelo dono, cai no caixa, e o caixa não decide nada aqui.</p>
+</section>
+
+<!-- ===================== 03 ===================== -->
+<section id="s03">
+  <header class="sec-head l3">
+    <p class="sec-num">03</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A dor que ela já paga para resolver</h2>
+  </header>
+
+  <p class="lead">Ela não acorda querendo comprar cortador. Ela acorda com três problemas, e os três você resolve.</p>
+
+  <div class="dores">
+    <div class="dor">
+      <span class="dn">1</span>
+      <h4>O pedido recusado</h4>
+      <p>Chega uma encomenda com um formato que ela não tem: o logotipo da empresa que está fazendo a festa, um número, um tema específico. Ela recusa, ou entrega algo parecido e o cliente reclama. Cada recusa é dinheiro saindo pela porta.</p>
+    </div>
+    <div class="dor">
+      <span class="dn">2</span>
+      <h4>O doce igual ao de todo mundo</h4>
+      <p>Ela usa o mesmo cortador redondo que as outras dez confeitarias da cidade compraram no mesmo lugar. No Instagram, o biscoito dela não se distingue do da concorrente.</p>
+    </div>
+    <div class="dor fecha">
+      <span class="dn">3</span>
+      <h4>A marca que não aparece</h4>
+      <p>O doce sai da caixa e vira só doce. Com o nome dela em relevo, o biscoito se assina sozinho na mesa da festa, na frente de trinta convidados que podem virar clientes.</p>
+    </div>
+  </div>
+
+  <p>A terceira dor é a que fecha venda grande. Fale das três, mas segure essa para o final.</p>
+
+
+  <div class="split">
+    <figure class="ill">
+      <div class="ill-art" data-ill="biscoito" role="img" aria-label="Dois biscoitos: um redondo liso, igual ao da concorrência, e outro com o nome da confeitaria em relevo e borda decorada"></div>
+      <figcaption>O mesmo biscoito, com e sem a marca dela.</figcaption>
+    </figure>
+    <div>
+      <h3 style="margin-top:0">Antes de visitar: três sinais no Instagram dela</h3>
+      <div class="ficha">
+    <ul class="check">
+      <li><strong>Biscoito decorado ou pão de mel na grade de posts.</strong> Ela usa cortador toda semana e sabe o que um formato novo vale.</li>
+      <li><strong>Post de "encomendas abertas" para uma data.</strong> Ela planeja por calendário, e você chega com o kit da próxima data.</li>
+      <li><strong>Doce com o logotipo de uma empresa.</strong> Ela já atende pedido corporativo, que é onde o carimbo com logo paga melhor.</li>
+    </ul>
+    <p>Confeitaria com os três sinais vai para a primeira visita do dia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 ===================== -->
+<section id="s04">
+  <header class="sec-head l4">
+    <p class="sec-num">04</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A oferta, em três níveis</h2>
+  </header>
+
+  <p class="lead">Nunca apresente um preço só. Apresente os três. Ela quase sempre escolhe o do meio, que é exatamente onde sua margem é melhor.</p>
+
+  <div class="niveis">
+    <div class="ficha nivel">
+      <p class="ficha-tab">Entrada</p>
+      <p class="preco">R$ 90 a 120</p>
+      <p>Três cortadores personalizados no formato que ela pedir. Para quem está desconfiada e quer testar antes.</p>
+    </div>
+    <div class="ficha nivel meio">
+      <span class="selo">O que você quer vender</span>
+      <p class="ficha-tab">Padrão</p>
+      <p class="preco">R$ 180 a 250</p>
+      <p>Kit de seis cortadores sortidos mais um carimbo com o nome ou a logo da confeitaria. Resolve o pedido recusado e ainda assina o produto dela.</p>
+    </div>
+    <div class="ficha nivel">
+      <p class="ficha-tab">Completo</p>
+      <p class="preco">R$ 300 a 400</p>
+      <p>Kit temático de uma data (Páscoa, Natal, festa junina) com carimbo de marca e topo de bolo combinando. Vende melhor a partir de 45 dias antes da data.</p>
+    </div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="niveis" role="img" aria-label="Os três níveis: três cortadores; seis cortadores e um carimbo; seis cortadores, carimbo e topo de bolo"></div>
+    <figcaption>Entrada, Padrão e Completo lado a lado.</figcaption>
+  </figure>
+
+  <div class="aviso">
+    <p class="ficha-tab">Regra</p>
+    <p class="aviso-grande">Não invente desconto. O preço da primeira venda vira o preço de todas as seguintes.</p>
+    <p>Se ela hesitar no Padrão, ofereça parcelar em dois Pix ou dividir a entrega em dois lotes. Se ainda assim não couber, desça para a Entrada. O preço de cada nível não muda.</p>
+  </div>
+
+  <h3>Quando o pedido chega: o calendário da confeitaria</h3>
+  <div class="calendario" aria-label="Meses de maior procura de cortadores e carimbos">
+    <div class="mes"><b>Jan</b><span>Aniversários seguem, datas param</span></div>
+    <div class="mes pico"><b>Fev</b><span>Ofereça o kit de Páscoa</span></div>
+    <div class="mes pico"><b>Mar</b><span>Produção de Páscoa</span></div>
+    <div class="mes pico"><b>Abr</b><span>Páscoa e Dia das Mães</span></div>
+    <div class="mes medio"><b>Mai</b><span>Dia das Mães</span></div>
+    <div class="mes medio"><b>Jun</b><span>Festa junina</span></div>
+    <div class="mes"><b>Jul</b><span>Férias</span></div>
+    <div class="mes medio"><b>Ago</b><span>Dia dos Pais; ofereça o de Crianças</span></div>
+    <div class="mes medio"><b>Set</b><span>Dia das Crianças</span></div>
+    <div class="mes pico"><b>Out</b><span>Ofereça o kit de Natal</span></div>
+    <div class="mes pico"><b>Nov</b><span>Natal e brinde de empresa</span></div>
+    <div class="mes medio"><b>Dez</b><span>Últimas encomendas</span></div>
+  </div>
+  <p class="g-nota">Verde escuro: meses de venda mais provável. Verde claro: procura média. É hipótese; ajuste depois do primeiro ano.</p>
+  <h3>O que vai em cada kit de data</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Data</th><th>Ofereça em</th><th>Formatos do kit</th></tr>
+    <tr><td>Páscoa</td><td class="n">fevereiro</td><td>Coelho, ovo, cenoura, pegada de coelho e carimbo "Feliz Páscoa"</td></tr>
+    <tr><td>Dia das Mães</td><td class="n">março</td><td>Coração, flor, palavra "Mãe" e carimbo com a marca dela</td></tr>
+    <tr><td>Festa junina</td><td class="n">abril</td><td>Balão, bandeirinha, chapéu de palha, fogueira e milho</td></tr>
+    <tr><td>Dia das Crianças</td><td class="n">agosto</td><td>Pipa, foguete, estrela, números e letras soltas</td></tr>
+    <tr><td>Natal</td><td class="n">outubro</td><td>Árvore, estrela, sino, bota, floco de neve e carimbo "Boas Festas"</td></tr>
+  </table>
+  </div>
+
+  <p>Repare que o pico de venda para você vem antes do pico dela. Ela compra o cortador de Páscoa em fevereiro, não na semana da Páscoa. Quem aparece com o kit 45 dias antes vende o Completo; quem aparece na semana vende, no máximo, a Entrada com urgência.</p>
+</section>
+
+<!-- ===================== 05 ===================== -->
+<section id="s05">
+  <header class="sec-head l5">
+    <p class="sec-num">05</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Material e contato com alimento</h2>
+  </header>
+
+  <p class="lead">Esta seção é a sua maior vantagem sobre o concorrente e o seu maior risco. Leia inteira antes de imprimir qualquer coisa.</p>
+
+  <div class="split">
+    <div>
+      <h3 style="margin-top:0">Imprima em PETG, não em PLA</h3>
+      <p>O cortador vendido em marketplace é quase sempre PLA. PLA começa a amolecer por volta de 60 °C, que é a temperatura de uma água de torneira bem quente. Na primeira lavagem malfeita ele entorta, e a cliente joga fora.</p>
+      <p>PETG suporta em torno de 80 °C, resiste melhor a detergente e não trinca com o uso. Imprime um pouco mais devagar e pede filamento seco. É a diferença entre uma peça que dura uma temporada e uma que dura anos, e é isso que você está vendendo.</p>
+    </div>
+    <div class="painel">
+      <p class="ficha-tab">Perfil de fatiamento · PETG</p>
+      <dl>
+        <dt>Bico</dt><dd>235–245 °C</dd>
+        <dt>Mesa</dt><dd>75–85 °C</dd>
+        <dt>Camada</dt><dd>0,16 mm</dd>
+        <dt>Paredes</dt><dd>4</dd>
+        <dt>Preenchimento</dt><dd>20%</dd>
+        <dt>Lâmina do cortador</dt><dd>0,8–1,0 mm</dd>
+        <dt>Ventoinha</dt><dd>30–50%</dd>
+      </dl>
+    </div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="temperatura" role="img" aria-label="Escala de temperatura: lavagem à mão com água morna fica bem abaixo dos 60 °C em que o PLA amolece; a lava-louças chega perto disso; o PETG aguenta até cerca de 80 °C"></div>
+    <figcaption>Por que nunca na lava-louças, mesmo em PETG. Valores aproximados; variam por fabricante.</figcaption>
+  </figure>
+
+  <p>Seque o filamento antes. PETG úmido imprime com fios e superfície áspera, e superfície áspera, aqui, não é só feio: é onde resíduo de massa se acumula.</p>
+
+  <h3>O filme plástico é parte do produto</h3>
+  <p>Nenhuma peça impressa em FDM tem garantia de segurança para contato com alimento. As linhas de camada formam microcanais que retêm massa e gordura, e nenhuma lavagem comum limpa isso por completo. Quem finge que esse problema não existe está entregando um passivo para a cliente.</p>
+  <p>A solução é o filme de PVC, que a confeitaria já conhece e já usa. A etiqueta de uso no fim desta seção vai dentro de toda caixa. Ele estica sobre a massa aberta, a peça pressiona por cima, e o contato direto não acontece. De quebra, a peça desgruda melhor e o relevo sai mais limpo.</p>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="filme" role="img" aria-label="Corte lateral: carimbo pressionando a massa através de uma camada de filme de PVC; o relevo marca a massa e a peça não encosta nela"></div>
+    <figcaption>O relevo passa para a massa; a peça não encosta nela.</figcaption>
+  </figure>
+
+
+  <div class="split">
+    <div class="aviso">
+      <p class="ficha-tab">Risco 1 · Contato com alimento</p>
+      <p>Nunca diga que a peça é segura para encostar em comida. Não é, e a frase é indefensável se der problema. Diga o que é verdade: PETG, uso com filme, contato breve, instrução de limpeza junto. Honestidade aqui é argumento de venda: nenhum concorrente de marketplace entrega isso.</p>
+      <p>Se quiser ir além, imprima com bico de aço em vez de latão e conte isso à cliente. Bico de latão pode conter traços de chumbo na liga.</p>
+    </div>
+    <div class="aviso">
+      <p class="ficha-tab">Risco 2 · Personagem de marca</p>
+      <p>Encomenda com personagem de desenho é comum. Cortador com o contorno de um personagem licenciado reproduz marca registrada sem autorização, e a responsabilidade cai em quem fabrica e em quem vende.</p>
+      <p>Você faz o tema: formas genéricas (estrela, nuvem, coroa, coração), número, nome, e a logo de uma empresa quando é a própria empresa que encomenda.</p>
+    </div>
+  </div>
+
+  <h3>Antes de entregar: conferência e etiqueta</h3>
+  <div class="split">
+  <div class="ficha">
+    <p class="ficha-tab">O erro que não tem volta é o carimbo ao contrário</p>
+    <ul class="check">
+      <li>Texto do carimbo espelhado no arquivo: é assim que ele sai legível na massa. Teste num pedaço de massa de modelar</li>
+      <li>Nome conferido letra por letra contra a arte aprovada por ela</li>
+      <li>Lâmina do cortador entre 0,8 e 1,0 mm, sem rebarba: passe o dedo pela borda inteira</li>
+      <li>Sem fio de PETG entre as partes do relevo</li>
+      <li>Peça lavada e seca antes de embalar</li>
+      <li>Etiqueta de uso impressa dentro da caixa</li>
+    </ul>
+  </div>
+  <div class="etiqueta">
+    <p class="etq-top">Como usar e limpar sua peça</p>
+    <ul>
+      <li>Carimbo e marcador: sempre com filme de PVC sobre a massa</li>
+      <li>Cortador: contato breve, só na borda; lave logo depois</li>
+      <li>Água fria ou morna, detergente neutro, escova macia</li>
+      <li>Nunca na lava-louças, em água fervente ou no forno</li>
+      <li>Seque por completo antes de guardar</li>
+      <li>Troque a peça se aparecer risco fundo, trinca ou camada soltando</li>
+    </ul>
+    <p class="etq-pe">Peça em PETG · impressa em 3D sob medida · [seu contato]</p>
+  </div>
+  </div>
+
+  <h3>Quando a peça volta: defeito ou uso fora da instrução</h3>
+  <div class="split">
+    <div class="ficha">
+      <p class="ficha-tab">Defeito seu · refaça sem custo</p>
+      <ul>
+        <li>Camada descolando ou lâmina rachando sem sinal de calor</li>
+        <li>Relevo com falha de impressão ou letra faltando</li>
+        <li>Nome diferente da arte aprovada</li>
+      </ul>
+    </div>
+    <div class="ficha">
+      <p class="ficha-tab">Uso fora da instrução · ofereça reimprimir a preço de custo</p>
+      <ul>
+        <li>Peça empenada ou com a borda ondulada: sinal de lava-louças ou água fervente</li>
+        <li>Lâmina amassada por força ou queda</li>
+        <li>Peça usada direto na massa, sem filme, com resíduo preso</li>
+      </ul>
+    </div>
+  </div>
+  <p>Mostre a etiqueta de uso com calma, sem acusar. A cliente que recebe uma peça nova a preço de custo, com a instrução explicada de novo, volta a comprar. A que ouve "a culpa é sua" não volta.</p>
+</section>
+
+<!-- ===================== 06 ===================== -->
+<section id="s06">
+  <header class="sec-head l6">
+    <p class="sec-num">06</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Kit de amostra: o que imprimir hoje à noite</h2>
+  </header>
+
+  <p class="lead">Não saia de casa sem estas três peças. A amostra na mão dela vale mais que qualquer apresentação.</p>
+
+  <h3 style="margin-top:0">Uma noite de máquina</h3>
+  <div class="mesa">
+    <div class="mesa-bar" role="img" aria-label="Tempo de impressão: cortador 30 minutos, carimbo 25 minutos, topo 40 minutos">
+      <div style="flex:30">30 min</div>
+      <div style="flex:25">25 min</div>
+      <div style="flex:40">40 min</div>
+    </div>
+    <ul class="mesa-leg">
+      <li><b>Cortador redondo 7 cm</b>Com nome em relevo · 11 g</li>
+      <li><b>Carimbo de textura 5 cm</b>Floral · 8 g</li>
+      <li><b>Topo de bolo "Parabéns"</b>Vazado · 13 g</li>
+    </ul>
+  </div>
+  <div class="totais">
+    <div><b>1h35</b><span>de máquina</span></div>
+    <div><b>32 g</b><span>de PETG</span></div>
+    <div><b>R$ 4,80</b><span>de filamento</span></div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="kit" role="img" aria-label="Kit de amostra em escala sobre régua: cortador de 7 cm com nome, carimbo de 5 cm com textura floral e topo de bolo Parabéns de 12 cm"></div>
+    <figcaption>O kit em escala real, sobre régua em centímetros.</figcaption>
+  </figure>
+
+  <div class="split">
+    <div class="ficha escura">
+      <p class="ficha-tab">Detalhe que fecha venda</p>
+      <p>Grave um nome fictício de confeitaria no cortador de amostra, algo como "Doces da Ana". Ela vai imaginar o nome dela ali antes de você terminar a frase.</p>
+      <p>Se conseguir o nome real da confeitaria antes da visita, imprima com o nome dela. A resposta muda completamente.</p>
+    </div>
+    <div>
+      <div class="ficha">
+        <p class="ficha-tab">A embalagem é metade da venda</p>
+        <p>Leve as três peças numa caixinha de papel kraft com uma etiqueta simples. Peça em saco plástico parece amostra de fundo de quintal; peça em caixa parece produto de fornecedor.</p>
+      </div>
+      <h3 style="margin-top:18px">Quanto custa sair para a rua</h3>
+      <div class="tabela">
+      <table>
+        <tr><th>Item</th><th>Quantidade</th><th>Valor</th></tr>
+        <tr><td>Kit de amostra em PETG</td><td>2 jogos</td><td class="n">R$ 9,60</td></tr>
+        <tr><td>Caixinha kraft com etiqueta</td><td>2 un</td><td class="n">R$ 6,00</td></tr>
+        <tr><td>Cartões de contato</td><td>20 un</td><td class="n">R$ 10,00</td></tr>
+        <tr class="total"><td>Total para 10 visitas</td><td>—</td><td class="n">R$ 25,60</td></tr>
+      </table>
+      </div>
+      <p>Estimativa para você refazer com os preços da sua região.</p>
+    </div>
+  </div>
+
+  <h3>Trocar o nome no arquivo em 10 minutos</h3>
+  <ol class="perguntas passos">
+    <li><span>Abra o modelo com texto editável no seu programa de modelagem. O Kit Amostra Pronta já traz os arquivos nesse formato.</span></li>
+    <li><span>Troque o texto e use fonte grossa: traço de pelo menos 1,2 mm, ou a letra some na massa.</span></li>
+    <li><span>Dê ao relevo entre 1,2 e 1,5 mm de altura. Menos que isso não marca; mais que isso prende massa.</span></li>
+    <li><span>No carimbo, espelhe o texto na horizontal antes de exportar.</span></li>
+    <li><span>Fatie com o perfil de PETG da seção 05 e confira a primeira camada das letras na pré-visualização.</span></li>
+  </ol>
+  <p class="g-nota">Alturas de relevo são ponto de partida. Teste numa massa de modelar antes do primeiro pedido.</p>
+</section>
+
+<!-- ===================== 07 ===================== -->
+<section id="s07">
+  <header class="sec-head l7">
+    <p class="sec-num">07</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Precificação</h2>
+  </header>
+
+  <p class="lead">Aqui a margem é folgada. O risco não é cobrar pouco demais por hora: é dar desconto na primeira venda e ficar preso a ele.</p>
+
+  <h3 style="margin-top:0">Retorno por hora, nível por nível</h3>
+  <div class="grafico g100" role="img" aria-label="Gráfico de barras do retorno por hora de máquina por nível e preço, com a linha do piso em R$ 15 por hora">
+    <div class="g-row"><span class="g-lab">Completo<small>a R$ 400 · 3h50</small></span><div class="g-track"><div class="g-bar top" style="--v:98">R$ 98/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Entrada<small>a R$ 120 · 1h30</small></span><div class="g-track"><div class="g-bar" style="--v:73">R$ 73/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Padrão<small>a R$ 250 · 3h10</small></span><div class="g-track"><div class="g-bar" style="--v:72">R$ 72/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Completo<small>a R$ 300 · 3h50</small></span><div class="g-track"><div class="g-bar" style="--v:72">R$ 72/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Padrão<small>a R$ 220 · 3h10</small></span><div class="g-track"><div class="g-bar" style="--v:62">R$ 62/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Entrada<small>a R$ 90 · 1h30</small></span><div class="g-track"><div class="g-bar" style="--v:53">R$ 53/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Padrão<small>a R$ 180 · 3h10</small></span><div class="g-track"><div class="g-bar" style="--v:49">R$ 49/h</div></div></div>
+    <div class="g-axis"><span></span><div class="g-ticks"><span style="left:0">0</span><span class="piso" style="left:15%">piso R$ 15</span><span style="left:50%">50</span><span style="left:100%;transform:translateX(-100%)">100</span></div></div>
+  </div>
+  <p class="g-nota">Margem = preço menos custo real. Retorno/h = margem dividida pelas horas de máquina.</p>
+  <p>Todo nível, em qualquer ponto da faixa, fica bem acima do piso. Por isso a regra deste G-Code não é subir preço: é não baixar. A diferença entre o Padrão a R$ 180 e a R$ 250 é R$ 70 por venda, e a confeitaria quase nunca percebe essa diferença quando o carimbo tem o nome dela.</p>
+
+  <h3>Custo real do kit Padrão</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Item</th><th>Cálculo</th><th>Valor</th></tr>
+    <tr><td>Filamento PETG</td><td>95 g a R$ 150/kg</td><td class="n">R$ 14,25</td></tr>
+    <tr><td>Energia</td><td>3h10 de impressão</td><td class="n">R$ 2,50</td></tr>
+    <tr><td>Embalagem e etiqueta</td><td>—</td><td class="n">R$ 4,00</td></tr>
+    <tr><td>Desgaste e perda</td><td>15% sobre filamento</td><td class="n">R$ 2,15</td></tr>
+    <tr class="total"><td>Custo total</td><td>6 cortadores e 1 carimbo</td><td class="n">R$ 22,90</td></tr>
+  </table>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Seu piso</p>
+    <p class="aviso-grande">R$ 15 por hora de máquina. No kit Padrão, isso é R$ 70.</p>
+    <p>Abaixo disso você está pagando para trabalhar. Não existe motivo para chegar perto: se o preço cair até aqui, a conversa virou disputa com marketplace, e essa você não quer ganhar.</p>
+  </div>
+
+  <div class="junto">
+    <h3>A conta de um pedido real, passo a passo</h3>
+    <p>Na quinta à tarde ela pede três cortadores para sábado de manhã. Antes de responder, faça esta conta:</p>
+    <div class="tabela">
+    <table>
+      <tr><th>Passo</th><th>Conta</th><th>Resultado</th></tr>
+      <tr><td>1 · Máquina</td><td>3 cortadores × 30 min</td><td class="n">1h30</td></tr>
+      <tr><td>2 · Custo</td><td>33 g de PETG, energia, caixa, perda</td><td class="n">R$ 10,90</td></tr>
+      <tr><td>3 · Preço</td><td>Entrada R$ 120 + 30% de urgência</td><td class="n">R$ 156</td></tr>
+      <tr><td>4 · Margem</td><td>R$ 156 − R$ 10,90</td><td class="n">R$ 145,10</td></tr>
+      <tr class="total"><td>5 · Retorno</td><td>R$ 145,10 ÷ 1,5 h</td><td class="n">R$ 97/h</td></tr>
+    </table>
+    </div>
+  </div>
+  <p>Urgência paga bem, mas só se a máquina estiver livre. Se aceitar o pedido de sábado atrasar a entrega de outra cliente, recuse. Diga o valor da urgência sem pedir desculpa.</p>
+
+  <div class="ficha">
+    <p class="ficha-tab">Condições que vão escritas no orçamento</p>
+    <ul>
+      <li><strong>Prazo:</strong> 5 dias úteis a partir da arte aprovada</li>
+      <li><strong>Urgência de 48 horas:</strong> +30% sobre o valor</li>
+      <li><strong>Personalização com nome ou logo:</strong> +R$ 15 a 25 por peça</li>
+      <li><strong>Pagamento:</strong> Pix, em até duas vezes no nível Padrão</li>
+      <li><strong>Garantia:</strong> quebrou nos primeiros 30 dias por defeito de impressão, refaço sem custo</li>
+      <li><strong>Junto com a peça:</strong> instrução de uso e limpeza</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== 08 ===================== -->
+<section id="s08">
+  <header class="sec-head l8">
+    <p class="sec-num">08</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A abordagem em 40 segundos</h2>
+  </header>
+
+  <div class="relogio">
+    <div class="passo">
+      <span class="t">antes</span>
+      <p class="acao">Entre com a caixa já aberta na mão. Não fique procurando na mochila na frente dela.</p>
+    </div>
+    <div class="passo">
+      <span class="t">0–8 s</span>
+      <p class="fala">"Oi, tudo bem? Eu faço cortadores e carimbos personalizados sob medida. Trouxe um exemplo pra você ver o acabamento. Esse aqui é com o nome da confeitaria em relevo na massa."</p>
+    </div>
+    <div class="passo cala">
+      <span class="t">8–20 s</span>
+      <p class="acao">Entregue a peça na mão dela. Pare de falar. Deixe ela virar a peça.</p>
+      <p>O silêncio é a parte mais importante do script. Quem fala primeiro depois de entregar a amostra perde a venda. Ela precisa de três a cinco segundos com a peça na mão.</p>
+    </div>
+    <div class="passo">
+      <span class="t">20–28 s</span>
+      <p class="fala">"Você costuma comprar cortador pronto ou já teve que recusar algum pedido porque não tinha o formato?"</p>
+    </div>
+    <div class="passo">
+      <span class="t">28–40 s</span>
+      <p>Essa pergunta é a venda inteira. Se ela disser que já recusou, não venda mais nada: pergunte qual era o formato e ofereça fazer.</p>
+    </div>
+  </div>
+
+  <div class="saidas">
+    <div class="saida">
+      <p class="quando">Ela já recusou pedido.</p>
+      <p>Pergunte o formato, anote, prometa orçamento no mesmo dia. Venda quase certa.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">Compra pronto e está satisfeita.</p>
+      <p>Vá para a marca: "E um com o nome da sua confeitaria no biscoito, você já viu?" Mostre o carimbo.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">Pergunta o preço antes de olhar.</p>
+      <p>"Depende do formato. O kit mais pedido fica entre 180 e 250." Devolva a peça pra mão dela e volte à pergunta do pedido recusado.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">Está ocupada.</p>
+      <p>Deixe a amostra e o cartão, diga que volta na quinta à tarde, e vá embora. Não insista.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 09 ===================== -->
+<section id="s09">
+  <header class="sec-head l9">
+    <p class="sec-num">09</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Objeções</h2>
+  </header>
+
+  <p class="lead">Seis frases que você vai ouvir. Decore a resposta de cada uma antes da primeira visita: improvisar na frente da cliente é o que derruba a venda.</p>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 1 de 6 · preço</p><p class="obj-q">"Eu compro pronto na internet por R$ 15."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu ainda não entendi que isso é outro produto.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Compra mesmo, e é um preço justo pro redondo comum. Só que esse aí é PLA: ele amolece com água quente, entorta e você troca. O meu é PETG, aguenta lavagem. E o que eu faço de verdade é o que não existe pronto: o formato daquele pedido que você teve que recusar, e o seu nome no biscoito. Esse aqui não tem em marketplace nenhum."</p></div>
+    </div>
+    <p class="erro">Erro fatal: competir no cortador genérico. Você perde e ainda queima o nicho.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 2 de 6 · segurança</p><p class="obj-q">"Mas plástico na massa é seguro?"</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu preciso de uma resposta que eu possa repetir pro meu cliente.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Pergunta certíssima, e eu prefiro ser direto: nenhuma peça impressa em 3D tem garantia de segurança pra encostar em alimento, e quem te disser o contrário tá te enganando. Por isso eu faço em PETG e o carimbo funciona por cima do filme de PVC: a peça nem encosta na massa, e ainda solta melhor. Vai junto uma instrução de limpeza. É o mesmo cuidado que você já tem com o resto da bancada."</p></div>
+    </div>
+    <p class="erro">Erro fatal: dizer que a peça é segura para alimento. Se der problema, você não tem defesa.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 3 de 6 · durabilidade</p><p class="obj-q">"E se quebrar?"</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Já me venderam porcaria antes.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Quebrou nos primeiros trinta dias por defeito meu, eu refaço sem custo. É rápido: eu já tenho o arquivo, é só imprimir de novo. Essa é a vantagem de comprar de quem faz e não de quem revende."</p></div>
+    </div>
+    <p class="erro">Erro fatal: prometer garantia vitalícia. Trinta dias resolve a insegurança e não te compromete.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 4 de 6 · valor</p><p class="obj-q">"Tá caro."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu não liguei esse preço a dinheiro entrando.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Entendo. Deixa eu colocar de outro jeito: quanto você cobra numa encomenda de cem biscoitos decorados? Então o kit inteiro se paga numa encomenda e meia. E depois disso ele continua trabalhando em toda festa do ano."</p>
+      <p class="acao">Se ela ainda hesitar: ofereça parcelar em dois Pix ou começar pela Entrada. Não baixe o preço.</p></div>
+    </div>
+    <p class="erro">Erro fatal: dar desconto na primeira venda. O preço que você aceita hoje vira o seu preço para sempre com essa cliente.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 5 de 6 · adiamento</p><p class="obj-q">"Vou pensar. Deixa seu contato."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Não tem nada marcado pra decidir, então não vou decidir.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Claro. Deixa eu fazer diferente: qual é o próximo pedido temático que você tem na agenda? Eu faço o orçamento só desse e te mando hoje ainda. Se fizer sentido, a gente fecha; se não, você já fica com meu contato."</p>
+      <p class="acao">Deixe a amostra com ela. A peça no balcão continua vendendo depois que você sai.</p></div>
+    </div>
+    <p class="erro">Erro fatal: sair sem uma data. "Vou pensar" sem prazo é não.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 6 de 6 · estoque</p><p class="obj-q">"Já tenho um monte de cortador."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Me mostra o que eu ainda não tenho.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Imagino que tenha. De formato comum todo mundo tem. Eu não vendo o que você já tem. Eu faço os dois que faltam: o do pedido específico e o com a sua marca. Qual foi o último formato que você procurou e não achou?"</p></div>
+    </div>
+    <p class="erro">Erro fatal: listar seu catálogo. Volte sempre para a pergunta sobre o que faltou a ela.</p>
+  </div>
+</section>
+
+<!-- ===================== 10 ===================== -->
+<section id="s10">
+  <header class="sec-head l10">
+    <p class="sec-num">10</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Follow-up</h2>
+  </header>
+
+  <p class="lead">Toda mensagem leva uma coisa concreta: um orçamento, uma data, uma pergunta de sim ou não. Nunca mande "passando pra ver se pensou".</p>
+
+  <div class="fio">
+    <div class="msg">
+      <p class="quando">48h<small>depois da visita</small></p>
+      <p class="balao">"Oi [nome], aqui é o [você], passei na [confeitaria] na terça com a amostra. Fiz o orçamento daquele formato que você comentou. Posso mandar aqui?"</p>
+    </div>
+    <div class="msg">
+      <p class="quando">7 dias<small>data</small></p>
+      <p class="balao">"Oi [nome], tudo bem? Lembrei da sua confeitaria porque [data comemorativa] tá chegando, e esse é o tipo de pedido que pega todo mundo de surpresa. Consigo entregar até [data] se fecharmos essa semana."</p>
+    </div>
+    <div class="msg fim">
+      <p class="quando">21 dias<small>desistência</small></p>
+      <p class="balao">"Oi [nome], vou parar de te incomodar. Só me diz se faz sentido eu te procurar mais pra frente ou se prefere que eu não volte. Qualquer coisa, tô por aqui."</p>
+      <p class="obs">É a que mais recebe resposta. Mande mesmo.</p>
+    </div>
+  </div>
+
+  <div class="ficha">
+    <p class="ficha-tab">Depois da primeira entrega</p>
+    <p class="balao" style="margin-bottom:12px">"Oi [nome]! Como saíram os biscoitos com o carimbo? Se tiver uma foto da fornada, me manda? Guardo pra mostrar o acabamento, e só posto se você autorizar."</p>
+    <p>A foto do biscoito pronto, com o nome dela na massa, vende a próxima visita melhor que a peça verde na caixa. E a pergunta abre espaço para o próximo pedido sem você precisar oferecer nada.</p>
+  </div>
+
+  <p>Depois do dia 21, reative em sessenta dias, sempre ancorado numa data do calendário da seção 04.</p>
+</section>
+
+<!-- ===================== 11 ===================== -->
+<section id="s11">
+  <header class="sec-head l11">
+    <p class="sec-num">11</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Depois de entrar: as três perguntas</h2>
+  </header>
+
+  <p class="lead">A primeira venda não é o objetivo. O objetivo é estar dentro do estabelecimento com permissão para olhar em volta.</p>
+
+  <p>Na entrega do pedido, com a peça na mão dela e o clima bom, faça estas três perguntas e anote as respostas:</p>
+
+  <ol class="perguntas">
+    <li><span>"Tem alguma coisa aqui que vive quebrando ou que você improvisa com fita?"</span></li>
+    <li><span>"O que você gostaria de oferecer pros seus clientes e hoje não consegue?"</span></li>
+    <li><span>"Se eu conseguisse fazer qualquer peça sob medida pra sua produção, qual seria a primeira?"</span></li>
+  </ol>
+
+  <p class="label">O que costuma aparecer</p>
+  <ul class="chips">
+    <li>Display de doces para a vitrine</li>
+    <li>Plaquinha de preço</li>
+    <li>Porta-cartão do balcão</li>
+    <li>Organizador de bicos de confeitar</li>
+    <li>Topo de bolo para revenda</li>
+    <li>Carimbo com a logo de uma empresa cliente dela</li>
+    <li class="g01">Indicação da papelaria de festa → G-09</li>
+  </ul>
+
+  <div class="ficha escura">
+    <p class="ficha-tab">Meta</p>
+    <p>Três oportunidades novas registradas por cliente atendida. Uma confeitaria bem atendida vale mais que dez visitas frias, porque ela conhece a decoradora, a papelaria e o buffet de todas as festas que atende.</p>
+  </div>
+</section>
+
+<!-- ===================== 12 ===================== -->
+<section id="s12">
+  <header class="sec-head l12">
+    <p class="sec-num">12</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Missão 72 horas</h2>
+  </header>
+
+  <p class="lead">Em 72 horas, você sai da impressora parada para três propostas entregues na mão de um comerciante. Não é promessa de venda: é estar na rua com material na mão.</p>
+
+  <div class="dias">
+    <div class="dia-col">
+      <p class="dia"><b>1</b> Preparar</p>
+      <ul class="check">
+        <li>Imprimir as três peças do kit de amostra em PETG</li>
+        <li>Montar a caixinha kraft com etiqueta e cartão</li>
+        <li>Listar 20 confeitarias no Google Maps, com nota acima de 4,3 e Instagram ativo</li>
+        <li>Decorar o script de 40 segundos e as seis respostas de objeção</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>2</b> Rua</p>
+      <ul class="check">
+        <li>Visitar 10 confeitarias entre 14h e 16h</li>
+        <li>Deixar 3 amostras</li>
+        <li>Entregar 3 propostas com os três níveis de preço</li>
+        <li>Anotar toda objeção que ouvir, com as palavras exatas</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>3</b> Fechar</p>
+      <ul class="check">
+        <li>Mandar o follow-up de 48h para os três contatos</li>
+        <li>Registrar tudo na aba 20 Alvos da planilha</li>
+        <li>Registrar 3 oportunidades novas ouvidas no balcão</li>
+        <li>Marcar a data da próxima leva de 10 visitas</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Número honesto</p>
+    <div class="funil" role="img" aria-label="De 10 visitas, 3 conversas boas, 3 propostas e 1 venda">
+      <div><span>Visitas</span><b>10</b></div>
+      <div><span>Conversas boas</span><b>3</b></div>
+      <div><span>Propostas entregues</span><b>3</b></div>
+      <div><span>Venda</span><b>1</b></div>
+    </div>
+    <p>Se você fizer 10 visitas e vender zero, não é sinal de que não funciona: é sinal de que faltam visitas. Quem desiste no dia 3 nunca descobre que a segunda leva converte melhor, porque nela você já ouviu as objeções de verdade.</p>
+  </div>
+
+  <h3>Depois das 72 horas: a semana 2</h3>
+  <ul class="check">
+    <li>Voltar nas confeitarias em que deixou amostra, no dia combinado</li>
+    <li>Fazer a segunda leva de 10 visitas, já com as objeções reais anotadas</li>
+    <li>Produzir o primeiro pedido e conferir com a lista da seção 05</li>
+    <li>Na entrega, fazer as três perguntas da seção 11 e pedir a foto da fornada</li>
+    <li>Oferecer o kit da próxima data do calendário para quem não comprou</li>
+  </ul>
+
+  <h3>Registro de visitas</h3>
+  <p>Preencha no carro, logo depois de cada visita. À noite, passe para a aba 20 Alvos da planilha.</p>
+  <div class="tabela">
+  <table class="registro">
+    <tr><th>Confeitaria e bairro</th><th>Quem faz os bolos</th><th>Formato recusado ou tema</th><th>Objeção, nas palavras dela</th><th>Volto em</th></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================== COLA ===================== -->
+<section id="cola">
+  <header class="sec-head">
+    <p class="sec-num">+</p>
+    <p class="kicker">Anexo · leia no carro, antes de entrar</p>
+    <h2>Cola de balcão</h2>
+  </header>
+
+  <div class="cola">
+    <div class="cola-top"><b>G-01 · Confeitarias e docerias</b><span>Terça a quinta · 14h às 16h</span></div>
+    <div class="cola-grid">
+
+      <div>
+        <h4>Na mão antes de entrar</h4>
+        <ul>
+          <li>Caixinha kraft já aberta, com as três peças em PETG</li>
+          <li>Cortador com o nome dela, se descobriu antes</li>
+          <li>Cartão de contato e instrução de uso</li>
+          <li>Pergunte por quem faz os bolos, não pelo dono</li>
+        </ul>
+
+        <h4 style="margin-top:18px">Os 40 segundos</h4>
+        <p class="fala">"Eu faço cortadores e carimbos sob medida. Trouxe um exemplo pra você ver o acabamento."</p>
+        <p class="acao">Peça na mão dela. Silêncio de 3 a 5 segundos.</p>
+        <p class="fala">"Você costuma comprar cortador pronto ou já teve que recusar algum pedido porque não tinha o formato?"</p>
+
+        <h4 style="margin-top:18px">As saídas</h4>
+        <dl>
+          <dt>Já recusou pedido.</dt><dd>Qual formato? Orçamento hoje ainda.</dd>
+          <dt>Compra pronto.</dt><dd>Vá para a marca: mostre o carimbo com nome.</dd>
+          <dt>Pergunta o preço.</dt><dd>O mais pedido fica entre 180 e 250. Volte à pergunta.</dd>
+          <dt>Ocupada.</dt><dd>Deixe amostra e cartão; volto quinta à tarde.</dd>
+        </dl>
+      </div>
+
+      <div>
+        <h4>As 6 objeções</h4>
+        <dl>
+          <dt>"Compro por R$ 15 na internet."</dt><dd>Aquele é PLA e entorta. Eu faço o formato que não existe pronto e o nome dela no biscoito.</dd>
+          <dt>"Plástico na massa é seguro?"</dt><dd>Nenhuma peça impressa tem garantia pra alimento. Por isso PETG, filme de PVC e instrução de limpeza.</dd>
+          <dt>"E se quebrar?"</dt><dd>30 dias: defeito meu, refaço sem custo.</dd>
+          <dt>"Tá caro."</dt><dd>Quanto rende uma encomenda de cem biscoitos? O kit se paga em uma e meia.</dd>
+          <dt>"Vou pensar."</dt><dd>Qual o próximo pedido temático? Orço só esse, hoje.</dd>
+          <dt>"Já tenho muito cortador."</dt><dd>Qual foi o último formato que você procurou e não achou?</dd>
+        </dl>
+
+        <h4 style="margin-top:18px">Os números</h4>
+        <table>
+          <tr><th>Nível</th><th>Preço</th><th>O que leva</th></tr>
+          <tr><td>Entrada</td><td class="n">R$ 90–120</td><td>3 cortadores</td></tr>
+          <tr><td>Padrão</td><td class="n">R$ 180–250</td><td>6 cortadores + carimbo</td></tr>
+          <tr><td>Completo</td><td class="n">R$ 300–400</td><td>Kit da data + topo</td></tr>
+        </table>
+        <p style="font-family:var(--sans);font-size:13.5px;font-weight:600;margin:8px 0 0">Piso R$ 70 no Padrão · urgência +30% · nome ou logo +R$ 15–25/peça</p>
+
+        <h4 style="margin-top:18px">Nunca</h4>
+        <ul class="nunca">
+          <li>Dizer que a peça é segura para alimento</li>
+          <li>Fazer contorno de personagem de marca</li>
+          <li>Dar desconto na primeira venda</li>
+          <li>Competir no cortador redondo comum</li>
+          <li>Sair sem uma data de volta</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <svg class="logo" style="fill:var(--green-neon)" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+  <p><strong>G-Code 01 · Confeitarias e docerias</strong></p>
+  <p>LR Maker Lab · G-Code 3D. Uso pessoal do comprador. Proibida a revenda ou redistribuição deste material.</p>
+  <p>Todo número deste manual é hipótese a validar: tempos, gramaturas e preços mudam com a sua impressora, o seu filamento e a sua região. Refaça as contas antes da primeira proposta.</p>
+  <p>As orientações sobre material, limpeza e etiqueta de uso não substituem a regulamentação sanitária local. Não reproduza personagens, logotipos ou marcas de terceiros sem autorização do titular.</p>
+</footer>
+
+<script>
+/* Ilustrações do manual, desenhadas em SVG por JavaScript. Tudo em escala e na paleta da marca. */
+(function(){
+  var G="#2d7a4f", GD="#1f5c3b", INK="#14201a", SOFT="#42514a", MUTE="#6b7a72", CAR="#8a5a1e", WHITE="#f7f6f1", F="Archivo, system-ui, sans-serif";
+  function defs(id){
+    return '<defs><pattern id="'+id+'-l" width="6" height="3.2" patternUnits="userSpaceOnUse">'+
+      '<rect width="6" height="3.2" fill="'+G+'"/><rect y="2.55" width="6" height=".65" fill="'+GD+'" opacity=".5"/></pattern></defs>';
+  }
+  function svg(id,w,h,body,bg){
+    return '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+defs(id)+
+      (bg?'<rect width="'+w+'" height="'+h+'" fill="'+bg+'"/>':'')+body+'</svg>';
+  }
+  function txt(x,y,s,o){
+    o=o||{};
+    return '<text x="'+x+'" y="'+y+'" font-family="'+F+'" font-size="'+(o.size||16)+'" font-weight="'+(o.weight||700)+'" fill="'+(o.fill||INK)+'"'+
+      (o.anchor?' text-anchor="'+o.anchor+'"':'')+(o.len?' textLength="'+o.len+'" lengthAdjust="spacingAndGlyphs"':'')+
+      (o.ls?' letter-spacing="'+o.ls+'"':'')+'>'+s+'</text>';
+  }
+  function sombra(x,y,w,h,r){return '<rect x="'+(x+4)+'" y="'+(y+5)+'" width="'+w+'" height="'+h+'" rx="'+(r||0)+'" fill="rgba(20,32,26,.16)"/>';}
+
+  /* peças */
+  function chaveiro(p,x,y,w,h,nome,fundo){
+    var r=h*.22, cx=x+h*.36, tx=x+h*.64;
+    return sombra(x,y,w,h,r)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+r+'" fill="url(#'+p+'-l)"/>'+
+      '<circle cx="'+cx+'" cy="'+(y+h/2)+'" r="'+(h*.13)+'" fill="'+fundo+'"/>'+
+      '<circle cx="'+(x-h*.1)+'" cy="'+(y+h/2)+'" r="'+(h*.34)+'" fill="none" stroke="#98a29d" stroke-width="'+(h*.07)+'"/>'+
+      txt(tx+(x+w-h*.18-tx)/2,y+h*.7,nome,{size:h*.52,weight:800,fill:WHITE,anchor:"middle",len:(x+w-h*.18-tx)*.86});
+  }
+  function plaquinha(p,x,y,w,h,nome){
+    return sombra(x,y,w,h,h*.12)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(h*.12)+'" fill="url(#'+p+'-l)"/>'+
+      txt(x+w/2,y+h*.68,nome,{size:h*.5,weight:800,fill:WHITE,anchor:"middle",len:w*.52});
+  }
+  function topo(p,x,y,w){
+    var h=w*.3, sx=x+h*.46, sy=y+h*.44, R=h*.42, pts=[];
+    for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5, rr=i%2?R*.45:R; pts.push((sx+rr*Math.cos(a)).toFixed(1)+","+(sy+rr*Math.sin(a)).toFixed(1));}
+    var cx=x+w-h*.4, t0=x+h*1.0, t1=cx-h*.46;
+    return '<g opacity=".16" transform="translate(4 5)"><polygon points="'+pts.join(" ")+'" fill="'+INK+'"/><rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" fill="'+INK+'"/></g>'+
+      '<rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" rx="'+(h*.05)+'" fill="url(#'+p+'-l)"/>'+
+      '<polygon points="'+pts.join(" ")+'" fill="url(#'+p+'-l)"/>'+
+      txt(t0+(t1-t0)/2,y+h*.78,"Ísis",{size:h*.66,weight:900,fill:"url(#"+p+"-l)",anchor:"middle",len:t1-t0})+
+      '<circle cx="'+cx+'" cy="'+(y+h*.46)+'" r="'+(h*.36)+'" fill="url(#'+p+'-l)"/>'+
+      txt(cx,y+h*.64,"5",{size:h*.5,weight:900,fill:WHITE,anchor:"middle"});
+  }
+  function bambu(x1,y1,x2,y2,w){
+    w=w||7;
+    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#cfa964" stroke-width="'+w+'" stroke-linecap="round"/>'+
+      '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#ead19c" stroke-width="'+(w*.28)+'" stroke-linecap="round" transform="translate('+(-w*.18)+' 0)"/>';
+  }
+  function caixaMilk(p,x,y,w,h,comPlaca){
+    var t=y+h*.28;
+    var s='<ellipse cx="'+(x+w/2+6)+'" cy="'+(y+h+2)+'" rx="'+(w*.58)+'" ry="'+(h*.035)+'" fill="rgba(20,32,26,.14)"/>'+
+      '<rect x="'+(x+w*.32)+'" y="'+y+'" width="'+(w*.36)+'" height="'+(h*.08)+'" fill="#e9e5da" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<polygon points="'+x+','+t+' '+(x+w/2)+','+(y+h*.07)+' '+(x+w)+','+t+'" fill="#efece4" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+x+'" y="'+t+'" width="'+w+'" height="'+(h*.72)+'" fill="'+WHITE+'" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+(x+w*.82)+'" y="'+t+'" width="'+(w*.18)+'" height="'+(h*.72)+'" fill="rgba(20,32,26,.05)"/>';
+    if(comPlaca) s+=plaquinha(p,x+w*.14,y+h*.52,w*.62,w*.24,"Ísis");
+    return s;
+  }
+  function placa(x,y,w,h){
+    var s='<rect x="'+(x+6)+'" y="'+(y+7)+'" width="'+w+'" height="'+h+'" fill="rgba(20,32,26,.18)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#bdb6a7"/>';
+    for(var i=x+9;i<x+w;i+=9) s+='<line x1="'+i+'" y1="'+y+'" x2="'+i+'" y2="'+(y+h)+'" stroke="rgba(20,32,26,.05)" stroke-width="1"/>';
+    return s;
+  }
+  function elastico(x1,x2,y){return '<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" stroke="#1d1f1e" stroke-width="3.5" stroke-linecap="round" opacity=".88"/>';}
+  function mesa(x,y,s){
+    var m='<rect x="'+(x+6)+'" y="'+(y+8)+'" width="'+s+'" height="'+s+'" rx="10" fill="rgba(20,32,26,.2)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" rx="10" fill="#1b2a22"/>';
+    for(var i=1;i<10;i++){var d=s*i/10;
+      m+='<line x1="'+(x+d)+'" y1="'+(y+6)+'" x2="'+(x+d)+'" y2="'+(y+s-6)+'" stroke="rgba(74,222,128,.1)"/>'+
+         '<line x1="'+(x+6)+'" y1="'+(y+d)+'" x2="'+(x+s-6)+'" y2="'+(y+d)+'" stroke="rgba(74,222,128,.1)"/>';}
+    return m;
+  }
+  function cota(x1,x2,y,rotulo){
+    return '<g stroke="'+MUTE+'" stroke-width="1.5"><line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'"/><line x1="'+x1+'" y1="'+(y-7)+'" x2="'+x1+'" y2="'+(y+7)+'"/><line x1="'+x2+'" y1="'+(y-7)+'" x2="'+x2+'" y2="'+(y+7)+'"/></g>'+
+      '<rect x="'+((x1+x2)/2-(rotulo.length*5+12))+'" y="'+(y-12)+'" width="'+(rotulo.length*10+24)+'" height="24" fill="#eceae4"/>'+
+      txt((x1+x2)/2,y+6,rotulo,{size:15,weight:700,fill:SOFT,anchor:"middle"});
+  }
+
+  /* cenas */
+  /* peças da confeitaria */
+  function cortador(p,x,y,d,nome){
+    var cx=x+d/2, cy=y+d/2, r=d/2, s='';
+    s+='<circle cx="'+(cx+4)+'" cy="'+(cy+5)+'" r="'+r+'" fill="none" stroke="rgba(20,32,26,.16)" stroke-width="'+(d*.09)+'"/>';
+    s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(r-d*.02)+'" fill="none" stroke="url(#'+p+'-l)" stroke-width="'+(d*.09)+'"/>';
+    s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(r-d*.09)+'" fill="none" stroke="'+GD+'" stroke-width="'+(d*.015)+'" opacity=".6"/>';
+    if(nome) s+=txt(cx,cy+d*.08,nome,{size:d*.2,weight:900,fill:"url(#"+p+"-l)",anchor:"middle",len:d*.56});
+    return s;
+  }
+  function carimbo(p,x,y,s){
+    var o=sombra(x,y,s,s,s*.1)+'<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" rx="'+(s*.1)+'" fill="url(#'+p+'-l)"/>';
+    var c=x+s/2, m=y+s/2;
+    for(var i=0;i<6;i++){var a=i*Math.PI/3; o+='<ellipse cx="'+(c+Math.cos(a)*s*.2).toFixed(1)+'" cy="'+(m+Math.sin(a)*s*.2).toFixed(1)+'" rx="'+(s*.12)+'" ry="'+(s*.07)+'" transform="rotate('+(i*60)+' '+(c+Math.cos(a)*s*.2).toFixed(1)+' '+(m+Math.sin(a)*s*.2).toFixed(1)+')" fill="#3f9a68"/>';}
+    o+='<circle cx="'+c+'" cy="'+m+'" r="'+(s*.08)+'" fill="'+GD+'"/>';
+    [[.14,.14],[.86,.14],[.14,.86],[.86,.86]].forEach(function(q){o+='<circle cx="'+(x+s*q[0])+'" cy="'+(y+s*q[1])+'" r="'+(s*.04)+'" fill="#3f9a68"/>';});
+    return o;
+  }
+  function topoTexto(p,x,y,w,texto){
+    var h=w*.28, o='';
+    o+='<g opacity=".16" transform="translate(4 5)"><rect x="'+x+'" y="'+(y+h*.78)+'" width="'+w+'" height="'+(h*.14)+'" fill="'+INK+'"/></g>';
+    o+='<rect x="'+x+'" y="'+(y+h*.78)+'" width="'+w+'" height="'+(h*.14)+'" rx="'+(h*.05)+'" fill="url(#'+p+'-l)"/>';
+    o+=txt(x+w/2,y+h*.8,texto,{size:h*.62,weight:900,fill:"url(#"+p+"-l)",anchor:"middle",len:w*.9});
+    [[x+w*.08,y+h*.14],[x+w*.92,y+h*.14]].forEach(function(q){
+      var pts=[],R=h*.13;
+      for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5, rr=i%2?R*.45:R; pts.push((q[0]+rr*Math.cos(a)).toFixed(1)+","+(q[1]+rr*Math.sin(a)).toFixed(1));}
+      o+='<polygon points="'+pts.join(" ")+'" fill="url(#'+p+'-l)"/>';
+    });
+    return o;
+  }
+  function biscoito(x,y,r,nome){
+    var o='<circle cx="'+(x+5)+'" cy="'+(y+7)+'" r="'+r+'" fill="rgba(20,32,26,.14)"/>'+
+      '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#e6bf85"/>'+
+      '<circle cx="'+x+'" cy="'+y+'" r="'+(r-6)+'" fill="#ecca95"/>';
+    for(var i=0;i<14;i++){var a=i*Math.PI/7; o+='<circle cx="'+(x+Math.cos(a)*r*.36).toFixed(1)+'" cy="'+(y+Math.sin(a)*r*.36).toFixed(1)+'" r="1.6" fill="#d9aa66" opacity=".5"/>';}
+    if(nome){
+      o+='<circle cx="'+x+'" cy="'+y+'" r="'+(r*.8)+'" fill="none" stroke="#d3a261" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round"/>';
+      o+=txt(x+1.5,y+r*.16+2,nome,{size:r*.46,weight:900,fill:"#f6dfb6",anchor:"middle",len:r*1.1});
+      o+=txt(x,y+r*.16,nome,{size:r*.46,weight:900,fill:"#c99052",anchor:"middle",len:r*1.1});
+    }
+    return o;
+  }
+
+  var ILL={
+    niveis:function(){
+      var p="gn", b="";
+      /* Entrada: 3 cortadores */
+      b+=cortador(p,90,70,110,"")+cortador(p,210,120,110,"")+cortador(p,110,190,110,"");
+      /* Padrão: 6 cortadores + carimbo */
+      for(var i=0;i<6;i++) b+=cortador(p,470+(i%3)*84,62+Math.floor(i/3)*84,72,"");
+      b+=carimbo(p,560,236,78);
+      /* Completo: 6 + carimbo + topo */
+      for(var j=0;j<6;j++) b+=cortador(p,860+(j%3)*84,50+Math.floor(j/3)*84,72,"");
+      b+=carimbo(p,866,224,70)+topoTexto(p,956,238,190,"Parabéns");
+      [[200,"R$ 90–120","ENTRADA · 3 CORTADORES"],[600,"R$ 180–250","PADRÃO · 6 CORTADORES + CARIMBO"],[1000,"R$ 300–400","COMPLETO · KIT DA DATA + TOPO"]].forEach(function(r){
+        b+=txt(r[0],386,r[1],{size:30,weight:900,fill:INK,anchor:"middle"})+txt(r[0],414,r[2],{size:14,weight:700,fill:G,anchor:"middle",ls:1.2});
+      });
+      return svg(p,1200,432,b,"#f2efe7");
+    },
+    temperatura:function(){
+      var b="", X=function(t){return 90+(t-20)*9.2;};
+      b+='<rect x="'+X(30)+'" y="150" width="'+(X(45)-X(30))+'" height="36" fill="#e4f1e8"/>'+txt(X(37.5),173,"Lavagem à mão",{size:14,weight:700,fill:G,anchor:"middle"});
+      b+='<rect x="'+X(55)+'" y="150" width="'+(X(75)-X(55))+'" height="36" fill="#f6ecdc"/>'+txt(X(65),173,"Lava-louças",{size:14,weight:700,fill:CAR,anchor:"middle"});
+      b+='<line x1="'+X(20)+'" y1="196" x2="'+X(100)+'" y2="196" stroke="'+INK+'" stroke-width="2"/>';
+      for(var t=20;t<=100;t+=10){b+='<line x1="'+X(t)+'" y1="196" x2="'+X(t)+'" y2="205" stroke="'+INK+'" stroke-width="1.5"/>'+txt(X(t),226,t+" °C",{size:13,weight:600,fill:SOFT,anchor:"middle"});}
+      b+='<line x1="'+X(60)+'" y1="62" x2="'+X(60)+'" y2="196" stroke="'+CAR+'" stroke-width="3"/>';
+      b+=txt(X(60)-10,56,"PLA começa a amolecer",{size:17,weight:800,fill:CAR,anchor:"end"})+txt(X(60)-10,78,"perto de 60 °C",{size:15,weight:600,fill:CAR,anchor:"end"});
+      b+='<line x1="'+X(80)+'" y1="96" x2="'+X(80)+'" y2="196" stroke="'+G+'" stroke-width="3"/>';
+      b+=txt(X(80)+10,100,"PETG aguenta",{size:17,weight:800,fill:G})+txt(X(80)+10,122,"até perto de 80 °C",{size:15,weight:600,fill:G});
+      return svg("gt",900,250,b,"#f2efe7");
+    },
+    filme:function(){
+      var p="gf", b="";
+      b+='<rect x="0" y="330" width="900" height="90" fill="#e7e3da"/><rect x="0" y="328" width="900" height="3" fill="#d6d0c3"/>';
+      b+='<path d="M150 330 L150 298 Q150 290 158 290 L372 290 L380 298 L520 298 L528 290 L742 290 Q750 290 750 298 L750 330 Z" fill="#ecd3a0"/>';
+      for(var i=0;i<7;i++){b+='<rect x="'+(388+i*19)+'" y="298" width="9" height="5" fill="#d9b673"/>';}
+      b+='<path d="M120 292 Q130 284 150 286 L368 286 L378 294 L522 294 L532 286 L750 286 Q770 284 780 292" fill="none" stroke="#86bfd4" stroke-width="4" opacity=".9"/>';
+      b+=sombra(360,120,180,112,10)+'<rect x="360" y="120" width="180" height="112" rx="10" fill="url(#'+p+'-l)"/>';
+      b+='<rect x="372" y="232" width="156" height="14" fill="url(#'+p+'-l)"/>';
+      for(var k=0;k<7;k++){b+='<rect x="'+(384+k*19)+'" y="246" width="9" height="46" fill="url(#'+p+'-l)"/>';}
+      b+='<line x1="450" y1="70" x2="450" y2="110" stroke="'+SOFT+'" stroke-width="3"/><polygon points="450,118 442,104 458,104" fill="'+SOFT+'"/>';
+      b+=txt(470,92,"pressão",{size:15,weight:700,fill:SOFT});
+      b+='<line x1="230" y1="286" x2="230" y2="200" stroke="#3b8aa5" stroke-width="2"/><circle cx="230" cy="286" r="4" fill="#3b8aa5"/>';
+      b+=txt(230,170,"Filme de PVC",{size:18,weight:800,fill:"#2f6f86",anchor:"middle"})+txt(230,192,"esticado sobre a massa",{size:15,weight:600,fill:"#2f6f86",anchor:"middle"});
+      b+='<line x1="650" y1="300" x2="650" y2="200" stroke="'+G+'" stroke-width="2"/><circle cx="650" cy="300" r="4" fill="'+G+'"/>';
+      b+=txt(650,150,"O relevo marca a massa",{size:18,weight:800,fill:G,anchor:"middle"})+txt(650,172,"através do filme.",{size:15,weight:600,fill:G,anchor:"middle"})+txt(650,192,"A peça não encosta nela.",{size:15,weight:600,fill:G,anchor:"middle"});
+      return svg(p,900,420,b,"#f2efe7");
+    },
+    kit:function(){
+      var p="gk", b="", u=36;
+      b+=cortador(p,50,40,7*u,"Ana")+cota(50,50+7*u,316,"7 cm");
+      b+=carimbo(p,340,76,5*u)+cota(340,340+5*u,316,"5 cm");
+      b+=topoTexto(p,560,110,12*u,"Parabéns")+cota(560,560+12*u,316,"12 cm");
+      var rx=30, ry=370;
+      b+='<rect x="'+rx+'" y="'+ry+'" width="'+(26*u+18)+'" height="56" rx="3" fill="#d3d9d6" stroke="#b3bdb8"/>';
+      for(var mm=0;mm<=260;mm++){var x=rx+18+mm*u/10, hh=mm%10===0?20:(mm%5===0?13:7);
+        b+='<line x1="'+x.toFixed(1)+'" y1="'+ry+'" x2="'+x.toFixed(1)+'" y2="'+(ry+hh)+'" stroke="#55615b" stroke-width="'+(mm%10===0?1.4:.8)+'"/>';
+        if(mm%10===0) b+=txt(x,ry+40,String(mm/10),{size:12,weight:600,fill:SOFT,anchor:"middle"});}
+      return svg(p,1000,450,b,"#eceae4");
+    },
+    biscoito:function(){
+      var b="";
+      b+=biscoito(250,125,88,"")+biscoito(650,125,88,"ANA");
+      b+=txt(250,258,"Cortador redondo comum",{size:19,weight:800,fill:SOFT,anchor:"middle"})+txt(250,282,"igual ao da concorrente",{size:15,weight:600,fill:MUTE,anchor:"middle"});
+      b+=txt(650,258,"Carimbo com o nome dela",{size:19,weight:800,fill:G,anchor:"middle"})+txt(650,282,"o doce que se assina na festa",{size:15,weight:600,fill:MUTE,anchor:"middle"});
+      return svg("gb",900,300,b,"#f2efe7");
+    }
+  };
+  var alvos=document.querySelectorAll("[data-ill]");
+  for(var i=0;i<alvos.length;i++){var f=ILL[alvos[i].getAttribute("data-ill")]; if(f) alvos[i].innerHTML=f();}
+})();
+</script>
+
+</body>
+</html>
