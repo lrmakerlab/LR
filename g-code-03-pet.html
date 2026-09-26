@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G-Code 03 · Pet shops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14201a;
+    --ink-soft:#42514a;
+    --ink-mute:#6b7a72;
+    --paper:#fbfaf6;
+    --paper-2:#f2efe7;
+    --rule:#ddd8cc;
+    --green-deep:#2d7a4f;
+    --green-neon:#4ade80;
+    --green-wash:#e4f1e8;
+    --plate:#1b2a22;
+    --caramel:#8a5a1e;
+    --caramel-soft:#f6ecdc;
+    --measure:66ch;
+    --wide:1080px;
+    --gut:clamp(18px,5vw,64px);
+    --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    box-sizing:border-box;
+    color-scheme:light;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 12px);-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%}
+
+  /* =========================================================
+     CAPA — a mesa de impressão
+     ========================================================= */
+  .cover{
+    background-color:var(--plate);
+    background-image:
+      linear-gradient(rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(rgba(74,222,128,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.035) 1px,transparent 1px);
+    background-size:80px 80px,80px 80px,16px 16px,16px 16px;
+    color:var(--paper);
+    padding:clamp(24px,5vw,56px) var(--gut) 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .cover-top{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;
+    font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.02em;
+    margin:0 0 clamp(28px,6vw,56px);
+  }
+  .cover-brand{color:var(--green-neon);margin:0}
+  .cover-level{color:#9fb3a8;margin:0;font-stretch:112%}
+  .cover-code{
+    font-family:var(--sans);
+    font-weight:900;
+    font-stretch:78%;
+    font-size:clamp(110px,31vw,330px);
+    line-height:.78;
+    letter-spacing:-.035em;
+    margin:0 0 0 -.04em;
+    color:var(--green-neon);
+    background:repeating-linear-gradient(180deg,var(--green-neon) 0 .052em,#2fbf63 .052em .062em);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .cover-grid{
+    display:grid;gap:clamp(18px,3vw,40px);
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));
+    align-items:end;
+    margin-top:clamp(14px,2vw,22px);
+  }
+  .cover-market{
+    font-family:var(--sans);
+    font-weight:800;
+    font-stretch:88%;
+    font-size:clamp(30px,5.4vw,58px);
+    line-height:1;
+    letter-spacing:-.025em;
+    margin:0;
+    text-wrap:balance;
+  }
+  .cover-promise{
+    max-width:46ch;
+    margin:0;
+    font-size:clamp(17px,2vw,20px);
+    color:#cdd8d0;
+  }
+  .cover > *{position:relative;z-index:1}
+  .cover > .cover-mark{
+    position:absolute;z-index:0;
+    right:clamp(-120px,-6vw,-30px);top:clamp(90px,10vw,130px);
+    width:clamp(260px,46vw,580px);height:auto;
+    fill:rgba(74,222,128,.07);
+  }
+  .cover-brand{display:flex;align-items:center;gap:10px}
+  .cover-brand .logo{width:26px;height:auto;fill:var(--green-neon);flex:none}
+  .cover-72h{
+    list-style:none;padding:0;margin:clamp(30px,5vw,48px) 0 0;max-width:none;
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;
+  }
+  .cover-72h li{max-width:none;margin:0;padding:14px 16px 16px;background:rgba(20,32,26,.78);border-top:3px solid rgba(74,222,128,.35);font-family:var(--sans)}
+  .cover-72h b{display:block;font-weight:900;font-stretch:78%;font-size:26px;letter-spacing:-.02em;line-height:1;color:var(--paper);margin-bottom:6px}
+  .cover-72h span{display:block;font-size:14px;line-height:1.35;color:#b9c8bf}
+  .cover-72h .fim{background:var(--green-neon);border-top-color:var(--green-neon)}
+  .cover-72h .fim b,.cover-72h .fim span{color:var(--ink)}
+  .cover-72h .fim span{font-weight:700}
+
+  .radar{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px;
+    background:rgba(74,222,128,.22);
+    border-top:1px solid rgba(74,222,128,.22);
+    margin:clamp(28px,5vw,44px) calc(var(--gut) * -1) 0;
+  }
+  .radar div{background:var(--ink);padding:18px var(--gut) 22px}
+  .radar dt{
+    font-family:var(--sans);
+    font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:#8ba296;margin:0 0 6px;
+  }
+  .radar dd{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:85%;font-size:24px;line-height:1.05;letter-spacing:-.02em;
+    margin:0;color:var(--paper);
+  }
+  .radar .hot dd{color:var(--green-neon)}
+
+  /* =========================================================
+     CORPO
+     ========================================================= */
+  main{padding-inline:var(--gut)}
+  section{
+    max-width:var(--wide);
+    margin-inline:auto;
+    padding-block:clamp(56px,8vw,96px) 0;
+  }
+  .sec-head{
+    display:grid;grid-template-columns:auto 1fr;gap:6px clamp(14px,2.4vw,28px);
+    align-items:end;
+    margin:0 0 clamp(22px,3vw,34px);
+    padding-bottom:clamp(16px,2vw,22px);
+    border-bottom:2px solid var(--ink);
+  }
+  .sec-num{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:72%;
+    font-size:clamp(64px,10vw,112px);
+    line-height:.8;letter-spacing:-.04em;
+    color:var(--green-deep);
+    margin:0;
+    grid-row:span 2;
+  }
+  .camadas{display:flex;gap:3px;max-width:260px;margin:0 0 10px}
+  .camadas i{flex:1;height:7px;background:var(--rule)}
+  .l1 i:nth-child(-n+1),.l2 i:nth-child(-n+2),.l3 i:nth-child(-n+3),.l4 i:nth-child(-n+4),
+  .l5 i:nth-child(-n+5),.l6 i:nth-child(-n+6),.l7 i:nth-child(-n+7),.l8 i:nth-child(-n+8),
+  .l9 i:nth-child(-n+9),.l10 i:nth-child(-n+10),.l11 i:nth-child(-n+11),.l12 i:nth-child(-n+12){background:var(--green-deep)}
+  .kicker{
+    font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--ink-mute);margin:0 0 4px;
+  }
+  h2{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;
+    font-size:clamp(28px,4.2vw,44px);
+    line-height:1.02;letter-spacing:-.028em;
+    margin:0;
+    text-wrap:balance;
+  }
+  h3{
+    font-family:var(--sans);
+    font-weight:700;font-size:19px;letter-spacing:-.012em;
+    margin:2.2em 0 .6em;
+    text-wrap:balance;
+  }
+  p,li{max-width:var(--measure)}
+  p{margin:0 0 1em}
+  ul,ol{padding-left:1.1em;margin:0 0 1em}
+  li{margin-bottom:.45em}
+  strong{font-weight:600}
+  .lead{font-size:clamp(19px,2.1vw,22px);line-height:1.5;color:var(--ink-soft);max-width:60ch;margin-bottom:1.4em}
+  .label{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);margin:0 0 10px;
+  }
+
+  .split{display:grid;gap:clamp(16px,2.6vw,28px);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));align-items:start;margin:0 0 20px}
+  .split > *{margin-bottom:0}
+
+  /* ---------- fichas e avisos ---------- */
+  .ficha{
+    border:1px solid var(--rule);
+    background:#fff;
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .ficha-tab{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);
+    margin:0 0 12px;
+  }
+  .ficha p:last-child,.ficha ul:last-child{margin-bottom:0}
+  .ficha.escura{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .ficha.escura .ficha-tab{color:var(--green-neon)}
+
+  .aviso{
+    background:var(--caramel-soft);
+    border-top:4px solid var(--caramel);
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .aviso .ficha-tab{color:var(--caramel)}
+  .aviso p:last-child,.aviso ul:last-child{margin-bottom:0}
+  .aviso-grande{
+    font-family:var(--sans);font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.1;letter-spacing:-.02em;
+    color:var(--caramel);margin:0 0 .5em;
+  }
+
+  /* ---------- fala e ação ---------- */
+  .fala{
+    font-size:clamp(19px,2.2vw,21px);
+    line-height:1.5;
+    border-left:4px solid var(--green-neon);
+    padding:2px 0 2px 18px;
+    margin:0 0 1em;
+    max-width:56ch;
+  }
+  .acao{
+    font-family:var(--sans);
+    font-weight:600;font-size:15px;
+    background:var(--paper-2);
+    padding:12px 16px 12px 44px;
+    margin:0 0 1em;
+    max-width:var(--measure);
+    position:relative;
+  }
+  .acao::before{
+    content:"";position:absolute;left:16px;top:17px;width:14px;height:10px;
+    border:2px solid var(--green-deep);border-radius:2px;
+  }
+
+  /* ---------- tabelas ---------- */
+  .tabela{overflow-x:auto;margin:0 0 20px;max-width:760px}
+  table{
+    border-collapse:collapse;
+    width:100%;
+    font-family:var(--sans);
+    font-size:15px;
+  }
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-weight:700;color:var(--ink-mute);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;border-bottom:2px solid var(--ink)}
+  td.n{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+  tr.total td{border-bottom:0;border-top:2px solid var(--ink);font-weight:800}
+
+  /* =========================================================
+     COMPONENTES VISUAIS POR SEÇÃO
+     ========================================================= */
+
+  /* 01 · filtro */
+  .filtro{list-style:none;padding:0;margin:0 0 28px;max-width:none;border-top:2px solid var(--ink)}
+  .filtro li{
+    display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 16px;align-items:center;
+    max-width:none;margin:0;padding:16px 0;border-bottom:1px solid var(--rule);
+  }
+  .filtro .ok{width:22px;height:22px;background:var(--green-deep);position:relative}
+  .filtro .ok::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid var(--green-neon);border-width:0 3px 3px 0;transform:rotate(45deg)}
+  .filtro .crit{font-family:var(--sans);font-weight:700;font-size:16px;line-height:1.25}
+  .filtro .crit small{display:block;font-family:var(--serif);font-weight:400;font-size:15px;color:var(--ink-soft);margin-top:2px}
+  .filtro .val{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.02em;text-align:right;white-space:nowrap;color:var(--green-deep)}
+
+  .conta{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:1px;
+    background:var(--ink);border:1px solid var(--ink);margin:0 0 22px;
+  }
+  .conta div{background:var(--paper);padding:18px 20px}
+  .conta div:last-child{background:var(--ink);color:var(--paper)}
+  .conta .big{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,50px);line-height:1;letter-spacing:-.03em}
+  .conta div:last-child .big{color:var(--green-neon)}
+  .conta .cap{display:block;font-family:var(--sans);font-size:14px;font-weight:600;margin-top:8px;color:var(--ink-soft)}
+  .conta div:last-child .cap{color:#b9c8bf}
+  .conta .op{font-family:var(--sans);font-weight:700;color:var(--ink-mute);font-size:13px;display:block;margin-bottom:6px}
+
+  /* 02 · tipos de cliente + semana */
+  .tipos{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));margin:0 0 22px}
+  .tipo{border-top:4px solid var(--green-deep);background:#fff;padding:16px 18px 18px;border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .tipo.principal{border-top-color:var(--green-neon);background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .tipo h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:20px;line-height:1.1;letter-spacing:-.015em;margin:0 0 6px}
+  .tipo .tag{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 10px}
+  .tipo.principal .tag{color:var(--green-neon)}
+  .tipo p{font-size:15.5px;line-height:1.5;margin:0}
+
+  .semana{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:0 0 20px;max-width:760px}
+  .dia-sem{padding:12px 8px 14px;background:var(--paper-2);min-height:112px;display:flex;flex-direction:column;gap:6px}
+  .dia-sem b{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:22px;letter-spacing:-.02em;line-height:1}
+  .dia-sem span{font-family:var(--sans);font-size:12.5px;line-height:1.3;color:var(--ink-soft)}
+  .dia-sem.ir{background:var(--green-deep);color:#fff}
+  .dia-sem.ir span{color:#e4f1e8}
+  .dia-sem.ir em{font-style:normal;font-family:var(--sans);font-weight:800;font-size:15px;color:var(--green-neon)}
+  .dia-sem.nao{background:repeating-linear-gradient(135deg,var(--paper-2) 0 8px,#e8e3d8 8px 10px)}
+
+  /* 03 · dores */
+  .dores{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 20px}
+  .dor{background:#fff;border:1px solid var(--rule);padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px}
+  .dor .dn{font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:54px;line-height:.8;color:var(--rule)}
+  .dor h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:21px;line-height:1.1;letter-spacing:-.015em;margin:0}
+  .dor p{font-size:15.5px;line-height:1.52;margin:0}
+  .dor.fecha{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .dor.fecha .dn{color:var(--green-neon)}
+  .dor.fecha h4{color:#fff}
+
+  /* 04 · níveis */
+  .niveis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));align-items:stretch;margin:0 0 24px}
+  .ficha.nivel{margin:0;display:flex;flex-direction:column;border-top:4px solid var(--rule)}
+  .nivel .preco{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:78%;font-size:clamp(30px,3.6vw,38px);line-height:1;letter-spacing:-.03em;
+    margin:.1em 0 .5em;
+  }
+  .nivel p:not(.preco):not(.ficha-tab){font-size:15.5px;line-height:1.52}
+  .ficha.nivel.meio{background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .ficha.nivel.meio .ficha-tab{color:var(--green-neon)}
+  .ficha.nivel.meio .preco{color:var(--green-neon)}
+  .selo{align-self:flex-start;font-family:var(--sans);font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--green-neon);color:var(--ink);padding:4px 8px;margin:0 0 12px}
+
+  .prazo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:6px 0 18px}
+  .prazo div{background:rgba(255,255,255,.7);padding:10px 6px;text-align:center;font-family:var(--sans)}
+  .prazo b{display:block;font-weight:800;font-size:14px}
+  .prazo span{display:block;font-size:11.5px;line-height:1.25;color:var(--ink-soft);margin-top:3px}
+  .prazo .p-ok{background:var(--green-deep);color:#fff}
+  .prazo .p-ok span{color:#e4f1e8}
+  .prazo .p-festa{background:var(--caramel);color:#fff}
+  .prazo .p-festa span{color:#f6ecdc}
+
+  /* 05 · material */
+  .cores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 20px;max-width:640px}
+  .cor{font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.25}
+  .cor i{display:block;aspect-ratio:1;max-width:100%;border:1px solid rgba(20,32,26,.18);margin-bottom:8px;
+    background-image:repeating-linear-gradient(180deg,rgba(0,0,0,.05) 0 2px,transparent 2px 5px)}
+  .painel{background:var(--plate);color:#dfe8e2;padding:18px 20px;font-family:var(--sans);font-size:14.5px}
+  .painel .ficha-tab{color:var(--green-neon)}
+  .painel dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0}
+  .painel dt,.painel dd{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1);margin:0}
+  .painel dt{color:#9fb3a8}
+  .painel dd{font-family:var(--mono);color:var(--green-neon);text-align:right;padding-left:12px}
+  .letra{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:0 0 20px}
+  .letra div{background:#fff;padding:16px 18px}
+  .letra b{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:44px;line-height:1;letter-spacing:-.03em;color:var(--green-deep)}
+  .letra span{font-family:var(--sans);font-size:13.5px;color:var(--ink-soft)}
+  .grafia{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .grafia span{font-family:var(--sans);font-weight:800;font-stretch:85%;font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;line-height:1;padding:10px 16px 12px;border:2px solid var(--ink);background:#fff}
+  .grafia span.certo{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+
+  /* 06 · kit */
+  .mesa{margin:0 0 10px;max-width:760px}
+  .mesa-bar{display:flex;gap:3px;height:64px}
+  .mesa-bar div{background:var(--green-deep);color:#fff;font-family:var(--sans);font-weight:800;font-size:15px;padding:10px 12px;display:flex;align-items:flex-end;min-width:0;overflow:hidden;white-space:nowrap}
+  .mesa-bar div:nth-child(2){background:var(--ink)}
+  .mesa-bar div:nth-child(3){background:#3d9a66}
+  .mesa-leg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px;margin:14px 0 0;padding:0;list-style:none;max-width:none}
+  .mesa-leg li{max-width:none;margin:0;font-family:var(--sans);font-size:14px;line-height:1.35;padding-left:18px;position:relative}
+  .mesa-leg li::before{content:"";position:absolute;left:0;top:4px;width:10px;height:10px;background:var(--green-deep)}
+  .mesa-leg li:nth-child(2)::before{background:var(--ink)}
+  .mesa-leg li:nth-child(3)::before{background:#3d9a66}
+  .mesa-leg b{display:block;font-size:15px}
+  .totais{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;margin:22px 0 24px;padding:16px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+  .totais div{font-family:var(--sans)}
+  .totais b{display:block;font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,48px);line-height:1;letter-spacing:-.03em}
+  .totais span{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute)}
+
+  /* 07 · gráfico de retorno por hora */
+  .grafico{margin:8px 0 12px;max-width:820px;font-family:var(--sans)}
+  .g-row{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:6px 16px;align-items:center;padding:7px 0}
+  .g-lab{font-size:14px;line-height:1.25;font-weight:600}
+  .g-lab small{display:block;font-weight:500;color:var(--ink-mute);font-size:12.5px}
+  .g-track{position:relative;height:30px;background:
+    linear-gradient(90deg,transparent calc(21.43% - 1px),var(--caramel) calc(21.43% - 1px) calc(21.43% + 1px),transparent calc(21.43% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(14.2857% - 1px),#e6e1d6 calc(14.2857% - 1px) 14.2857%)}
+  .g-bar{height:100%;width:calc(var(--v) / 70 * 100%);background:var(--green-deep);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-weight:800;font-size:13.5px;white-space:nowrap;min-width:64px}
+  .g-bar.baixo{background:var(--caramel)}
+  .g-bar.top{background:var(--green-neon);color:var(--ink)}
+  .g-axis{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:16px;font-size:11.5px;color:var(--ink-mute);font-weight:600}
+  .g-ticks{position:relative;height:18px}
+  .g-ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+  .g-ticks span:first-child{transform:none}
+  .g-ticks span.piso{color:var(--caramel);font-weight:800}
+  .g-nota{font-family:var(--sans);font-size:13px;color:var(--ink-mute);margin:6px 0 24px}
+
+
+  .folha{background:#fff;border:1px solid var(--rule);box-shadow:6px 6px 0 var(--paper-2);padding:clamp(18px,3vw,28px);margin:0 0 22px;max-width:780px}
+  .folha-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:4px}
+  .folha-top b{font-family:var(--sans);font-weight:900;font-stretch:80%;font-size:26px;letter-spacing:-.02em}
+  .folha-top span{font-family:var(--sans);font-size:13px;color:var(--ink-mute);font-weight:600}
+  .folha .tabela{margin:0;max-width:none}
+  .folha td.revende{color:var(--green-deep)}
+
+  /* 08 · os 40 segundos */
+  .relogio{position:relative;margin:6px 0 26px;padding-left:92px;max-width:780px}
+  .relogio::before{content:"";position:absolute;left:70px;top:6px;bottom:6px;width:2px;background:var(--rule)}
+  .passo{position:relative;margin:0 0 18px}
+  .passo:last-child{margin-bottom:0}
+  .passo .t{position:absolute;left:-92px;top:2px;width:60px;text-align:right;font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:17px;color:var(--green-deep);white-space:nowrap}
+  .passo::before{content:"";position:absolute;left:-27px;top:8px;width:12px;height:12px;background:var(--paper);border:3px solid var(--green-deep)}
+  .passo.cala::before{background:var(--green-neon);border-color:var(--ink)}
+  .passo .fala,.passo .acao,.passo p{margin-bottom:.6em}
+  .saidas{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0 0 18px}
+  .saida{background:#fff;border:1px solid var(--rule);padding:18px 20px}
+  .saida .quando{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:18px;line-height:1.2;letter-spacing:-.01em;margin:0 0 8px}
+  .saida p{font-size:15.5px;line-height:1.52;margin:0}
+
+  /* 09 · objeções */
+  .obj{border:1px solid var(--rule);background:#fff;margin:0 0 18px;display:grid;grid-template-columns:minmax(0,1fr)}
+  .obj-head{background:var(--ink);color:#fff;padding:clamp(18px,3vw,26px)}
+  .obj-n{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-neon);margin:0 0 8px}
+  .obj-q{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.12;letter-spacing:-.02em;
+    margin:0;text-wrap:balance;max-width:none;
+  }
+  .obj-body{padding:clamp(18px,3vw,26px);display:grid;gap:4px 28px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+  .obj-body > *{margin:0}
+  .obj-real{color:var(--ink-soft);font-style:italic;font-size:16px}
+  .obj-real::before{content:"O que ela quer dizer";display:block;font-style:normal;font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:6px}
+  .obj-resp{grid-column:1/-1}
+  .obj-resp .label{margin-top:12px}
+  .erro{
+    grid-column:1/-1;
+    color:var(--caramel);font-weight:700;font-family:var(--sans);font-size:15px;
+    background:var(--caramel-soft);margin:0;padding:12px clamp(18px,3vw,26px);
+  }
+
+  /* 10 · follow-up */
+  .fio{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 22px;align-items:start}
+  .msg{position:relative}
+  .msg .quando{font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:40px;line-height:1;letter-spacing:-.03em;color:var(--green-deep);margin:0 0 10px}
+  .msg .quando small{font-size:14px;font-weight:700;font-stretch:100%;letter-spacing:0;color:var(--ink-mute);margin-left:6px}
+  .balao{background:var(--green-wash);border-radius:14px 14px 14px 3px;padding:14px 16px;font-size:16px;line-height:1.5;margin:0}
+  .msg.fim .quando{color:var(--caramel)}
+  .msg.fim .balao{background:var(--caramel-soft)}
+  .msg .obs{font-family:var(--sans);font-size:13.5px;color:var(--ink-mute);margin:10px 0 0}
+
+  /* 11 · perguntas */
+  .perguntas{list-style:none;padding:0;margin:0 0 22px;counter-reset:q;max-width:none}
+  .perguntas li{counter-increment:q;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:baseline;max-width:none;padding:14px 0;border-bottom:1px solid var(--rule);margin:0}
+  .perguntas li::before{content:counter(q);font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:48px;line-height:.8;color:var(--green-deep)}
+  .perguntas span{font-family:var(--sans);font-weight:700;font-stretch:92%;font-size:clamp(20px,2.6vw,26px);line-height:1.2;letter-spacing:-.015em}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;padding:0;list-style:none;max-width:none}
+  .chips li{margin:0;max-width:none;font-family:var(--sans);font-size:14px;font-weight:600;border:1.5px solid var(--green-deep);color:var(--green-deep);padding:6px 12px}
+  .chips li.g01{background:var(--green-deep);color:#fff}
+
+  /* 12 · missão */
+  .dias{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));margin:0 0 26px;align-items:start}
+  .dia-col{background:#fff;border:1px solid var(--rule);padding:0 20px 8px}
+  .dia{
+    font-family:var(--sans);
+    font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);
+    margin:0 -20px 16px;padding:16px 20px 14px;border-bottom:2px solid var(--ink);
+    display:flex;align-items:baseline;gap:12px;
+  }
+  .dia b{font-weight:900;font-stretch:72%;font-size:56px;line-height:.8;letter-spacing:-.04em;color:var(--ink)}
+  .check{list-style:none;padding:0;max-width:none}
+  .check li{position:relative;padding-left:30px;margin-bottom:.75em;font-size:15.5px;line-height:1.45;max-width:none}
+  .check li::before{content:"";position:absolute;left:0;top:.2em;width:17px;height:17px;border:2px solid var(--green-deep);background:#fff}
+
+  .funil{display:grid;gap:4px;margin:6px 0 16px;font-family:var(--sans)}
+  .funil div{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(138,90,30,.14);padding:10px 14px;font-weight:600;font-size:14.5px;min-width:0}
+  .funil div b{font-weight:900;font-stretch:78%;font-size:24px;letter-spacing:-.02em;white-space:nowrap}
+  .funil div:nth-child(1){width:100%}
+  .funil div:nth-child(2){width:78%}
+  .funil div:nth-child(3){width:58%;background:rgba(138,90,30,.28)}
+  .funil div:nth-child(4){width:44%;background:var(--caramel);color:#fff}
+
+  .g100 .g-bar{width:calc(var(--v) / 100 * 100%)}
+  .g100 .g-track{background:
+    linear-gradient(90deg,transparent calc(15% - 1px),var(--caramel) calc(15% - 1px) calc(15% + 1px),transparent calc(15% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(10% - 1px),#e6e1d6 calc(10% - 1px) 10%)}
+  /* ---------- etiqueta e passos ---------- */
+  .etiqueta{border:2px dashed var(--ink);background:#fff;padding:16px 18px;font-family:var(--sans);font-size:13.5px;line-height:1.4;align-self:start}
+  .etiqueta .etq-top{font-weight:900;font-stretch:85%;font-size:18px;letter-spacing:-.01em;margin:0 0 8px;padding-bottom:8px;border-bottom:2px solid var(--green-deep);color:var(--green-deep)}
+  .etiqueta ul{margin:0 0 8px;padding-left:1em}
+  .etiqueta li{margin-bottom:.25em;max-width:none}
+  .etiqueta .etq-pe{font-size:11.5px;color:var(--ink-mute);margin:0}
+  .perguntas.passos span{font-size:clamp(16px,2vw,19px);font-weight:600;font-stretch:100%}
+  .perguntas.passos li::before{font-size:38px}
+
+  .g40 .g-bar{width:calc(var(--v) / 40 * 100%)}
+  .g40 .g-track{background:
+    linear-gradient(90deg,transparent calc(37.5% - 1px),var(--caramel) calc(37.5% - 1px) calc(37.5% + 1px),transparent calc(37.5% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(12.5% - 1px),#e6e1d6 calc(12.5% - 1px) 12.5%)}
+  .filtro .ok.meio{background:var(--caramel-soft);box-shadow:inset 0 0 0 2px var(--caramel)}
+  .filtro .ok.meio::after{left:5px;top:9px;width:12px;height:3px;border:0;background:var(--caramel);transform:none}
+  .filtro li.parcial .val{color:var(--caramel)}
+  /* ---------- calendário e registro ---------- */
+  .calendario{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;margin:0 0 8px;max-width:820px}
+  .mes{background:var(--paper-2);padding:10px 8px 12px;font-family:var(--sans)}
+  .mes b{display:block;font-weight:800;font-size:15px;margin-bottom:4px}
+  .mes span{display:block;font-size:12px;line-height:1.3;color:var(--ink-soft)}
+  .mes.medio{background:var(--green-wash)}
+  .mes.pico{background:var(--green-deep);color:#fff}
+  .mes.pico span{color:#e4f1e8}
+  .registro td{height:34px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
+  .registro td:last-child{border-right:0}
+
+  /* ---------- cola de balcão ---------- */
+  .cola{background:#fff;border:2px dashed var(--ink);padding:clamp(18px,3vw,30px);font-size:15px;line-height:1.45}
+  .cola-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 20px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin:0 0 18px}
+  .cola-top b{font-family:var(--sans);font-weight:900;font-stretch:78%;font-size:clamp(30px,4.4vw,44px);letter-spacing:-.03em;line-height:1}
+  .cola-top span{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-mute)}
+  .cola-grid{display:grid;gap:20px 30px;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr))}
+  .cola h4{font-family:var(--sans);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 8px}
+  .cola p,.cola li{max-width:none}
+  .cola ul{margin:0;padding-left:1em}
+  .cola li{margin-bottom:.3em}
+  .cola .fala{font-size:16px;margin:0 0 .6em;padding-left:12px;border-left-width:3px}
+  .cola .acao{font-size:13.5px;padding:8px 12px 8px 36px;margin:0 0 .6em}
+  .cola .acao::before{left:12px;top:12px}
+  .cola dl{margin:0}
+  .cola dt{font-family:var(--sans);font-weight:800;font-size:14.5px;margin:10px 0 2px}
+  .cola dt:first-child{margin-top:0}
+  .cola dd{margin:0;color:var(--ink-soft)}
+  .cola table{font-size:13.5px}
+  .cola th,.cola td{padding:6px 8px}
+  .cola .nunca li{color:var(--caramel);font-family:var(--sans);font-weight:600;font-size:14px}
+
+  /* ---------- ilustrações ---------- */
+  figure{margin:0 0 26px;max-width:860px}
+  .ill-art svg{display:block;width:100%;height:auto}
+  .ill figcaption{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink-mute);margin-top:10px}
+
+  footer{
+    background:var(--ink);color:#9fb3a8;
+    margin-top:clamp(64px,9vw,110px);
+    padding:clamp(28px,5vw,44px) var(--gut);
+    font-family:var(--sans);font-size:14px;
+  }
+  footer p{max-width:62ch;margin:0 0 .6em}
+  footer .logo{display:block;width:44px;height:auto;margin-bottom:18px}
+  footer strong{color:var(--green-neon);font-weight:700}
+
+  :focus-visible{outline:3px solid var(--green-neon);outline-offset:2px}
+
+
+  @media (max-width:560px){
+    .calendario{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .cover-72h{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .radar div:last-child:nth-child(odd){grid-column:1/-1}
+    .semana{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .prazo{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .cores{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .g-row,.g-axis{grid-template-columns:minmax(0,1fr)}
+    .g-axis > span:first-child{display:none}
+    .relogio{padding-left:30px}
+    .relogio::before{left:8px}
+    .passo .t{position:static;display:block;text-align:left;width:auto;margin-bottom:4px}
+    .passo::before{left:-30px;top:6px}
+    .funil div:nth-child(n){width:100%}
+    .filtro li{grid-template-columns:28px minmax(0,1fr)}
+    .filtro .val{grid-column:2;text-align:left}
+  }
+
+  @media print{
+    .radar{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .radar div{padding:12px 14px 14px}
+    .radar dd{font-size:14pt}
+    #cola .cola{font-size:9pt;padding:12px}
+    #cola .cola .fala{font-size:10pt}
+    #cola .cola-grid{gap:8px 18px;grid-template-columns:1fr 1fr}
+    #cola .sec-head{margin-bottom:8px;padding-bottom:6px}
+    #cola .sec-num{font-size:40pt}
+    #cola .cola-top{margin-bottom:8px;padding-bottom:6px}
+    #cola .cola-top b{font-size:18pt}
+    #cola .cola h4{font-size:7.5pt;margin-bottom:4px}
+    #cola .cola h4[style]{margin-top:10px!important}
+    #cola .cola dt{font-size:8.5pt;margin-top:5px}
+    #cola .cola dd,#cola .cola li{font-size:8.5pt;margin-bottom:1px}
+    #cola .cola .fala{font-size:9pt;margin-bottom:4px}
+    #cola .cola .acao{font-size:8pt;padding:5px 8px 5px 30px;margin-bottom:4px}
+    #cola .cola .acao::before{left:9px;top:7px}
+    #cola .cola table{font-size:8pt}
+    #cola .cola th,#cola .cola td{padding:3px 5px}
+    #cola .cola .nunca li{font-size:8.5pt}
+    .cola{break-inside:avoid}
+    @page{size:A4;margin:14mm 15mm}
+    @page capa{margin:0}
+    @page contracapa{margin:0}
+    :root{--paper:#ffffff;--gut:15mm}
+    body{font-size:10pt;line-height:1.5}
+    main{padding-inline:0}
+    section{max-width:none}
+    .lead{font-size:12pt;margin-bottom:1em}
+    .sec-head{margin-bottom:14px;padding-bottom:10px}
+    .sec-num{font-size:52pt}
+    h2{font-size:24pt}
+    h3{margin-top:1.4em;font-size:12.5pt}
+
+    /* capa e contracapa ocupam a folha inteira */
+    .cover{page:capa;height:297mm;box-sizing:border-box;width:210mm;display:flex;flex-direction:column;padding:18mm 15mm 0;overflow:hidden}
+    .cover > .cover-mark{right:-30mm;top:40mm;width:150mm}
+    .cover-code{font-size:210pt;margin-top:24mm;background:none;-webkit-text-fill-color:var(--green-neon)}
+    .cover-market{font-size:30pt}
+    .cover-promise{font-size:13pt}
+    .cover-grid{grid-template-columns:1.1fr 1fr;margin-top:8mm}
+    .cover-72h{margin-top:20mm}
+    .radar{margin:auto -15mm 0}
+    .radar div{padding-left:15mm}
+    footer{page:contracapa;break-before:page;height:297mm;overflow:hidden;box-sizing:border-box;margin:0;padding:0 15mm 22mm;display:flex;flex-direction:column;justify-content:flex-end;font-size:10pt}
+
+    /* colunas fixas no papel */
+    .tipos,.dores,.niveis,.fio,.dias{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .split,.saidas{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .conta{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .obj{display:block;margin-bottom:12px}
+    .filtro li{padding:8px 0}
+    .funil div{padding:6px 12px}
+    .funil div b{font-size:16pt}
+    .conta div{padding:12px 14px}
+    .etiqueta{font-size:9pt}
+    .perguntas li{padding:8px 0}
+    .perguntas.passos span{font-size:10.5pt}
+    table{font-size:9pt}
+    th,td{padding:5px 8px}
+    .junto{break-inside:avoid}
+    .calendario{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .mes span{font-size:8pt}
+    .registro td{height:9mm}
+    .obj-head{padding:10px 16px}
+    .obj-q{font-size:15pt}
+    .obj-body{padding:10px 16px;gap:2px 20px}
+    .obj-body .fala{font-size:10.5pt;line-height:1.42}
+    .obj-real{font-size:9.5pt}
+    .erro{font-size:9pt;padding:7px 16px}
+    .dia-col{break-inside:auto}
+    .check li{font-size:9.5pt;margin-bottom:.45em}
+    .tipo p,.dor p,.nivel p:not(.preco):not(.ficha-tab),.saida p{font-size:9.5pt;line-height:1.45}
+    .dia-sem{min-height:78px}
+    p,li{orphans:3;widows:3}
+    footer .logo{width:22mm;margin-bottom:8mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    section{break-before:page;padding-top:0}
+    main > section:first-of-type{break-before:page}
+    .ficha,.aviso,.obj,figure,.ill,table,.saida,.dor,.tipo,.msg,.dia-col,.grafico,.folha,.conta,.semana,.prazo,.passo{break-inside:avoid}
+    h2,h3,.sec-head{break-after:avoid}
+    .ill-art svg{max-height:92mm;width:auto;max-width:100%;margin:0 auto}
+    .tabela{overflow:visible}
+    .folha{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <svg class="cover-mark" viewBox="370 340 640 650" aria-hidden="true"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+
+  <div class="cover-top">
+    <p class="cover-brand"><svg class="logo" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>LR Maker Lab · G-Code 3D</p>
+    <p class="cover-level">Nível 1 · primeira venda rápida</p>
+  </div>
+
+  <p class="cover-code">G-03</p>
+
+  <div class="cover-grid">
+    <h1 class="cover-market">Pet shops</h1>
+    <p class="cover-promise">Tag de coleira com a logo do pet shop no verso, para ele revender no balcão, e placa de baia para o banho e tosa. Você não vende para o tutor: você abastece quem já atende o tutor toda semana.</p>
+  </div>
+
+  <ol class="cover-72h" aria-label="Missão 72 horas">
+    <li><b>Dia 1</b><span>Imprimir as tags e o mini display</span></li>
+    <li><b>Dia 2</b><span>10 pet shops, tag com o nome de um cliente deles</span></li>
+    <li><b>Dia 3</b><span>Proposta do display em consignação</span></li>
+    <li class="fim"><b>72h</b><span>Três propostas entregues na mão de um comerciante</span></li>
+  </ol>
+
+  <dl class="radar">
+    <div><dt>Ticket do 1º pedido</dt><dd>R$ 160 a 800</dd></div>
+    <div><dt>Retorno por hora</dt><dd>~R$ 58/h</dd></div>
+    <div class="hot"><dt>Recompra</dt><dd>Reposição quinzenal</dd></div>
+    <div><dt>Ciclo de venda</dt><dd>1 a 2 visitas</dd></div>
+    <div><dt>Nota no filtro</dt><dd>3 de 5</dd></div>
+  </dl>
+</header>
+
+<main>
+
+<!-- ===================== 01 ===================== -->
+<section id="s01">
+  <header class="sec-head l1">
+    <p class="sec-num">01</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Por que este G-Code funciona</h2>
+  </header>
+
+  <p class="lead">Pet shop vive de ração, e ração tem margem apertada. Acessório personalizado tem margem larga e faz o tutor voltar ao balcão. Você entra como o fornecedor dessa margem.</p>
+
+  <ul class="filtro">
+    <li><span class="ok"></span><span class="crit">Ticket do primeiro pedido<small>Um display com 24 tags já passa o piso do filtro</small></span><span class="val">R$ 160–800</span></li>
+    <li><span class="ok"></span><span class="crit">Retorno por hora de máquina<small>Tag pequena enche a mesa; placa de baia puxa a média para baixo</small></span><span class="val">~R$ 58/h</span></li>
+    <li class="parcial"><span class="ok meio"></span><span class="crit">Recompra<small>Reposição dos nomes que saíram; depende de o display girar</small></span><span class="val">Média</span></li>
+    <li><span class="ok"></span><span class="crit">Decisor<small>O dono costuma estar no balcão ou no banho e tosa</small></span><span class="val">No balcão</span></li>
+    <li class="parcial"><span class="ok meio"></span><span class="crit">Insubstituível<small>O laser concorre. Você só vence com cor, formato e relevo</small></span><span class="val">Contra o laser</span></li>
+  </ul>
+
+  <h3>A conta do modelo de revenda</h3>
+  <div class="conta">
+    <div><span class="op">você vende</span><span class="big">R$ 8</span><span class="cap">cada tag, para o pet shop</span></div>
+    <div><span class="op">ele revende</span><span class="big">R$ 25</span><span class="cap">para o tutor, no balcão</span></div>
+    <div><span class="op">×</span><span class="big">20</span><span class="cap">tags por quinzena, num display que gira</span></div>
+    <div><span class="op">=</span><span class="big">R$ 320</span><span class="cap">por mês em pedidos, de um único pet shop</span></div>
+  </div>
+  <p>O pet shop ganha R$ 17 por tag sem estoque parado, porque o primeiro lote é em consignação parcial. Você ganha a reposição quinzenal sem precisar visitar ninguém de novo.</p>
+
+  <div class="aviso">
+    <p class="ficha-tab">O ponto fraco, dito antes</p>
+    <p>Muito pet shop já vende tag de metal gravada a laser. Você não vai substituir essa tag. Vai colocar do lado dela uma linha que o laser não faz: formato de osso e patinha, cor da coleira, nome em relevo de outra cor. Se o pet shop só quer tag de metal, não é cliente deste G-Code.</p>
+  </div>
+</section>
+
+<!-- ===================== 02 ===================== -->
+<section id="s02">
+  <header class="sec-head l2">
+    <p class="sec-num">02</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Quem é o cliente</h2>
+  </header>
+
+  <p class="lead">O pet shop de bairro que conhece o cachorro pelo nome. Tem balcão com acessório, banho e tosa nos fundos e cliente que volta toda semana.</p>
+
+  <div class="tipos">
+    <div class="tipo principal">
+      <p class="tag">Cliente principal</p>
+      <h4>Pet shop de bairro com banho e tosa</h4>
+      <p>Balcão para o display de tags, baias para as placas e tutor que volta toda semana.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Compra placa de baia</p>
+      <h4>Hotel e creche canina</h4>
+      <p>Cada baia precisa de identificação que troca todo dia. Ticket bom nas placas, pouco balcão para tag.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Revende com confiança</p>
+      <h4>Clínica veterinária com loja</h4>
+      <p>O tutor confia no que a clínica indica. Tag de identificação conversa com o assunto de animal perdido.</p>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="ficha">
+      <p class="ficha-tab">Como reconhecer</p>
+      <ul>
+        <li>Instagram com post do "banho do Thor", com nome do pet e do tutor</li>
+        <li>Balcão com acessórios pendurados: coleira, guia, brinquedo</li>
+        <li>Logo próprio, na fachada e no uniforme</li>
+      </ul>
+    </div>
+    <div class="ficha">
+      <p class="ficha-tab">Quem não é cliente</p>
+      <ul>
+        <li>Grande rede, com compra centralizada</li>
+        <li>Agropecuária que vende ração a granel e nada de acessório</li>
+        <li>Pet shop que só aceita tag de metal e não quer outra linha</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Quando aparecer</h3>
+  <div class="semana">
+    <div class="dia-sem"><b>Seg</b><span>Recebendo mercadoria</span></div>
+    <div class="dia-sem ir"><b>Ter</b><em>14h–16h</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Qua</b><em>14h–16h</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Qui</b><em>14h–16h</em><span>Vá</span></div>
+    <div class="dia-sem nao"><b>Sex</b><span>Banho e tosa lotado</span></div>
+    <div class="dia-sem nao"><b>Sáb</b><span>Dia mais cheio</span></div>
+  </div>
+  <p>De manhã o banho e tosa recebe os animais e o balcão fica cheio de tutor deixando cachorro. No meio da tarde, os animais estão no banho e o dono respira.</p>
+  <p>Pergunte pelo dono ou por quem compra os acessórios. O atendente do caixa e o tosador não decidem o que entra no balcão.</p>
+</section>
+
+<!-- ===================== 03 ===================== -->
+<section id="s03">
+  <header class="sec-head l3">
+    <p class="sec-num">03</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A dor que ele já paga para resolver</h2>
+  </header>
+
+  <p class="lead">Ele não precisa de mais um produto na parede. Precisa de margem, de motivo para o tutor voltar e de um jeito de a marca dele sair da loja.</p>
+
+  <div class="dores">
+    <div class="dor">
+      <span class="dn">1</span>
+      <h4>A margem que a ração não dá</h4>
+      <p>O saco de ração paga as contas e deixa pouco. O que sustenta o lucro é o acessório, e acessório igual ao da internet o tutor compra na internet.</p>
+    </div>
+    <div class="dor">
+      <span class="dn">2</span>
+      <h4>A venda que vai para o marketplace</h4>
+      <p>O tutor quer tag com o nome do cachorro, não acha no balcão e encomenda no celular ali mesmo, enquanto espera o banho acabar.</p>
+    </div>
+    <div class="dor fecha">
+      <span class="dn">3</span>
+      <h4>A marca que passeia pelo bairro</h4>
+      <p>Com a logo do pet shop no verso, cada tag vendida passeia duas vezes por dia pela rua, na coleira de um cliente. É propaganda que o tutor paga para carregar.</p>
+    </div>
+  </div>
+
+  <p>A terceira é a que fecha o display. Mostre a tag virada, com a logo dele atrás, e deixe ele segurar.</p>
+
+  <div class="split">
+    <figure class="ill">
+      <div class="ill-art" data-ill="laser" role="img" aria-label="Tag de metal gravada a laser, plana e de uma cor, ao lado de uma tag impressa em 3D em formato de osso vermelho com o nome em relevo branco"></div>
+      <figcaption>O laser grava. O 3D dá forma, cor e relevo.</figcaption>
+    </figure>
+    <div>
+      <h3 style="margin-top:0">Antes de visitar: três sinais no Instagram dele</h3>
+      <div class="ficha">
+        <ul class="check">
+          <li><strong>Post com o nome do pet atendido.</strong> Ele já trata o cachorro pelo nome, e a tag conversa com isso.</li>
+          <li><strong>Foto de acessório à venda no balcão.</strong> Tem espaço e costume de revender.</li>
+          <li><strong>Logo bem resolvido.</strong> Ele vai querer ver a marca dele no verso.</li>
+        </ul>
+        <p>Anote o nome de um pet que aparece nos posts. Ele vai para a tag de amostra.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 ===================== -->
+<section id="s04">
+  <header class="sec-head l4">
+    <p class="sec-num">04</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A oferta, em três níveis</h2>
+  </header>
+
+  <p class="lead">O display no balcão é o produto. As tags são a reposição. Venda o display que gira sozinho, não um lote de peças.</p>
+
+  <div class="niveis">
+    <div class="ficha nivel">
+      <p class="ficha-tab">Entrada · display em consignação</p>
+      <p class="preco">R$ 160 a 240</p>
+      <p>Display de balcão em comodato com 24 tags de pronta-entrega, em três formatos e quatro cores, com a logo dele no verso. Metade paga na entrega, metade no acerto de 30 dias.</p>
+    </div>
+    <div class="ficha nivel meio">
+      <span class="selo">O que você quer vender</span>
+      <p class="ficha-tab">Padrão · display e encomenda</p>
+      <p class="preco">R$ 300 a 450</p>
+      <p>O display com 40 tags, mais o serviço de tag sob encomenda com nome e telefone, em lote semanal, e 6 placas de baia para o banho e tosa.</p>
+    </div>
+    <div class="ficha nivel">
+      <p class="ficha-tab">Completo · loja inteira</p>
+      <p class="preco">R$ 600 a 800</p>
+      <p>O Padrão mais placas para todas as baias do banho e tosa ou do hotel, e a plaquinha de balcão "Tag com o nome do seu pet aqui".</p>
+    </div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="niveis" role="img" aria-label="Os três níveis: display de balcão com tags; display com placas de baia; display, várias placas de baia e plaquinha de balcão"></div>
+    <figcaption>Entrada, Padrão e Completo lado a lado.</figcaption>
+  </figure>
+
+  <div class="aviso">
+    <p class="ficha-tab">Consignação parcial, por escrito</p>
+    <p class="aviso-grande">Metade na entrega cobre todo o seu custo. O risco que sobra é só a sua margem.</p>
+    <ul>
+      <li>Lista assinada com quantidade, nomes, cores e valor de cada tag deixada</li>
+      <li>Foto do display cheio no dia da entrega, enviada para ele por WhatsApp</li>
+      <li>Data do acerto marcada: 30 dias, você vai até o balcão</li>
+      <li>No acerto, ele paga o que saiu e você troca os nomes parados por outros</li>
+      <li>Display em comodato: se ele encerrar, o display volta com você</li>
+    </ul>
+  </div>
+
+  <h3>Quais nomes ter no display</h3>
+  <p>Não chute. Peça ao pet shop os nomes do cadastro do banho e tosa, só os nomes, sem telefone. São os cachorros reais do bairro, e o tutor que vê o nome do próprio cão no display compra na hora.</p>
+  <div class="tabela">
+  <table>
+    <tr><th>Quantidade</th><th>O que imprimir</th><th>Por quê</th></tr>
+    <tr><td class="n">12 tags</td><td>Os 12 nomes que mais aparecem no cadastro</td><td>Venda de impulso: o tutor reconhece o nome</td></tr>
+    <tr><td class="n">6 tags</td><td>Nomes curtos e comuns na região, sem tutor definido</td><td>Giro para quem ainda não é cliente do banho</td></tr>
+    <tr><td class="n">6 tags</td><td>Sem nome, só com a logo e a patinha</td><td>Mostram cor e formato para a encomenda</td></tr>
+  </table>
+  </div>
+
+  <h3>Quando o pedido chega: o calendário do pet shop</h3>
+  <div class="calendario" aria-label="Meses de maior procura">
+    <div class="mes pico"><b>Jan</b><span>Férias: hotel lotado, placas de baia</span></div>
+    <div class="mes medio"><b>Fev</b><span>Volta da rotina</span></div>
+    <div class="mes medio"><b>Mar</b><span>Reposição normal</span></div>
+    <div class="mes medio"><b>Abr</b><span>Reposição normal</span></div>
+    <div class="mes medio"><b>Mai</b><span>Ação de Dia das Mães de pet</span></div>
+    <div class="mes"><b>Jun</b><span>Frio: menos banho</span></div>
+    <div class="mes pico"><b>Jul</b><span>Férias de julho: hotel</span></div>
+    <div class="mes medio"><b>Ago</b><span>Reposição normal</span></div>
+    <div class="mes pico"><b>Set</b><span>Ofereça o kit do Dia dos Animais</span></div>
+    <div class="mes pico"><b>Out</b><span>4 de outubro, Dia dos Animais</span></div>
+    <div class="mes pico"><b>Nov</b><span>Presente de Natal para o pet</span></div>
+    <div class="mes pico"><b>Dez</b><span>Natal e hotel de fim de ano</span></div>
+  </div>
+  <p class="g-nota">Verde escuro: meses de venda mais provável. É hipótese; ajuste depois do primeiro ano.</p>
+</section>
+
+<!-- ===================== 05 ===================== -->
+<section id="s05">
+  <header class="sec-head l5">
+    <p class="sec-num">05</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Material e segurança do animal</h2>
+  </header>
+
+  <p class="lead">A tag vai para a rua, para a chuva, para o banho e para perto da boca de um cachorro. O material e o desenho precisam aguentar isso, e o manual diz até onde aguentam.</p>
+
+  <div class="split">
+    <div>
+      <h3 style="margin-top:0">PETG, 3 mm de espessura, relevo de outra cor</h3>
+      <p>PETG aguenta água, sol do dia a dia, xampu do banho e pancada no chão. Com 3 mm de espessura e bordas arredondadas, a tag não racha no primeiro tombo.</p>
+      <p>O relevo do nome em cor contrastante, com troca de cor na camada, é o que o laser não faz. Nome branco sobre osso vermelho se lê de longe, que é o que importa se o cachorro fugir.</p>
+      <p>A argola é de aço inox, com fechamento duplo. A argola aberta de bijuteria abre na primeira puxada da guia.</p>
+    </div>
+    <div class="painel">
+      <p class="ficha-tab">Perfil de fatiamento · PETG</p>
+      <dl>
+        <dt>Bico</dt><dd>235–245 °C</dd>
+        <dt>Mesa</dt><dd>75–85 °C</dd>
+        <dt>Camada</dt><dd>0,20 mm</dd>
+        <dt>Espessura da tag</dt><dd>3,0 mm</dd>
+        <dt>Relevo do nome</dt><dd>0,8 mm</dd>
+        <dt>Furo da argola</dt><dd>4 mm, a 2 mm da borda</dd>
+        <dt>Preenchimento</dt><dd>100%</dd>
+      </dl>
+    </div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="tags" role="img" aria-label="Três tags em formato de osso, patinha e coração, com nome em relevo na frente; no verso, telefone do tutor e a logo do pet shop"></div>
+    <figcaption>Frente com o nome do pet. Verso com o telefone do tutor e a logo do pet shop.</figcaption>
+  </figure>
+
+  <div class="split">
+    <div class="aviso">
+      <p class="ficha-tab">Risco 1 · Segurança do animal</p>
+      <p>Tag de plástico não é para cachorro que mastiga a coleira. Diga isso ao pet shop, com essas palavras, para ele repassar ao tutor. Para esse cachorro, a tag de metal que ele já vende é a certa.</p>
+      <p>Nunca imprima brinquedo, mordedor ou peça que o animal leve à boca. Fragmento de plástico impresso engolido é caso de veterinário.</p>
+    </div>
+    <div class="aviso">
+      <p class="ficha-tab">Risco 2 · Marca e dados</p>
+      <p>Escudo de time e personagem são pedidos comuns em tag de pet. Não imprima: é marca registrada sem autorização.</p>
+      <p>A lista de encomendas traz nome e telefone de tutor. Guarde só até a entrega e apague depois. Nunca use esses contatos para oferecer nada.</p>
+    </div>
+  </div>
+
+  <h3>Antes de entregar: conferência do lote</h3>
+  <div class="ficha">
+    <ul class="check">
+      <li>Nome e telefone conferidos, número por número, contra a lista que o pet shop mandou</li>
+      <li>Relevo sem fio entre as letras, legível a um braço de distância</li>
+      <li>Bordas sem rebarba: passe o dedo em volta de cada tag</li>
+      <li>Argola de inox fechada e girando no furo</li>
+      <li>Tags de encomenda em saquinho com o nome do pet escrito por fora</li>
+      <li>Lista da consignação atualizada e assinada no acerto</li>
+    </ul>
+  </div>
+
+  <h3>Cores que se leem de longe</h3>
+  <p>Se o cachorro fugir, quem acha precisa ler o nome e o telefone a um passo de distância. Contraste vale mais que a cor da moda.</p>
+  <div class="tabela">
+  <table>
+    <tr><th>Corpo da tag</th><th>Relevo</th><th>Leitura</th></tr>
+    <tr><td>Vermelho, azul, verde ou preto</td><td>Branco</td><td class="n">Ótima</td></tr>
+    <tr><td>Amarelo ou laranja</td><td>Preto</td><td class="n">Ótima</td></tr>
+    <tr><td>Rosa bebê ou azul bebê</td><td>Branco</td><td class="n">Fraca: use relevo escuro</td></tr>
+    <tr><td>Branco</td><td>Amarelo ou rosa claro</td><td class="n">Não venda</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================== 06 ===================== -->
+<section id="s06">
+  <header class="sec-head l6">
+    <p class="sec-num">06</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Kit de amostra: o que imprimir hoje à noite</h2>
+  </header>
+
+  <p class="lead">Três tags e um mini display. A amostra que fecha é a tag com o nome de um cachorro que ele atende.</p>
+
+  <h3 style="margin-top:0">Uma noite de máquina</h3>
+  <div class="mesa">
+    <div class="mesa-bar" role="img" aria-label="Tempo de impressão: três tags 60 minutos, mini display 70 minutos">
+      <div style="flex:60">1h00</div>
+      <div style="flex:70">1h10</div>
+    </div>
+    <ul class="mesa-leg">
+      <li><b>3 tags: osso, patinha e coração</b>Nome e telefone fictício, duas cores · 15 g</li>
+      <li><b>Mini display de balcão 10 × 12 cm</b>Com 3 ganchos e espaço para a logo · 30 g</li>
+    </ul>
+  </div>
+  <div class="totais">
+    <div><b>2h10</b><span>de máquina</span></div>
+    <div><b>45 g</b><span>de PETG</span></div>
+    <div><b>R$ 6,75</b><span>de filamento</span></div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="kit" role="img" aria-label="Kit de amostra em escala sobre régua: tag osso de 4 cm, patinha e coração de 3,5 cm e mini display de 10 cm"></div>
+    <figcaption>O kit em escala real, sobre régua em centímetros.</figcaption>
+  </figure>
+
+  <div class="split">
+    <div class="ficha escura">
+      <p class="ficha-tab">Detalhe que fecha venda</p>
+      <p>Imprima uma das tags com o nome de um cachorro que aparece no Instagram do pet shop, o do "banho do Thor". Entregue essa primeiro. Ele reconhece o cliente dele e entende o produto sem explicação.</p>
+      <p>No verso, escreva "seu logo aqui" num adesivo. Ele vai imaginar a marca dele antes de você pedir.</p>
+    </div>
+    <div>
+      <div class="ficha">
+        <p class="ficha-tab">Apresentação</p>
+        <p>As três tags penduradas no mini display, como vão ficar no balcão dele. Ele precisa ver o produto já exposto, não solto na mão.</p>
+      </div>
+      <h3 style="margin-top:18px">Quanto custa sair para a rua</h3>
+      <div class="tabela">
+      <table>
+        <tr><th>Item</th><th>Quantidade</th><th>Valor</th></tr>
+        <tr><td>Kit de amostra em PETG</td><td>2 jogos</td><td class="n">R$ 13,50</td></tr>
+        <tr><td>Argolas de inox</td><td>10 un</td><td class="n">R$ 8,00</td></tr>
+        <tr><td>Adesivos "seu logo aqui"</td><td>1 folha</td><td class="n">R$ 5,00</td></tr>
+        <tr class="total"><td>Total para 10 visitas</td><td>—</td><td class="n">R$ 26,50</td></tr>
+      </table>
+      </div>
+      <p>Estimativa para você refazer com os preços da sua região.</p>
+    </div>
+  </div>
+
+  <h3>Onde o display fica no balcão dele</h3>
+  <ol class="perguntas passos">
+    <li><span>Ao lado do caixa, na altura dos olhos de quem paga. Tutor compra tag na hora de pagar o banho.</span></li>
+    <li><span>Nomes do cadastro na fileira da frente. O tutor que acha o nome do próprio cachorro compra sem perguntar preço.</span></li>
+    <li><span>Uma tag de cada cor na fileira de baixo, para quem vai encomendar com telefone.</span></li>
+    <li><span>Bloco de pedido e caneta presos no display: nome, telefone do tutor, formato e cor.</span></li>
+  </ol>
+</section>
+
+<!-- ===================== 07 ===================== -->
+<section id="s07">
+  <header class="sec-head l7">
+    <p class="sec-num">07</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Precificação</h2>
+  </header>
+
+  <p class="lead">A tag paga bem; a placa de baia paga pouco. O display pronto paga menos no primeiro lote e muito na reposição. Faça a conta de cada linha separada.</p>
+
+  <h3 style="margin-top:0">Retorno por hora, peça por peça</h3>
+  <div class="grafico" role="img" aria-label="Gráfico de barras do retorno por hora de máquina por peça, com a linha do piso em R$ 15 por hora">
+    <div class="g-row"><span class="g-lab">20 tags de reposição<small>a R$ 8 · 2h</small></span><div class="g-track"><div class="g-bar top" style="--v:66">R$ 66/h</div></div></div>
+    <div class="g-row"><span class="g-lab">20 tags de reposição<small>a R$ 6 · 2h</small></span><div class="g-track"><div class="g-bar" style="--v:46">R$ 46/h</div></div></div>
+    <div class="g-row"><span class="g-lab">8 tags de encomenda<small>a R$ 8 · 1h10</small></span><div class="g-track"><div class="g-bar" style="--v:45">R$ 45/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Primeiro lote com display<small>24 tags a R$ 8 · 5h25</small></span><div class="g-track"><div class="g-bar" style="--v:27">R$ 27/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Placa de baia<small>a R$ 55 · 2h20</small></span><div class="g-track"><div class="g-bar" style="--v:21">R$ 21/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Placa de baia<small>a R$ 45 · 2h20</small></span><div class="g-track"><div class="g-bar" style="--v:16">R$ 16/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Placa de baia<small>a R$ 35 · 2h20</small></span><div class="g-track"><div class="g-bar baixo" style="--v:12">R$ 12/h</div></div></div>
+    <div class="g-axis"><span></span><div class="g-ticks"><span style="left:0">0</span><span class="piso" style="left:21.43%">piso R$ 15</span><span style="left:42.86%">30</span><span style="left:71.43%">50</span><span style="left:100%;transform:translateX(-100%)">70</span></div></div>
+  </div>
+  <p class="g-nota">Margem = preço menos custo real. Retorno/h = margem dividida pelas horas de máquina.</p>
+  <p>A reposição de tags é onde está o dinheiro. A placa de baia entra no pacote porque o banho e tosa precisa dela e porque abre a porta, não porque paga a sua hora. Nunca venda placa solta abaixo de R$ 45.</p>
+
+  <h3>Custo real de uma mesa de 20 tags</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Item</th><th>Cálculo</th><th>Valor</th></tr>
+    <tr><td>Filamento PETG</td><td>100 g a R$ 150/kg</td><td class="n">R$ 15,00</td></tr>
+    <tr><td>Argolas de inox</td><td>20 × R$ 0,45</td><td class="n">R$ 9,00</td></tr>
+    <tr><td>Energia</td><td>2h de impressão</td><td class="n">R$ 0,80</td></tr>
+    <tr><td>Desgaste e perda</td><td>15% sobre filamento</td><td class="n">R$ 2,25</td></tr>
+    <tr class="total"><td>Custo da mesa</td><td>R$ 1,35 por tag</td><td class="n">R$ 27,05</td></tr>
+  </table>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Seu piso</p>
+    <p class="aviso-grande">R$ 15 por hora de máquina. Na placa de baia, isso é R$ 42.</p>
+    <p>Duas horas e vinte de máquina vezes R$ 15, mais R$ 7 de custo. Na tag de reposição o piso fica em R$ 2,85 por unidade, tão longe do preço que o risco ali é outro: aceitar desconto por volume que ele não precisa.</p>
+  </div>
+
+  <div class="junto">
+    <h3>A conta do primeiro lote em consignação, passo a passo</h3>
+    <p>Display em comodato com 24 tags de pronta-entrega. Antes de propor, faça esta conta:</p>
+    <div class="tabela">
+    <table>
+      <tr><th>Passo</th><th>Conta</th><th>Resultado</th></tr>
+      <tr><td>1 · Máquina</td><td>Display 3h + 24 tags 2h25</td><td class="n">5h25</td></tr>
+      <tr><td>2 · Custo</td><td>Display R$ 11,55 + 24 × R$ 1,35</td><td class="n">R$ 43,95</td></tr>
+      <tr><td>3 · Preço do lote</td><td>24 × R$ 8</td><td class="n">R$ 192</td></tr>
+      <tr><td>4 · Na entrega</td><td>50% de R$ 192</td><td class="n">R$ 96</td></tr>
+      <tr><td>5 · Retorno do lote</td><td>(R$ 192 − R$ 43,95) ÷ 5,4 h</td><td class="n">R$ 27/h</td></tr>
+      <tr class="total"><td>6 · Reposição</td><td>20 tags a R$ 8, sem display</td><td class="n">R$ 66/h</td></tr>
+    </table>
+    </div>
+  </div>
+  <p>Os R$ 96 da entrega pagam todo o custo do lote duas vezes. O primeiro lote paga pouco por hora porque carrega o display; a partir da primeira reposição, o retorno mais que dobra.</p>
+
+  <div class="ficha">
+    <p class="ficha-tab">Condições que vão escritas na proposta</p>
+    <ul>
+      <li><strong>Consignação parcial:</strong> 50% na entrega, acerto em 30 dias do que saiu</li>
+      <li><strong>Troca:</strong> nomes parados trocados sem custo no acerto</li>
+      <li><strong>Reposição:</strong> quinzenal, a partir de 10 tags</li>
+      <li><strong>Encomenda com nome e telefone:</strong> lote semanal, entrega em 5 dias úteis</li>
+      <li><strong>Display:</strong> em comodato, volta se a parceria encerrar</li>
+      <li><strong>Dados dos tutores:</strong> usados só para a encomenda e apagados após a entrega</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== 08 ===================== -->
+<section id="s08">
+  <header class="sec-head l8">
+    <p class="sec-num">08</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A abordagem em 40 segundos</h2>
+  </header>
+
+  <div class="relogio">
+    <div class="passo">
+      <span class="t">antes</span>
+      <p class="acao">Espere o tutor que está no balcão ser atendido. Pet shop cheio de cachorro latindo não é hora de proposta.</p>
+    </div>
+    <div class="passo">
+      <span class="t">0–8 s</span>
+      <p class="fala">"Oi, tudo bem? Eu faço tag de coleira em 3D com a logo do pet shop no verso, pra vocês revenderem aqui no balcão. Trouxe uma de um cliente seu."</p>
+    </div>
+    <div class="passo cala">
+      <span class="t">8–20 s</span>
+      <p class="acao">Entregue a tag com o nome do cachorro que você tirou do Instagram dele. Pare de falar.</p>
+      <p>Ele vai ler o nome, rir e dizer de quem é o cachorro. Deixe ele falar do cliente. Depois, vire a tag e mostre o verso com "seu logo aqui".</p>
+    </div>
+    <div class="passo">
+      <span class="t">20–28 s</span>
+      <p class="fala">"Hoje, quando um tutor quer tag com o nome do cachorro, ele compra aqui ou no celular?"</p>
+    </div>
+    <div class="passo">
+      <span class="t">28–40 s</span>
+      <p>Se a resposta for "no celular", mostre o mini display: "É assim que fica no seu balcão, e o primeiro lote você paga metade."</p>
+    </div>
+  </div>
+
+  <div class="saidas">
+    <div class="saida">
+      <p class="quando">"No celular, a gente não vende."</p>
+      <p>"Então essa venda está saindo daqui. Posso deixar um display com 24 nomes dos seus clientes? Você paga metade agora e o resto no acerto."</p>
+    </div>
+    <div class="saida">
+      <p class="quando">"Já vendo tag de metal a laser."</p>
+      <p>"Ótimo, continua. A minha fica do lado, pra quem quer cor e formato." Mostre o osso vermelho ao lado da de metal dele.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">"Quanto custa?"</p>
+      <p>"Pra você, R$ 8. No balcão, a maioria vende entre 25 e 30." Devolva a tag para a mão dele.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">Está no banho e tosa.</p>
+      <p>Deixe a tag do cliente dele com o atendente, com seu cartão. "Volto quinta às 15h pra mostrar o display."</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 09 ===================== -->
+<section id="s09">
+  <header class="sec-head l9">
+    <p class="sec-num">09</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Objeções</h2>
+  </header>
+
+  <p class="lead">Seis frases de quem compra de distribuidor toda semana e já viu muito produto encalhar na parede.</p>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 1 de 6 · concorrente</p><p class="obj-q">"Eu já vendo tag de metal gravada a laser."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Já tenho fornecedor e não quero trocar.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"E continua vendendo. A de metal é pra quem quer durabilidade. A minha é pra quem quer o formato de osso, a cor da coleira e o nome em relevo. São tutores diferentes, e as duas ficam lado a lado no balcão."</p></div>
+    </div>
+    <p class="erro">Erro fatal: dizer que a sua é melhor que a de metal. Ele escolheu aquele fornecedor, e você acabou de dizer que ele errou.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 2 de 6 · durabilidade</p><p class="obj-q">"Cachorro morde e quebra isso."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Não quero tutor voltando aqui reclamar.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Morde mesmo, e eu prefiro ser direto: tag de plástico não é pra cachorro que mastiga a coleira. Pra esse, a de metal que você já tem. Pros outros, ela aguenta banho, chuva e tombo, com argola de inox. Quebrou por defeito em 30 dias, eu troco."</p></div>
+    </div>
+    <p class="erro">Erro fatal: prometer que aguenta mordida. O primeiro cachorro que mastigar desmente você no balcão dele.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 3 de 6 · estoque</p><p class="obj-q">"Não quero produto parado na parede."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Já comprei acessório que nunca saiu.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Por isso o primeiro lote é meio consignado. Você paga metade, e em 30 dias eu venho, você paga o que vendeu e eu troco os nomes que não saíram. E os nomes eu tiro do seu cadastro do banho: são os cachorros que já passam aqui."</p></div>
+    </div>
+    <p class="erro">Erro fatal: deixar tudo 100% consignado. Sem nenhum pagamento, ele não tem motivo para expor o display na frente.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 4 de 6 · preço final</p><p class="obj-q">"Tutor não paga R$ 25 numa tag."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Não sei se consigo vender por esse valor.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Ela sai no caixa, junto com o banho, quando o tutor vê o nome do cachorro dele no display. Você compra a R$ 8; se preferir vender a R$ 20, ainda ganha R$ 12 por tag. O preço final quem decide é você."</p></div>
+    </div>
+    <p class="erro">Erro fatal: baixar o seu preço para ajudar o preço final dele. Ele tem margem de sobra para ajustar; você não.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 5 de 6 · marca</p><p class="obj-q">"Faz com o escudo do time? É o que mais pedem."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu quero vender o que o tutor pede.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Escudo de time eu não faço, porque é marca registrada e o problema cai em quem fabrica e em quem vende. Faço nas cores do time, com o nome do cachorro em relevo. O torcedor reconhece as cores de longe."</p></div>
+    </div>
+    <p class="erro">Erro fatal: aceitar "só pra esse cliente". A tag vai passear pelo bairro inteiro com a sua peça e a logo dele no verso.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 6 de 6 · adiamento</p><p class="obj-q">"Me manda o catálogo no WhatsApp."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Quero decidir depois, sem você na frente.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Mando, mas o que vende é a peça no balcão. Deixa eu fazer diferente: deixo esse mini display com as três tags aqui até terça. Se algum tutor perguntar, você me conta, e a gente decide olhando isso."</p>
+      <p class="acao">Deixe o mini display no balcão, perto do caixa. Marque a volta para terça.</p></div>
+    </div>
+    <p class="erro">Erro fatal: sair só com a promessa do catálogo. Catálogo no WhatsApp não aparece para nenhum tutor.</p>
+  </div>
+
+  <div class="ficha">
+    <p class="ficha-tab">No acerto: quando o display não girou</p>
+    <p>A objeção mais difícil aparece 30 dias depois: "quase não saiu". Antes de aceitar o encerramento, confira:</p>
+    <ul class="check">
+      <li>O display estava ao lado do caixa, ou foi parar num canto?</li>
+      <li>Os nomes eram do cadastro do banho, ou só nomes genéricos?</li>
+      <li>O atendente mostrou a tag no pagamento do banho?</li>
+      <li>Tinha bloco de encomenda, ou o tutor que não achou o nome foi embora?</li>
+    </ul>
+    <p>Se dois desses falharam, proponha mais 30 dias com o display no lugar certo e novos nomes. Se tudo foi feito e não girou, recolha o display com educação e siga para o próximo pet shop.</p>
+  </div>
+</section>
+
+<!-- ===================== 10 ===================== -->
+<section id="s10">
+  <header class="sec-head l10">
+    <p class="sec-num">10</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Follow-up</h2>
+  </header>
+
+  <p class="lead">Aqui o follow-up não termina na venda: o acerto da consignação é o follow-up que mais importa.</p>
+
+  <div class="fio">
+    <div class="msg">
+      <p class="quando">48h<small>depois da visita</small></p>
+      <p class="balao">"Oi [nome], aqui é o [você], da tag do [pet]. Montei uma imagem do display com a logo do [pet shop] e 24 nomes do bairro. Te mando pra ver como fica no balcão?"</p>
+    </div>
+    <div class="msg">
+      <p class="quando">7 dias<small>data</small></p>
+      <p class="balao">"Oi [nome]! O Dia dos Animais é 4 de outubro. Se fecharmos essa semana, o display chega com uma tag de patinha especial da data. Faz sentido pra você?"</p>
+    </div>
+    <div class="msg fim">
+      <p class="quando">21 dias<small>desistência</small></p>
+      <p class="balao">"Oi [nome], não vou mais insistir no display. Se um dia um tutor pedir tag com nome e você quiser, é só me chamar. Abraço pro [pet]!"</p>
+    </div>
+  </div>
+
+  <div class="ficha">
+    <p class="ficha-tab">15 dias depois da entrega: a pergunta da reposição</p>
+    <p class="balao" style="margin-bottom:12px">"Oi [nome]! Como está o display? Quantas tags saíram, e teve algum nome que tutor pediu e não tinha? Já separo pra reposição."</p>
+    <p>Essa mensagem transforma o acerto de 30 dias numa reposição de 15. O nome que o tutor pediu e não achou é a próxima tag vendida, e é também a informação que ninguém mais tem.</p>
+  </div>
+
+  <p>Reative quem não comprou em setembro, para o Dia dos Animais, e em novembro, para o Natal.</p>
+</section>
+
+<!-- ===================== 11 ===================== -->
+<section id="s11">
+  <header class="sec-head l11">
+    <p class="sec-num">11</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Depois de entrar: as três perguntas</h2>
+  </header>
+
+  <p class="lead">No dia do acerto você está atrás do balcão, contando tags com ele. É o melhor momento da parceria para perguntar.</p>
+
+  <ol class="perguntas">
+    <li><span>"O que o banho e tosa improvisa com fita crepe ou caneta?"</span></li>
+    <li><span>"Que acessório os tutores pedem e você não encontra no distribuidor?"</span></li>
+    <li><span>"Você indica algum veterinário, adestrador ou hotel pros seus clientes?"</span></li>
+  </ol>
+
+  <p class="label">O que costuma aparecer</p>
+  <ul class="chips">
+    <li>Placa "banho em andamento" para a baia</li>
+    <li>Porta-saquinho de coleta com a logo, para revenda</li>
+    <li>Suporte de parede para guias e coleiras</li>
+    <li>Plaquinha de Pix e QR do Instagram no balcão</li>
+    <li>Tag temática de Natal e Dia dos Animais</li>
+    <li class="g01">Indicação do hotel ou da clínica parceira</li>
+  </ul>
+
+  <div class="ficha escura">
+    <p class="ficha-tab">Meta</p>
+    <p>Três oportunidades por pet shop atendido e uma indicação de parceiro. Clínica, hotel e adestrador atendem os mesmos tutores e compram placa, tag e display do mesmo jeito.</p>
+  </div>
+</section>
+
+<!-- ===================== 12 ===================== -->
+<section id="s12">
+  <header class="sec-head l12">
+    <p class="sec-num">12</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Missão 72 horas</h2>
+  </header>
+
+  <p class="lead">Em 72 horas, você sai da impressora parada para três propostas entregues na mão de um comerciante. Aqui, proposta é o display com a logo dele e as condições da consignação.</p>
+
+  <div class="dias">
+    <div class="dia-col">
+      <p class="dia"><b>1</b> Preparar</p>
+      <ul class="check">
+        <li>Listar 20 pet shops no Google Maps, com banho e tosa e Instagram ativo</li>
+        <li>Anotar, dos 10 primeiros, o nome de um pet que aparece nos posts</li>
+        <li>Imprimir o kit de amostra e 3 tags com esses nomes</li>
+        <li>Decorar o script de 40 segundos e as seis respostas</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>2</b> Rua</p>
+      <ul class="check">
+        <li>Visitar 10 pet shops entre 14h e 16h</li>
+        <li>Entregar a tag do cliente de cada um</li>
+        <li>Deixar 3 mini displays em balcões interessados</li>
+        <li>Pedir os nomes do cadastro do banho para montar a proposta</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>3</b> Fechar</p>
+      <ul class="check">
+        <li>Mandar a imagem do display com a logo de cada um</li>
+        <li>Mandar as condições da consignação por escrito</li>
+        <li>Registrar tudo na aba 20 Alvos da planilha</li>
+        <li>Marcar a volta nos balcões onde ficou o mini display</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Número honesto</p>
+    <div class="funil" role="img" aria-label="De 10 visitas, 3 conversas boas, 3 mini displays deixados e 1 lote em consignação">
+      <div><span>Visitas</span><b>10</b></div>
+      <div><span>Conversas boas</span><b>3</b></div>
+      <div><span>Mini displays deixados</span><b>3</b></div>
+      <div><span>Lote em consignação</span><b>1</b></div>
+    </div>
+    <p>O primeiro lote paga pouco. Quem desiste antes do acerto de 30 dias nunca vê a reposição, que é onde este G-Code paga R$ 66 por hora. Meça o sucesso pela reposição, não pela primeira entrega.</p>
+  </div>
+
+  <h3>Depois das 72 horas: a semana 2</h3>
+  <ul class="check">
+    <li>Voltar nos balcões em que deixou o mini display, no dia combinado</li>
+    <li>Imprimir o primeiro lote com os nomes do cadastro e conferir com a lista da seção 05</li>
+    <li>Entregar o display com a lista da consignação assinada e a foto</li>
+    <li>Fazer a segunda leva de 10 visitas</li>
+    <li>Marcar na agenda a mensagem de 15 dias e o acerto de 30 dias</li>
+  </ul>
+
+  <h3>Registro de visitas</h3>
+  <p>Preencha no carro, logo depois de cada visita. À noite, passe para a aba 20 Alvos da planilha.</p>
+  <div class="tabela">
+  <table class="registro">
+    <tr><th>Pet shop e bairro</th><th>Quem compra acessório</th><th>Já vende tag? Qual</th><th>Objeção, nas palavras dele</th><th>Volto em</th></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================== COLA ===================== -->
+<section id="cola">
+  <header class="sec-head">
+    <p class="sec-num">+</p>
+    <p class="kicker">Anexo · leia no carro, antes de entrar</p>
+    <h2>Cola de balcão</h2>
+  </header>
+
+  <div class="cola">
+    <div class="cola-top"><b>G-03 · Pet shops</b><span>Terça a quinta · 14h às 16h</span></div>
+    <div class="cola-grid">
+
+      <div>
+        <h4>Na mão antes de entrar</h4>
+        <ul>
+          <li>Tag com o nome de um cachorro cliente dele</li>
+          <li>Mini display com as três tags, verso "seu logo aqui"</li>
+          <li>Condições da consignação impressas</li>
+          <li>Espere o tutor do balcão ser atendido</li>
+        </ul>
+
+        <h4 style="margin-top:18px">Os 40 segundos</h4>
+        <p class="fala">"Eu faço tag de coleira em 3D com a logo do pet shop no verso, pra vocês revenderem. Trouxe uma de um cliente seu."</p>
+        <p class="acao">Tag do cliente na mão dele. Deixe ele falar do cachorro. Vire a tag.</p>
+        <p class="fala">"Hoje o tutor compra tag com nome aqui ou no celular?"</p>
+
+        <h4 style="margin-top:18px">As saídas</h4>
+        <dl>
+          <dt>"No celular."</dt><dd>Display com 24 nomes; metade agora, resto no acerto.</dd>
+          <dt>"Vendo de metal."</dt><dd>Continua. A minha fica do lado, pra quem quer cor.</dd>
+          <dt>"Quanto custa?"</dt><dd>R$ 8 pra você; no balcão, 25 a 30.</dd>
+          <dt>No banho e tosa.</dt><dd>Deixe a tag com o atendente; volto quinta 15h.</dd>
+        </dl>
+      </div>
+
+      <div>
+        <h4>As 6 objeções</h4>
+        <dl>
+          <dt>"Já vendo tag a laser."</dt><dd>Continua. São tutores diferentes; lado a lado.</dd>
+          <dt>"Cachorro morde."</dt><dd>Pra quem mastiga, metal. Pros outros, PETG e inox; 30 dias de troca.</dd>
+          <dt>"Não quero estoque parado."</dt><dd>Metade consignada, nomes do seu cadastro, troca no acerto.</dd>
+          <dt>"Tutor não paga R$ 25."</dt><dd>Você compra a 8; o preço final é seu.</dd>
+          <dt>"Faz escudo de time?"</dt><dd>Não. Faço nas cores do time, com o nome.</dd>
+          <dt>"Manda o catálogo."</dt><dd>Deixo o mini display até terça.</dd>
+        </dl>
+
+        <h4 style="margin-top:18px">Os números</h4>
+        <table>
+          <tr><th>Item</th><th>Você vende</th><th>Ele revende</th></tr>
+          <tr><td>Tag pronta-entrega</td><td class="n">R$ 8</td><td class="n">R$ 25–30</td></tr>
+          <tr><td>Tag com telefone</td><td class="n">R$ 8</td><td class="n">R$ 30–35</td></tr>
+          <tr><td>Placa de baia</td><td class="n">R$ 45–55</td><td>uso próprio</td></tr>
+        </table>
+        <p style="font-family:var(--sans);font-size:13.5px;font-weight:600;margin:8px 0 0">Primeiro lote: 50% na entrega · acerto em 30 dias · reposição quinzenal</p>
+
+        <h4 style="margin-top:18px">Nunca</h4>
+        <ul class="nunca">
+          <li>Prometer que a tag aguenta mordida</li>
+          <li>Imprimir brinquedo ou mordedor</li>
+          <li>Imprimir escudo de time</li>
+          <li>Deixar lote 100% consignado</li>
+          <li>Guardar telefone de tutor depois da entrega</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <svg class="logo" style="fill:var(--green-neon)" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+  <p><strong>G-Code 03 · Pet shops</strong></p>
+  <p>LR Maker Lab · G-Code 3D. Uso pessoal do comprador. Proibida a revenda ou redistribuição deste material.</p>
+  <p>Todo número deste manual é hipótese a validar: tempos, gramaturas, preços de revenda e o giro do display mudam com a sua impressora, o seu filamento e a sua região. Refaça as contas antes da primeira proposta.</p>
+  <p>Tag de identificação não substitui microchip nem cuidado veterinário. Não reproduza escudos, logotipos ou marcas de terceiros sem autorização do titular. Trate os dados dos tutores conforme a LGPD.</p>
+</footer>
+
+<script>
+/* Ilustrações do manual, desenhadas em SVG por JavaScript. Tudo em escala e na paleta da marca. */
+(function(){
+  var G="#2d7a4f", GD="#1f5c3b", INK="#14201a", SOFT="#42514a", MUTE="#6b7a72", CAR="#8a5a1e", WHITE="#f7f6f1", F="Archivo, system-ui, sans-serif";
+  function defs(id){
+    return '<defs><pattern id="'+id+'-l" width="6" height="3.2" patternUnits="userSpaceOnUse">'+
+      '<rect width="6" height="3.2" fill="'+G+'"/><rect y="2.55" width="6" height=".65" fill="'+GD+'" opacity=".5"/></pattern></defs>';
+  }
+  function svg(id,w,h,body,bg){
+    return '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+defs(id)+
+      (bg?'<rect width="'+w+'" height="'+h+'" fill="'+bg+'"/>':'')+body+'</svg>';
+  }
+  function txt(x,y,s,o){
+    o=o||{};
+    return '<text x="'+x+'" y="'+y+'" font-family="'+F+'" font-size="'+(o.size||16)+'" font-weight="'+(o.weight||700)+'" fill="'+(o.fill||INK)+'"'+
+      (o.anchor?' text-anchor="'+o.anchor+'"':'')+(o.len?' textLength="'+o.len+'" lengthAdjust="spacingAndGlyphs"':'')+
+      (o.ls?' letter-spacing="'+o.ls+'"':'')+'>'+s+'</text>';
+  }
+  function sombra(x,y,w,h,r){return '<rect x="'+(x+4)+'" y="'+(y+5)+'" width="'+w+'" height="'+h+'" rx="'+(r||0)+'" fill="rgba(20,32,26,.16)"/>';}
+
+  /* peças */
+  function chaveiro(p,x,y,w,h,nome,fundo){
+    var r=h*.22, cx=x+h*.36, tx=x+h*.64;
+    return sombra(x,y,w,h,r)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+r+'" fill="url(#'+p+'-l)"/>'+
+      '<circle cx="'+cx+'" cy="'+(y+h/2)+'" r="'+(h*.13)+'" fill="'+fundo+'"/>'+
+      '<circle cx="'+(x-h*.1)+'" cy="'+(y+h/2)+'" r="'+(h*.34)+'" fill="none" stroke="#98a29d" stroke-width="'+(h*.07)+'"/>'+
+      txt(tx+(x+w-h*.18-tx)/2,y+h*.7,nome,{size:h*.52,weight:800,fill:WHITE,anchor:"middle",len:(x+w-h*.18-tx)*.86});
+  }
+  function plaquinha(p,x,y,w,h,nome){
+    return sombra(x,y,w,h,h*.12)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(h*.12)+'" fill="url(#'+p+'-l)"/>'+
+      txt(x+w/2,y+h*.68,nome,{size:h*.5,weight:800,fill:WHITE,anchor:"middle",len:w*.52});
+  }
+  function topo(p,x,y,w){
+    var h=w*.3, sx=x+h*.46, sy=y+h*.44, R=h*.42, pts=[];
+    for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5, rr=i%2?R*.45:R; pts.push((sx+rr*Math.cos(a)).toFixed(1)+","+(sy+rr*Math.sin(a)).toFixed(1));}
+    var cx=x+w-h*.4, t0=x+h*1.0, t1=cx-h*.46;
+    return '<g opacity=".16" transform="translate(4 5)"><polygon points="'+pts.join(" ")+'" fill="'+INK+'"/><rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" fill="'+INK+'"/></g>'+
+      '<rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" rx="'+(h*.05)+'" fill="url(#'+p+'-l)"/>'+
+      '<polygon points="'+pts.join(" ")+'" fill="url(#'+p+'-l)"/>'+
+      txt(t0+(t1-t0)/2,y+h*.78,"Ísis",{size:h*.66,weight:900,fill:"url(#"+p+"-l)",anchor:"middle",len:t1-t0})+
+      '<circle cx="'+cx+'" cy="'+(y+h*.46)+'" r="'+(h*.36)+'" fill="url(#'+p+'-l)"/>'+
+      txt(cx,y+h*.64,"5",{size:h*.5,weight:900,fill:WHITE,anchor:"middle"});
+  }
+  function bambu(x1,y1,x2,y2,w){
+    w=w||7;
+    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#cfa964" stroke-width="'+w+'" stroke-linecap="round"/>'+
+      '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#ead19c" stroke-width="'+(w*.28)+'" stroke-linecap="round" transform="translate('+(-w*.18)+' 0)"/>';
+  }
+  function caixaMilk(p,x,y,w,h,comPlaca){
+    var t=y+h*.28;
+    var s='<ellipse cx="'+(x+w/2+6)+'" cy="'+(y+h+2)+'" rx="'+(w*.58)+'" ry="'+(h*.035)+'" fill="rgba(20,32,26,.14)"/>'+
+      '<rect x="'+(x+w*.32)+'" y="'+y+'" width="'+(w*.36)+'" height="'+(h*.08)+'" fill="#e9e5da" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<polygon points="'+x+','+t+' '+(x+w/2)+','+(y+h*.07)+' '+(x+w)+','+t+'" fill="#efece4" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+x+'" y="'+t+'" width="'+w+'" height="'+(h*.72)+'" fill="'+WHITE+'" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+(x+w*.82)+'" y="'+t+'" width="'+(w*.18)+'" height="'+(h*.72)+'" fill="rgba(20,32,26,.05)"/>';
+    if(comPlaca) s+=plaquinha(p,x+w*.14,y+h*.52,w*.62,w*.24,"Ísis");
+    return s;
+  }
+  function placa(x,y,w,h){
+    var s='<rect x="'+(x+6)+'" y="'+(y+7)+'" width="'+w+'" height="'+h+'" fill="rgba(20,32,26,.18)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#bdb6a7"/>';
+    for(var i=x+9;i<x+w;i+=9) s+='<line x1="'+i+'" y1="'+y+'" x2="'+i+'" y2="'+(y+h)+'" stroke="rgba(20,32,26,.05)" stroke-width="1"/>';
+    return s;
+  }
+  function elastico(x1,x2,y){return '<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" stroke="#1d1f1e" stroke-width="3.5" stroke-linecap="round" opacity=".88"/>';}
+  function mesa(x,y,s){
+    var m='<rect x="'+(x+6)+'" y="'+(y+8)+'" width="'+s+'" height="'+s+'" rx="10" fill="rgba(20,32,26,.2)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" rx="10" fill="#1b2a22"/>';
+    for(var i=1;i<10;i++){var d=s*i/10;
+      m+='<line x1="'+(x+d)+'" y1="'+(y+6)+'" x2="'+(x+d)+'" y2="'+(y+s-6)+'" stroke="rgba(74,222,128,.1)"/>'+
+         '<line x1="'+(x+6)+'" y1="'+(y+d)+'" x2="'+(x+s-6)+'" y2="'+(y+d)+'" stroke="rgba(74,222,128,.1)"/>';}
+    return m;
+  }
+  function cota(x1,x2,y,rotulo){
+    return '<g stroke="'+MUTE+'" stroke-width="1.5"><line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'"/><line x1="'+x1+'" y1="'+(y-7)+'" x2="'+x1+'" y2="'+(y+7)+'"/><line x1="'+x2+'" y1="'+(y-7)+'" x2="'+x2+'" y2="'+(y+7)+'"/></g>'+
+      '<rect x="'+((x1+x2)/2-(rotulo.length*5+12))+'" y="'+(y-12)+'" width="'+(rotulo.length*10+24)+'" height="24" fill="#eceae4"/>'+
+      txt((x1+x2)/2,y+6,rotulo,{size:15,weight:700,fill:SOFT,anchor:"middle"});
+  }
+
+  /* cenas */
+  /* peças do pet shop */
+  function camadas(p){
+    return '<defs><pattern id="'+p+'-o" width="6" height="3.2" patternUnits="userSpaceOnUse"><rect y="2.55" width="6" height=".65" fill="#000" opacity=".14"/></pattern></defs>';
+  }
+  function argola(cx,cy,r){return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#9aa39f" stroke-width="'+(r*.28)+'"/>';}
+  function preencher(p,forma,cor){
+    var f=cor?cor:'url(#'+p+'-l)';
+    return forma.replace('FILL',f)+(cor?forma.replace('FILL','url(#'+p+'-o)'):'');
+  }
+  function osso(p,x,y,w,h,nome,cor){
+    var r=h*.3, s='';
+    var forma='<g fill="FILL"><circle cx="'+(x+r)+'" cy="'+(y+r)+'" r="'+r+'"/><circle cx="'+(x+r)+'" cy="'+(y+h-r)+'" r="'+r+'"/><circle cx="'+(x+w-r)+'" cy="'+(y+r)+'" r="'+r+'"/><circle cx="'+(x+w-r)+'" cy="'+(y+h-r)+'" r="'+r+'"/><rect x="'+(x+r*.8)+'" y="'+(y+h*.2)+'" width="'+(w-r*1.6)+'" height="'+(h*.6)+'"/></g>';
+    s+='<g opacity=".16" transform="translate(4 5)">'+forma.replace('FILL',INK)+'</g>'+preencher(p,forma,cor);
+    s+=argola(x-h*.12,y+h/2,h*.2)+'<circle cx="'+(x+r*.7)+'" cy="'+(y+h/2)+'" r="'+(h*.09)+'" fill="#eceae4"/>';
+    if(nome) s+=txt(x+w/2+r*.2,y+h*.66,nome,{size:h*.44,weight:900,fill:WHITE,anchor:"middle",len:(w-r*2.6)*.9});
+    return s;
+  }
+  function patinha(p,cx,cy,r,nome,cor){
+    var forma='<g fill="FILL"><ellipse cx="'+cx+'" cy="'+(cy+r*.25)+'" rx="'+(r*.72)+'" ry="'+(r*.6)+'"/>'+
+      [[-.62,-.42],[-.22,-.78],[.22,-.78],[.62,-.42]].map(function(q){return '<ellipse cx="'+(cx+q[0]*r)+'" cy="'+(cy+q[1]*r)+'" rx="'+(r*.2)+'" ry="'+(r*.26)+'"/>';}).join('')+'</g>';
+    var s='<g opacity=".16" transform="translate(4 5)">'+forma.replace('FILL',INK)+'</g>'+preencher(p,forma,cor);
+    s+=argola(cx,cy-r*1.18,r*.14);
+    if(nome) s+=txt(cx,cy+r*.42,nome,{size:r*.42,weight:900,fill:WHITE,anchor:"middle",len:r*.9});
+    return s;
+  }
+  function coracao(p,cx,cy,r,nome,cor){
+    var d='M'+cx+' '+(cy+r*.95)+' C'+(cx-r*1.25)+' '+(cy+r*.1)+' '+(cx-r*1.05)+' '+(cy-r*.95)+' '+cx+' '+(cy-r*.4)+' C'+(cx+r*1.05)+' '+(cy-r*.95)+' '+(cx+r*1.25)+' '+(cy+r*.1)+' '+cx+' '+(cy+r*.95)+' Z';
+    var forma='<path d="'+d+'" fill="FILL"/>';
+    var s='<g opacity=".16" transform="translate(4 5)">'+forma.replace('FILL',INK)+'</g>'+preencher(p,forma,cor);
+    s+=argola(cx,cy-r*.62,r*.13);
+    if(nome) s+=txt(cx,cy+r*.28,nome,{size:r*.4,weight:900,fill:WHITE,anchor:"middle",len:r*.95});
+    return s;
+  }
+  function display(p,x,y,w,titulo,itens){
+    var rows=Math.ceil(itens.length/3), h=w*(.40+.28*rows+.06), s='';
+    s+=sombra(x,y,w,h,8)+'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="8" fill="#ebe7de" stroke="#cfc9bb" stroke-width="2"/>';
+    s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+(w*.26)+'" rx="8" fill="url(#'+p+'-l)"/>'+txt(x+w/2,y+w*.17,titulo,{size:w*.1,weight:900,fill:WHITE,anchor:"middle",len:w*.74});
+    s+='<rect x="'+(x-w*.05)+'" y="'+(y+h-w*.04)+'" width="'+(w*1.1)+'" height="'+(w*.1)+'" rx="4" fill="url(#'+p+'-l)"/>';
+    var cols=3, cw=w/cols;
+    itens.forEach(function(it,i){
+      var c=i%cols, r=Math.floor(i/cols), hx=x+cw*(c+.5), hy=y+w*.34+r*w*.28;
+      s+='<rect x="'+(hx-2)+'" y="'+(hy-6)+'" width="4" height="10" fill="#9aa39f"/>';
+      var sz=cw*.46;
+      if(it[0]==='o') s+=osso(p,hx-sz*.9,hy+sz*.3,sz*1.8,sz*.9,"",it[1]);
+      if(it[0]==='p') s+=patinha(p,hx,hy+sz*.95,sz*.62,"",it[1]);
+      if(it[0]==='c') s+=coracao(p,hx,hy+sz*.85,sz*.7,"",it[1]);
+    });
+    return s;
+  }
+  function placaBaia(p,x,y,w,nome){
+    var h=w*.62, s=sombra(x,y,w,h,6)+'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="6" fill="url(#'+p+'-l)"/>';
+    s+=patinha(p,x+w*.16,y+h*.4,w*.09,"",null).replace(/url\(#[^)]+-l\)/g,WHITE);
+    s+=txt(x+w*.58,y+h*.42,nome,{size:h*.28,weight:900,fill:WHITE,anchor:"middle",len:w*.55});
+    s+='<rect x="'+(x+w*.1)+'" y="'+(y+h*.58)+'" width="'+(w*.8)+'" height="'+(h*.28)+'" rx="3" fill="#fbfaf6"/>'+txt(x+w/2,y+h*.78,"banho · 14h",{size:h*.14,weight:600,fill:SOFT,anchor:"middle"});
+    return s;
+  }
+  var MIX=[["o","#d84343"],["p",null],["c","#1565c0"],["p","#f2b635"],["o",null],["c","#d84343"],["o","#1565c0"],["c",null],["p","#d84343"]];
+
+  var ILL={
+    laser:function(){
+      var p="pl", b=camadas(p);
+      b+='<defs><linearGradient id="pl-m" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3e7e8"/><stop offset=".5" stop-color="#aeb6b8"/><stop offset="1" stop-color="#d2d7d8"/></linearGradient></defs>';
+      b+='<circle cx="175" cy="150" r="92" fill="url(#pl-m)" stroke="#8d9699" stroke-width="2"/>'+argola(175,40,16);
+      b+=txt(175,150,"THOR",{size:26,weight:500,fill:"#5d6669",anchor:"middle"})+txt(175,180,"(00) 90000-0000",{size:13,weight:500,fill:"#5d6669",anchor:"middle"});
+      b+=txt(175,286,"Laser",{size:19,weight:800,fill:SOFT,anchor:"middle"})+txt(175,310,"plana, uma cor, gravada",{size:14,weight:600,fill:MUTE,anchor:"middle"});
+      b+=osso(p,370,95,240,112,"THOR","#d84343");
+      b+=txt(490,286,"Impressão 3D",{size:19,weight:800,fill:G,anchor:"middle"})+txt(490,310,"formato, cor e nome em relevo",{size:14,weight:600,fill:MUTE,anchor:"middle"});
+      return svg(p,660,330,b,"#f2efe7");
+    },
+    niveis:function(){
+      var p="pn", b=camadas(p);
+      b+=display(p,120,40,160,"SEU PET SHOP",MIX);
+      b+=display(p,440,40,150,"SEU PET SHOP",MIX)+placaBaia(p,610,110,120,"THOR")+placaBaia(p,610,210,120,"MEL");
+      b+=display(p,860,40,140,"SEU PET SHOP",MIX)+placaBaia(p,1015,70,110,"THOR")+placaBaia(p,1015,150,110,"MEL")+placaBaia(p,1015,230,110,"LUNA");
+      b+=plaquinha(p,860,250,140,40,"Tag com nome");
+      [[200,"R$ 160–240","ENTRADA · DISPLAY CONSIGNADO"],[590,"R$ 300–450","PADRÃO · DISPLAY + ENCOMENDA + BAIAS"],[1000,"R$ 600–800","COMPLETO · LOJA INTEIRA"]].forEach(function(r){
+        b+=txt(r[0],366,r[1],{size:30,weight:900,fill:INK,anchor:"middle"})+txt(r[0],394,r[2],{size:14,weight:700,fill:G,anchor:"middle",ls:1.2});
+      });
+      return svg(p,1200,410,b,"#f2efe7");
+    },
+    tags:function(){
+      var p="pt", b=camadas(p);
+      b+=txt(40,40,"FRENTE",{size:14,weight:800,fill:G,ls:1.5});
+      b+=osso(p,50,70,200,96,"THOR","#d84343")+patinha(p,380,130,68,"MEL",null)+coracao(p,560,125,72,"LUNA","#1565c0");
+      b+=txt(40,250,"VERSO",{size:14,weight:800,fill:G,ls:1.5});
+      var v=function(s2){return s2;};
+      b+=osso(p,50,280,200,96,"","#d84343")+txt(160,322,"(00) 90000-0000",{size:15,weight:800,fill:WHITE,anchor:"middle"})+txt(160,346,"SEU PET SHOP",{size:12,weight:800,fill:"#ffd6d6",anchor:"middle"});
+      b+=patinha(p,380,340,68,"",null)+txt(380,362,"SEU PET SHOP",{size:11,weight:800,fill:WHITE,anchor:"middle"});
+      b+=coracao(p,560,335,72,"","#1565c0")+txt(560,344,"(00) 90000",{size:12,weight:800,fill:WHITE,anchor:"middle"})+txt(560,362,"SEU PET SHOP",{size:10,weight:800,fill:"#d6e6ff",anchor:"middle"});
+      return svg(p,680,430,b,"#f2efe7");
+    },
+    kit:function(){
+      var p="pk", b=camadas(p), u=36;
+      b+=osso(p,60,120,4*u,2*u,"THOR","#d84343")+cota(60,60+4*u,300,"4 cm");
+      b+=patinha(p,320,175,1.75*u*.95,"MEL",null)+cota(320-1.75*u,320+1.75*u,300,"3,5 cm");
+      b+=coracao(p,500,170,1.75*u,"LUNA","#1565c0")+cota(500-1.75*u,500+1.75*u,300,"3,5 cm");
+      b+=display(p,640,40,10*u*.95,"SEU PET SHOP",MIX.slice(0,3))+cota(640,640+10*u*.95,440,"10 cm");
+      var rx=30, ry=470;
+      b+='<rect x="'+rx+'" y="'+ry+'" width="'+(28*u+18)+'" height="56" rx="3" fill="#d3d9d6" stroke="#b3bdb8"/>';
+      for(var mm=0;mm<=280;mm++){var x=rx+18+mm*u/10, hh=mm%10===0?20:(mm%5===0?13:7);
+        b+='<line x1="'+x.toFixed(1)+'" y1="'+ry+'" x2="'+x.toFixed(1)+'" y2="'+(ry+hh)+'" stroke="#55615b" stroke-width="'+(mm%10===0?1.4:.8)+'"/>';
+        if(mm%10===0) b+=txt(x,ry+40,String(mm/10),{size:12,weight:600,fill:SOFT,anchor:"middle"});}
+      return svg(p,1080,550,b,"#eceae4");
+    }
+  };
+  var alvos=document.querySelectorAll("[data-ill]");
+  for(var i=0;i<alvos.length;i++){var f=ILL[alvos[i].getAttribute("data-ill")]; if(f) alvos[i].innerHTML=f();}
+})();
+</script>
+
+</body>
+</html>
