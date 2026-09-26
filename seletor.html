@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seletor G-Code 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14201a; --paper:#fbfaf6; --paper-2:#f2efe7; --rule:#ddd8cc;
+  --green:#2d7a4f; --green-wash:#e3f0e8; --neon:#4ade80; --caramel:#8a5a1e; --caramel-soft:#f6ecdc;
+  --soft:#42514a; --mute:#6b7a72;
+  --band:#14201a; --band-text:#f7f6f1; --band-mute:#9fb3a7;
+  --card:#14201a; --card-text:#f7f6f1; --card-mute:#a9bbb0; --card-rule:#2c3d33;
+  --chip-on:#2d7a4f; --chip-on-text:#ffffff;
+  --display:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#e8eee9; --paper:#0f1713; --paper-2:#16211b; --rule:#2a3a31;
+    --green:#4ade80; --green-wash:#18291f; --caramel:#e0b276; --caramel-soft:#2a2116;
+    --soft:#b9c7bf; --mute:#8fa198;
+    --band:#0a110d; --band-text:#f7f6f1; --band-mute:#8fa198;
+    --card:#1b2a21; --card-text:#f7f6f1; --card-mute:#a9bbb0; --card-rule:#2f4237;
+    --chip-on:#4ade80; --chip-on-text:#0f1713;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e8eee9; --paper:#0f1713; --paper-2:#16211b; --rule:#2a3a31;
+  --green:#4ade80; --green-wash:#18291f; --caramel:#e0b276; --caramel-soft:#2a2116;
+  --soft:#b9c7bf; --mute:#8fa198;
+  --band:#0a110d; --band-text:#f7f6f1; --band-mute:#8fa198;
+  --card:#1b2a21; --card-text:#f7f6f1; --card-mute:#a9bbb0; --card-rule:#2f4237;
+  --chip-on:#4ade80; --chip-on-text:#0f1713;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding-inline:20px}
+
+/* faixa de topo */
+.band{background:var(--band);color:var(--band-text);padding-block:26px 30px;
+  background-image:linear-gradient(rgba(74,222,128,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(74,222,128,.07) 1px,transparent 1px);
+  background-size:22px 22px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--band-mute)}
+.brand svg{width:22px;height:22px;fill:#4ade80;flex:none}
+.band h1{font-family:var(--display);font-stretch:78%;font-weight:900;font-size:clamp(40px,8vw,68px);line-height:.95;letter-spacing:-.02em;margin:22px 0 12px;text-wrap:balance}
+.band h1 b{color:#4ade80;font-weight:900}
+.band p{margin:0;max-width:58ch;color:#d5dfd9;font-size:17px}
+.band .promessa{margin-top:18px;display:inline-block;font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:.02em;color:#14201a;background:#4ade80;padding:7px 12px;border-radius:3px;line-height:1.35}
+
+/* perguntas */
+main{padding-block:34px 56px}
+.pergs{display:grid;gap:14px}
+fieldset{border:1px solid var(--rule);border-radius:6px;margin:0;padding:18px 20px 20px;background:var(--paper);display:grid;grid-template-columns:44px 1fr;column-gap:14px;row-gap:12px}
+fieldset.ok{border-color:var(--green)}
+.n{grid-row:1 / span 2;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:18px;background:var(--paper-2);color:var(--soft);border:1px solid var(--rule)}
+fieldset.ok .n{background:var(--green);color:var(--paper);border-color:var(--green)}
+legend{display:contents}
+.q{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:-.01em;line-height:1.25;margin:6px 0 0;text-wrap:balance}
+.q small{display:block;font-family:var(--serif);font-weight:400;font-size:15px;color:var(--mute);letter-spacing:0;margin-top:3px}
+.ops{grid-column:2;display:flex;flex-wrap:wrap;gap:8px}
+.ops input{position:absolute;opacity:0;pointer-events:none}
+.ops label{cursor:pointer;font-family:var(--display);font-weight:700;font-size:15px;padding:10px 16px;border:1.5px solid var(--rule);border-radius:4px;background:var(--paper-2);color:var(--ink);transition:background .15s,border-color .15s;user-select:none}
+.ops label:hover{border-color:var(--green)}
+.ops input:checked+label{background:var(--chip-on);border-color:var(--chip-on);color:var(--chip-on-text)}
+.ops input:focus-visible+label{outline:3px solid var(--neon);outline-offset:2px}
+
+/* resultado */
+.res{margin-top:26px}
+.espera{border:1.5px dashed var(--rule);border-radius:6px;padding:20px;color:var(--mute);font-size:16px}
+.espera b{font-family:var(--display);color:var(--ink)}
+.card{background:var(--card);color:var(--card-text);border-radius:6px;padding:28px 26px 26px;display:grid;grid-template-columns:auto 1fr;gap:6px 26px;align-items:start}
+.cod{font-family:var(--display);font-stretch:70%;font-weight:900;font-size:clamp(76px,16vw,128px);line-height:.82;color:#4ade80;letter-spacing:-.03em;grid-row:1 / span 3}
+.nivel{font-family:var(--display);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--card-mute);margin:4px 0 0}
+.card h2{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,32px);line-height:1.1;letter-spacing:-.015em;margin:2px 0 0;text-wrap:balance}
+.porq{margin:6px 0 0;color:#d5dfd9;max-width:56ch}
+.radar{grid-column:1 / -1;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--card-rule);margin-top:18px;padding-top:14px;gap:14px}
+.radar dt{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--card-mute)}
+.radar dd{margin:2px 0 0;font-family:var(--display);font-weight:800;font-size:19px;font-variant-numeric:tabular-nums}
+.passo{grid-column:1 / -1;margin-top:18px;background:#4ade80;color:#14201a;border-radius:4px;padding:14px 16px;font-family:var(--display);font-weight:700;font-size:16px;line-height:1.4}
+.passo span{display:block;font-weight:500;font-size:14px;margin-top:3px}
+.nota{grid-column:1 / -1;margin:14px 0 0;font-size:14px;color:var(--card-mute)}
+.aviso{grid-column:1 / -1;margin-top:14px;border-left:3px solid #e0b276;padding:4px 0 4px 12px;font-size:15px;color:#f1e3cf}
+
+/* mapa */
+.mapa{margin-top:40px}
+.mapa h3{font-family:var(--display);font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin:0 0 10px}
+.mapa ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mapa li{border:1px solid var(--rule);border-radius:4px;padding:10px 12px;font-size:14px;line-height:1.35;color:var(--soft);background:var(--paper)}
+.mapa li b{display:block;font-family:var(--display);font-weight:900;font-size:18px;color:var(--ink)}
+.mapa li.on{border-color:var(--green);background:var(--green-wash)}
+.mapa li.on b{color:var(--green)}
+.biblio{margin-top:22px;font-size:15px;color:var(--soft);max-width:66ch;border-top:1px solid var(--rule);padding-top:16px}
+.biblio b{font-family:var(--display);color:var(--ink)}
+.again{margin-top:16px;font-family:var(--display);font-weight:700;font-size:14px;background:none;border:1.5px solid var(--rule);color:var(--ink);padding:8px 14px;border-radius:4px;cursor:pointer}
+.again:hover{border-color:var(--green)}
+.again:focus-visible{outline:3px solid var(--neon);outline-offset:2px}
+footer{border-top:1px solid var(--rule);padding-block:18px 28px;font-size:13px;color:var(--mute)}
+
+@media (max-width:640px){
+  body{font-size:16px}
+  fieldset{grid-template-columns:1fr;padding:16px}
+  .n{grid-row:auto;width:34px;height:34px;font-size:16px}
+  .ops{grid-column:1}
+  .card{grid-template-columns:1fr;padding:22px 18px}
+  .cod{grid-row:auto}
+  .radar{grid-template-columns:1fr 1fr}
+  .mapa ol{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@keyframes entra{from{transform:translateY(6px)}to{transform:none}}
+.card{animation:entra .25s ease-out}
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="wrap">
+    <div class="brand"><svg viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>LR Maker Lab · G-Code 3D</div>
+    <h1>Três perguntas.<br><b>Um G-Code.</b></h1>
+    <p>São dez manuais, mas você vai executar um. Responda com a sua realidade de hoje, não com a que você quer ter. Leva um minuto.</p>
+    <p class="promessa">Em 72 horas, você sai da impressora parada para três propostas entregues na mão de um comerciante.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <form id="sel" class="pergs" autocomplete="off">
+    <fieldset id="f1">
+      <span class="n" aria-hidden="true">1</span>
+      <legend><p class="q">Quanto tempo de máquina livre você tem por dia?<small>Horas em que a impressora pode rodar pedido seu, contando a noite.</small></p></legend>
+      <div class="ops">
+        <input type="radio" name="maq" id="maq-p" value="pouca"><label for="maq-p">Menos de 3h</label>
+        <input type="radio" name="maq" id="maq-m" value="media"><label for="maq-m">De 3h a 8h</label>
+        <input type="radio" name="maq" id="maq-g" value="muita"><label for="maq-g">Mais de 8h</label>
+      </div>
+    </fieldset>
+    <fieldset id="f2">
+      <span class="n" aria-hidden="true">2</span>
+      <legend><p class="q">Você já modela em CAD?<small>Modelar é desenhar peça com medida, furo e encaixe. Baixar e editar texto de um STL não conta.</small></p></legend>
+      <div class="ops">
+        <input type="radio" name="cad" id="cad-n" value="nao"><label for="cad-n">Não</label>
+        <input type="radio" name="cad" id="cad-b" value="basico"><label for="cad-b">Básico</label>
+        <input type="radio" name="cad" id="cad-s" value="sim"><label for="cad-s">Sim, peça com encaixe</label>
+      </div>
+    </fieldset>
+    <fieldset id="f3">
+      <span class="n" aria-hidden="true">3</span>
+      <legend><p class="q">Você prefere vender para quem revende ou para quem usa?<small>Quem revende compra de novo quando vende. Quem usa compra quando precisa.</small></p></legend>
+      <div class="ops">
+        <input type="radio" name="pub" id="pub-r" value="revende"><label for="pub-r">Para quem revende</label>
+        <input type="radio" name="pub" id="pub-u" value="usa"><label for="pub-u">Para quem usa</label>
+      </div>
+    </fieldset>
+  </form>
+
+  <section class="res" id="res" aria-live="polite">
+    <div class="espera" id="espera"><b>Faltam 3 respostas.</b> O seu G-Code aparece aqui, com o primeiro passo de hoje à noite.</div>
+  </section>
+
+  <section class="mapa" aria-label="Os seis resultados possíveis">
+    <h3>Os seis resultados possíveis</h3>
+    <ol id="mapa">
+      <li data-g="G-01"><b>G-01</b>Confeitarias. Pouca máquina, sem CAD, vende para quem usa</li>
+      <li data-g="G-03"><b>G-03</b>Pet shops. Pouca máquina, vende para quem revende</li>
+      <li data-g="G-04"><b>G-04</b>Restaurantes e cafés. Máquina média, sem CAD, vende para quem usa</li>
+      <li data-g="G-09"><b>G-09</b>Papelarias e ateliês. Máquina média, vende para quem revende</li>
+      <li data-g="G-07"><b>G-07</b>Academias. Mais de 8h de máquina por dia</li>
+      <li data-g="G-10"><b>G-10</b>Oficinas. Você já modela em CAD</li>
+    </ol>
+    <p class="biblio"><b>E os outros quatro?</b> G-02, G-05, G-06 e G-08 ficam na biblioteca. Abra um deles depois da primeira venda, nunca antes. Quem começa com dois nichos termina a semana sem nenhuma proposta.</p>
+    <button type="button" class="again" id="again">Refazer as respostas</button>
+  </section>
+</main>
+
+<footer class="wrap">LR Maker Lab · G-Code 3D · Uso pessoal do comprador. Os números de ticket e retorno por hora são hipóteses a validar na sua região e na sua impressora.</footer>
+
+<script>
+(function(){
+  var G={
+    "G-01":{nome:"Confeitarias e docerias",nivel:"Nível 1 · primeira venda rápida",ticket:"R$ 90–400",hora:"~R$ 65/h",rec:"A cada tema",
+      porq:"Pouca máquina e sem CAD pedem peça pequena, arte simples e pedido que cabe numa noite. Cortador, carimbo e topo de bolo são isso.",
+      kit:"Imprimir as três peças do kit de amostra em PETG (seção 06)."},
+    "G-03":{nome:"Pet shops",nivel:"Nível 1 · primeira venda rápida",ticket:"R$ 160–800",hora:"~R$ 58/h",rec:"Reposição quinzenal",
+      porq:"Com pouca máquina, quem revende trabalha por você: o pet shop vende as suas tags no balcão, e a reposição chega sem nova visita.",
+      kit:"Imprimir o display e as tags de amostra do kit (seção 06)."},
+    "G-04":{nome:"Restaurantes, cafés e bares",nivel:"Nível 1 · primeira venda rápida",ticket:"R$ 150–700",hora:"~R$ 52/h",rec:"Reposição e sinalização",
+      porq:"Máquina média, sem CAD e para quem usa: suporte de QR para avaliação no Google, cardápio e Pix. A dor é a nota no Google, e o dono sabe disso.",
+      kit:"Imprimir o kit e testar o QR com três celulares antes da visita (seção 06)."},
+    "G-09":{nome:"Papelarias, gráficas rápidas e ateliês de festa",nivel:"Nível 3 · o cliente que compra todo mês",ticket:"R$ 150–1.500/mês",hora:"~R$ 35/h",rec:"Toda festa fechada",
+      porq:"Máquina média e revenda: você vira o fornecedor 3D da papelaria, com tabela de atacado. Cada festa que ela fecha é um pedido seu.",
+      kit:"Imprimir dois jogos do kit de amostra e preencher a tabela de atacado (seção 06)."},
+    "G-07":{nome:"Academias, boxes e escolas esportivas",nivel:"Nível 2 · ticket maior",ticket:"R$ 250–1.500",hora:"~R$ 52/h",rec:"A cada desafio",
+      porq:"Com mais de 8h livres por dia, você aguenta um pacote de 14h de máquina. Medalha de desafio interno tem data marcada e se repete a cada desafio.",
+      kit:"Imprimir as medalhas e o mini troféu do kit (seção 06). Exija 10 dias de antecedência e sinal em todo pedido."},
+    "G-10":{nome:"Oficinas, manutenção e pequena indústria",nivel:"Nível 3 · avançado: exige CAD",ticket:"R$ 80–1.500",hora:"R$ 50–200/h",rec:"Banco de arquivos",
+      porq:"Você já modela peça com encaixe. Peça de reposição e gabarito pagam pelo valor da máquina parada, não pelo plástico. É o melhor retorno por hora do kit.",
+      kit:"Imprimir o gabarito, os clips e a engrenagem do kit (seção 06).",
+      aviso:"Nunca imprima peça de segurança: freio, direção, suspensão, sustentação de carga ou EPI. O manual explica o porquê na seção 05."}
+  };
+  var form=document.getElementById("sel"), res=document.getElementById("res"), mapa=document.getElementById("mapa");
+  function val(n){var e=form.querySelector('input[name="'+n+'"]:checked');return e?e.value:null;}
+  function escolhe(m,c,p){
+    if(c==="sim") return {g:"G-10",ignorou:(m||p)?"Com CAD, o G-10 vem primeiro. As outras respostas não mudam o resultado.":""};
+    if(m==="muita") return {g:"G-07",ignorou:"Com mais de 8h de máquina, o G-07 vem primeiro, venda você para quem revende ou para quem usa."};
+    if(m==="pouca") return {g:p==="revende"?"G-03":"G-01",ignorou:c==="basico"?"CAD básico conta como não modelar: o G-10 pede peça com encaixe na primeira tentativa.":""};
+    return {g:p==="revende"?"G-09":"G-04",ignorou:c==="basico"?"CAD básico conta como não modelar: o G-10 pede peça com encaixe na primeira tentativa.":""};
+  }
+  function render(){
+    var m=val("maq"), c=val("cad"), p=val("pub");
+    ["f1","f2","f3"].forEach(function(id,i){document.getElementById(id).classList.toggle("ok",!![m,c,p][i]);});
+    var falta=[m,c,p].filter(function(x){return !x;}).length;
+    var pronto = c==="sim" || (m==="muita" && c) || (m && c && p);
+    [].forEach.call(mapa.children,function(li){li.classList.remove("on");});
+    if(!pronto){
+      res.innerHTML='<div class="espera"><b>'+(falta===1?"Falta 1 resposta.":"Faltam "+falta+" respostas.")+'</b> O seu G-Code aparece aqui, com o primeiro passo de hoje à noite.</div>';
+      return;
+    }
+    var r=escolhe(m,c,p), d=G[r.g];
+    mapa.querySelector('[data-g="'+r.g+'"]').classList.add("on");
+    res.innerHTML='<article class="card">'+
+      '<div class="cod">'+r.g+'</div>'+
+      '<p class="nivel">'+d.nivel+'</p>'+
+      '<h2>'+d.nome+'</h2>'+
+      '<p class="porq">'+d.porq+'</p>'+
+      '<dl class="radar"><div><dt>Ticket do 1º pedido</dt><dd>'+d.ticket+'</dd></div><div><dt>Retorno por hora</dt><dd>'+d.hora+'</dd></div><div><dt>Recompra</dt><dd>'+d.rec+'</dd></div></dl>'+
+      '<div class="passo">Hoje à noite: '+d.kit+'<span>Depois abra a seção 12 do manual '+r.g+', Missão 72 horas, e siga o Dia 1.</span></div>'+
+      (d.aviso?'<p class="aviso">'+d.aviso+'</p>':'')+
+      (r.ignorou?'<p class="nota">'+r.ignorou+'</p>':'')+
+      '</article>';
+  }
+  form.addEventListener("change",render);
+  form.addEventListener("submit",function(e){e.preventDefault();});
+  document.getElementById("again").addEventListener("click",function(){form.reset();render();document.getElementById("f1").scrollIntoView({behavior:"smooth",block:"center"});});
+  render();
+})();
+</script>
+</body>
+</html>
