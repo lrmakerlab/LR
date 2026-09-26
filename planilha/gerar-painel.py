@@ -4,6 +4,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import FormulaRule
 from openpyxl.utils import get_column_letter as L
 from openpyxl.utils.cell import coordinate_from_string, column_index_from_string
+from openpyxl.worksheet.hyperlink import Hyperlink
 import datetime, sys
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else "/home/user/LR/planilha/Painel-G-Code-3D.xlsx"
@@ -49,6 +50,7 @@ def merge(ws, rng, v=None, f=None, fl=None, al=None, fmt=None):
     return put(ws, a, v, f, None, al, fmt)
 def header(ws, last_col, title, sub):
     ws.sheet_view.showGridLines = False
+    LASTCOL[ws.title] = last_col
     band(ws, 1, 4, 1, last_col, INK)
     put(ws, "B2", "LR MAKER LAB · PAINEL G-CODE 3D", font(8, True, NEON))
     put(ws, "B3", title, font(20, True, WHITE))
@@ -57,6 +59,13 @@ def header(ws, last_col, title, sub):
     ws.row_dimensions[3].height = 30; ws.row_dimensions[4].height = 20
     for c in range(1, last_col + 1): ws.cell(5, c).border = GLINE
     ws.row_dimensions[5].height = 6
+LASTCOL = {}
+def link(ws, ref, text, sheet, f=None, al=None):
+    c = ws[ref]; c.value = text
+    c.hyperlink = Hyperlink(ref=ref, location=f"'{sheet}'!A1", display=text)
+    c.font = f or Font(name=F, size=10, bold=True, color=GD, underline="single")
+    if al: c.alignment = al
+    return c
 def section(ws, row, c1, c2, text, color=INK):
     band(ws, row, row, c1, c2, color)
     put(ws, f"{L(c1)}{row}", text, font(10, True, WHITE), al=Alignment(vertical="center", indent=1))
@@ -86,24 +95,25 @@ START = "Painel!$K$7"    # data do Dia 1
 # =====================================================================
 bib = wb.active; bib.title = "Biblioteca"
 G = [
- ("G-01","G-01 · Confeitarias e docerias","Nível 1","R$ 90 a 400","~R$ 65/h","terça a quinta, das 14h às 16h","as três peças em PETG","1h35 de máquina · 32 g","10 visitas → 3 propostas → 1 venda","G-04 · Restaurantes, cafés e bares"),
- ("G-02","G-02 · Nail designers e salões","Nível 1","R$ 90 a 300","~R$ 21/h","terça ou quarta, das 9h às 10h30","o mini mostruário e a plaquinha","3h00 de máquina · 60 g","10 abordagens → 3 propostas → 1 venda, mais indicações","G-05 · Semijoias e acessórios"),
- ("G-03","G-03 · Pet shops","Nível 1","R$ 160 a 800","~R$ 58/h","terça a quinta, das 14h às 16h","as tags e o mini display","2h10 de máquina · 45 g","10 visitas → 3 mini displays deixados → 1 lote em consignação","G-09 · Papelarias e festa"),
- ("G-04","G-04 · Restaurantes, cafés e bares","Nível 1","R$ 150 a 700","~R$ 52/h","terça a quinta, das 15h às 17h","o suporte, com o QR testado em 3 celulares","1h50 de máquina · 59 g","10 visitas → 3 casas com suporte em teste → 1 venda","G-01 · Confeitarias e docerias"),
- ("G-05","G-05 · Semijoias e acessórios","Nível 2","R$ 150 a 700","~R$ 25/h","terça a quinta, das 10h às 12h","o kit em PLA fosco e silk","2h40 de máquina · 60 g","10 visitas → 3 propostas → 1 venda até o próximo lançamento","G-02 · Nail designers e salões"),
- ("G-06","G-06 · Lojas de celular e assistências","Nível 2","R$ 120 a 700","~R$ 30/h","terça a quinta, das 10h às 12h","o expositor e a mini bandeja","2h20 de máquina · 65 g","10 visitas → 3 lojas medidas → 1 venda","G-10 · Oficinas e pequena indústria"),
- ("G-07","G-07 · Academias, boxes e escolas esportivas","Nível 2","R$ 250 a 1.500","~R$ 52/h","fora do pico: 10h às 12h ou 14h às 16h","a medalha com o nome do desafio deles","2h50 de máquina · 64 g","10 visitas → 3 datas de desafio anotadas → 1 pedido","G-08 · Imobiliárias e corretores"),
- ("G-08","G-08 · Imobiliárias e corretores","Nível 2","R$ 225 a 1.200","~R$ 30/h","segunda a quarta, das 9h às 11h","o kit de entrega e as tags","2h35 de máquina · 60 g","10 contatos → 3 propostas → 1 pacote, em geral de corretor autônomo","G-07 · Academias, boxes e escolas esportivas"),
- ("G-09","G-09 · Papelarias e festa","Nível 3","R$ 150 a 500","~R$ 35/h","terça ou quarta, das 10h às 11h30","o kit e o mostruário","2h05 de máquina · 33 g","10 abordagens → 2 a 3 interessadas → 1 lote-teste em até 2 semanas","G-03 · Pet shops"),
- ("G-10","G-10 · Oficinas e pequena indústria","Nível 3 · exige CAD","R$ 80 a 1.500","R$ 50 a 200/h","terça a quinta, das 14h às 16h","o gabarito, os clips e a engrenagem","3h00 de máquina · 63 g","10 visitas → 3 peças medidas → 2 pedidos","G-06 · Lojas de celular e assistências"),
+ ("G-01","G-01 · Confeitarias e docerias","Nível 1","R$ 90 a 400","~R$ 65/h","terça a quinta, das 14h às 16h","as três peças em PETG","1h35 de máquina · 32 g","10 visitas → 3 propostas → 1 venda","G-04 · Restaurantes, cafés e bares", "Pouca máquina e sem CAD pedem peça pequena, arte simples e pedido que cabe numa noite. Cortador, carimbo e topo de bolo são isso."),
+ ("G-02","G-02 · Nail designers e salões","Nível 1","R$ 90 a 300","~R$ 21/h","terça ou quarta, das 9h às 10h30","o mini mostruário e a plaquinha","3h00 de máquina · 60 g","10 abordagens → 3 propostas → 1 venda, mais indicações","G-05 · Semijoias e acessórios", "Fica na biblioteca: abra depois da primeira venda."),
+ ("G-03","G-03 · Pet shops","Nível 1","R$ 160 a 800","~R$ 58/h","terça a quinta, das 14h às 16h","as tags e o mini display","2h10 de máquina · 45 g","10 visitas → 3 mini displays deixados → 1 lote em consignação","G-09 · Papelarias e festa", "Com pouca máquina, quem revende trabalha por você: o pet shop vende as suas tags no balcão, e a reposição chega sem nova visita."),
+ ("G-04","G-04 · Restaurantes, cafés e bares","Nível 1","R$ 150 a 700","~R$ 52/h","terça a quinta, das 15h às 17h","o suporte, com o QR testado em 3 celulares","1h50 de máquina · 59 g","10 visitas → 3 casas com suporte em teste → 1 venda","G-01 · Confeitarias e docerias", "Máquina média, sem CAD e para quem usa: suporte de QR para avaliação no Google, cardápio e Pix. A dor é a nota no Google, e o dono sabe disso."),
+ ("G-05","G-05 · Semijoias e acessórios","Nível 2","R$ 150 a 700","~R$ 25/h","terça a quinta, das 10h às 12h","o kit em PLA fosco e silk","2h40 de máquina · 60 g","10 visitas → 3 propostas → 1 venda até o próximo lançamento","G-02 · Nail designers e salões", "Fica na biblioteca: abra depois da primeira venda."),
+ ("G-06","G-06 · Lojas de celular e assistências","Nível 2","R$ 120 a 700","~R$ 30/h","terça a quinta, das 10h às 12h","o expositor e a mini bandeja","2h20 de máquina · 65 g","10 visitas → 3 lojas medidas → 1 venda","G-10 · Oficinas e pequena indústria", "Fica na biblioteca: abra depois da primeira venda."),
+ ("G-07","G-07 · Academias, boxes e escolas esportivas","Nível 2","R$ 250 a 1.500","~R$ 52/h","fora do pico: 10h às 12h ou 14h às 16h","a medalha com o nome do desafio deles","2h50 de máquina · 64 g","10 visitas → 3 datas de desafio anotadas → 1 pedido","G-08 · Imobiliárias e corretores", "Com mais de 8h livres por dia, você aguenta um pacote de 14h de máquina. Medalha de desafio interno tem data marcada e se repete a cada desafio."),
+ ("G-08","G-08 · Imobiliárias e corretores","Nível 2","R$ 225 a 1.200","~R$ 30/h","segunda a quarta, das 9h às 11h","o kit de entrega e as tags","2h35 de máquina · 60 g","10 contatos → 3 propostas → 1 pacote, em geral de corretor autônomo","G-07 · Academias, boxes e escolas esportivas", "Fica na biblioteca: abra depois da primeira venda."),
+ ("G-09","G-09 · Papelarias e festa","Nível 3","R$ 150 a 500","~R$ 35/h","terça ou quarta, das 10h às 11h30","o kit e o mostruário","2h05 de máquina · 33 g","10 abordagens → 2 a 3 interessadas → 1 lote-teste em até 2 semanas","G-03 · Pet shops", "Máquina média e revenda: você vira o fornecedor 3D da papelaria, com tabela de atacado. Cada festa que ela fecha é um pedido seu."),
+ ("G-10","G-10 · Oficinas e pequena indústria","Nível 3 · exige CAD","R$ 80 a 1.500","R$ 50 a 200/h","terça a quinta, das 14h às 16h","o gabarito, os clips e a engrenagem","3h00 de máquina · 63 g","10 visitas → 3 peças medidas → 2 pedidos","G-06 · Lojas de celular e assistências", "Você já modela peça com encaixe. Peça de reposição e gabarito pagam pelo valor da máquina parada, não pelo plástico. Nunca imprima peça de segurança."),
 ]
-header(bib, 12, "Biblioteca dos 10 G-Codes", "Os dados que alimentam o Painel. Vêm dos manuais e são hipóteses a validar na sua região.")
-th(bib, 7, 2, ["Código", "G-Code", "Nível", "Ticket do 1º pedido", "Retorno por hora", "Quando visitar", "Kit de amostra: imprima…", "Máquina do kit", "Número honesto (expectativa, não promessa)", "Se precisar trocar"])
+header(bib, 13, "Biblioteca dos 10 G-Codes", "Os dados que alimentam o Painel. Vêm dos manuais e são hipóteses a validar na sua região.")
+th(bib, 7, 2, ["Código", "G-Code", "Nível", "Ticket do 1º pedido", "Retorno por hora", "Quando visitar", "Kit de amostra: imprima…", "Máquina do kit", "Número honesto (expectativa, não promessa)", "Se precisar trocar", "Por que o Seletor indica"])
 for i, g in enumerate(G):
     r = 8 + i
     for j, v in enumerate(g):
         c = bib.cell(r, 2 + j, v); c.font = font(9, j == 1); c.alignment = LEFT; c.border = LINE
     inp(bib.cell(r, 11)); bib.cell(r, 11).font = font(9)
+    bib.cell(r, 12).font = font(9, False, SOFT)
     bib.row_dimensions[r].height = 32
 dvb = DataValidation(type="list", formula1="=$C$8:$C$17", allow_blank=True); bib.add_data_validation(dvb); dvb.add("K8:K17")
 put(bib, "B19", "A coluna \"Se precisar trocar\"", font(10, True, GD))
@@ -111,7 +121,11 @@ merge(bib, "B20:K20", "É o G-Code que o Painel sugere quando a decisão da sema
 bib.row_dimensions[20].height = 30
 put(bib, "B22", "Linha do G-Code escolhido (automático, não mexa):", font(8, False, MUTE))
 put(bib, "F22", f'=IFERROR(MATCH({SEL},$C$8:$C$17,0),0)', font(8, False, MUTE))
-setw(bib, [2, 8, 34, 16, 16, 13, 30, 34, 20, 44, 34, 2])
+put(bib, "B23", "G-Code indicado pelo Seletor (automático, não mexa):", font(8, False, MUTE))
+put(bib, "F23", '=IFERROR(INDEX($C$8:$C$17,MATCH(Seletor!$B$16,$B$8:$B$17,0)),"")', font(8, False, MUTE))
+put(bib, "B24", "Linha do G-Code do Seletor (automático, não mexa):", font(8, False, MUTE))
+put(bib, "F24", '=IFERROR(MATCH(Seletor!$B$16,$B$8:$B$17,0),0)', font(8, False, MUTE))
+setw(bib, [2, 8, 34, 16, 16, 13, 30, 34, 20, 44, 34, 50, 2])
 bib.freeze_panes = "D8"
 IDX = "Biblioteca!$F$22"
 def g(col): return f'IF({IDX}=0,"",INDEX(Biblioteca!${col}$8:${col}$17,{IDX}))'
@@ -338,9 +352,9 @@ mi.column_dimensions["B"].width = 3
 r = M_LAST + 2
 DEC_R = r
 section(mi, r, 2, 10, "DECISÃO DA SEMANA 2 · o Painel lê os seus números")
-DEC = (f'=IF({IDX}=0,"ESCOLHA SEU G-CODE",IF(({A_FECH})+({R_N})>=1,"ESCALAR",IF(AND(({A_VIS})>=20,({A_PROP})=0),"TROCAR",'
+DEC = (f'=IF({IDX}=0,"RESPONDA O SELETOR",IF(({A_FECH})+({R_N})>=1,"ESCALAR",IF(AND(({A_VIS})>=20,({A_PROP})=0),"TROCAR",'
        f'IF(({A_PROP})>=3,"AJUSTAR O FOLLOW-UP",IF(({A_VIS})>=10,"AJUSTAR A ABORDAGEM","SIGA A MISSÃO")))))')
-DEC_TXT = (f'=IF({IDX}=0,"Escolha seu G-Code no Painel.",IF(({A_FECH})+({R_N})>=1,"Houve venda. Produza, entregue no prazo, faça as três perguntas da seção 11 e faça a segunda leva de visitas no mesmo bairro.",'
+DEC_TXT = (f'=IF({IDX}=0,"Responda as três perguntas na aba Seletor.",IF(({A_FECH})+({R_N})>=1,"Houve venda. Produza, entregue no prazo, faça as três perguntas da seção 11 e faça a segunda leva de visitas no mesmo bairro.",'
            f'IF(AND(({A_VIS})>=20,({A_PROP})=0),"Duas levas completas sem nenhuma proposta. Troque para "&{g("K")}&". Leve as objeções que você anotou: elas valem para o próximo.",'
            f'IF(({A_PROP})>=3,"As propostas estão na mão. Agora é follow-up: 48h, 7 dias e a mensagem final, como na seção 10. Não troque de G-Code antes disso.",'
            f'IF(({A_VIS})>=10,"Você visitou, mas ainda não chegou a 3 propostas. Releia as objeções anotadas, confira o horário de visita e faça a segunda leva de 10.",'
@@ -356,23 +370,91 @@ mi.row_dimensions[r + 5].height = 28
 setw(mi, [2, 3, 12, 58, 22, 22, 26, 9, 12, 2, 2])
 mi.freeze_panes = "A8"
 
+
+# =====================================================================
+# SELETOR
+# =====================================================================
+se = wb.create_sheet("Seletor")
+header(se, 14, "Seletor", "Três perguntas. Um G-Code. Responda com a sua realidade de hoje, não com a que você quer ter.")
+section(se, 7, 2, 13, "AS TRÊS PERGUNTAS")
+QS = [("1", "Quanto tempo de máquina livre você tem por dia?", "Horas em que a impressora pode rodar pedido seu, contando a noite.", ["Menos de 3h", "De 3h a 8h", "Mais de 8h"]),
+      ("2", "Você já modela em CAD?", "Modelar é desenhar peça com medida, furo e encaixe. Baixar um STL e editar o texto não conta.", ["Não", "Básico", "Sim, peça com encaixe"]),
+      ("3", "Prefere vender para quem revende ou para quem usa?", "Quem revende compra de novo quando vende. Quem usa compra quando precisa.", ["Para quem revende", "Para quem usa"])]
+for i, (n, q, h, ops) in enumerate(QS):
+    r = 8 + i * 2
+    merge(se, f"B{r}:B{r+1}", n, font(20, True, INK), NEON, CENTER)
+    merge(se, f"C{r}:H{r}", q, font(11, True, INK), None, Alignment(vertical="bottom", indent=1, wrap_text=True))
+    merge(se, f"C{r+1}:H{r+1}", h, font(9, False, MUTE), None, Alignment(vertical="top", indent=1, wrap_text=True))
+    merge(se, f"I{r}:L{r+1}", None)
+    for rr in (r, r + 1):
+        for c in range(9, 13): inp(se.cell(rr, c))
+    se[f"I{r}"].font = font(12, True, INK); se[f"I{r}"].alignment = CENTER
+    dvq = DataValidation(type="list", formula1='"' + ",".join(ops) + '"', allow_blank=True); se.add_data_validation(dvq); dvq.add(f"I{r}")
+    merge(se, f"M{r}:M{r+1}", '=IF(I' + str(r) + '="","← escolha","✓")', font(10, True, GD), None, CENTER)
+    se.row_dimensions[r].height = 24; se.row_dimensions[r + 1].height = 26
+CODE = '=IF(I10="Sim, peça com encaixe","G-10",IF(OR(I8="",I10=""),"",IF(I8="Mais de 8h","G-07",IF(I12="","",IF(I8="Menos de 3h",IF(I12="Para quem revende","G-03","G-01"),IF(I12="Para quem revende","G-09","G-04"))))))'
+SI = "Biblioteca!$F$24"
+def sg(col): return f'IF({SI}=0,"",INDEX(Biblioteca!${col}$8:${col}$17,{SI}))'
+section(se, 15, 2, 13, "SEU G-CODE")
+merge(se, "B16:D19", CODE, font(40, True, NEON), INK, CENTER)
+merge(se, "E16:M16", f'=IF(B16="","Faltam "&(3-COUNTA(I8,I10,I12))&" resposta(s). O seu G-Code aparece aqui.",{sg("C")})', font(15, True, INK), P2, Alignment(vertical="center", indent=1, wrap_text=True))
+merge(se, "E17:M17", f'=IF(B16="","",{sg("D")})', font(9, True, GD), P2, Alignment(vertical="center", indent=1))
+merge(se, "E18:M19", f'=IF(B16="","Responda as três perguntas acima. A indicação é uma só, de propósito: quem começa com dois nichos termina a semana sem nenhuma proposta.",{sg("L")})', font(10, False, SOFT), P2, Alignment(vertical="top", indent=1, wrap_text=True))
+se.row_dimensions[16].height = 26; se.row_dimensions[17].height = 16; se.row_dimensions[18].height = 26; se.row_dimensions[19].height = 26
+for i, (lab, col) in enumerate([("TICKET DO 1º PEDIDO", "E"), ("RETORNO POR HORA", "F"), ("QUANDO VISITAR", "G")]):
+    c1 = [2, 6, 10][i]; c2 = [5, 9, 13][i]
+    merge(se, f"{L(c1)}21:{L(c2)}21", lab, font(8, True, MUTE), None, Alignment(indent=1, vertical="bottom"))
+    merge(se, f"{L(c1)}22:{L(c2)}22", "=" + sg(col), font(13, True, INK), None, Alignment(indent=1, vertical="center", wrap_text=True))
+    for c in range(c1, c2 + 1): se.cell(22, c).border = LINE
+se.row_dimensions[22].height = 30
+section(se, 24, 2, 13, "HOJE À NOITE")
+merge(se, "B25:M26", f'=IF(B16="","",IF(B16="G-10","Leia antes a seção 05 do manual: a lista do que nunca imprimir. ","")&"Imprima "&{sg("H")}&" ("&{sg("I")}&"). Depois abra a Missão 72h: o Dia 1 já está com a data e o kit do seu G-Code.")', font(11, True, INK), MINT, Alignment(vertical="center", indent=1, wrap_text=True))
+se.row_dimensions[25].height = 24; se.row_dimensions[26].height = 24
+merge(se, "B27:M27", '=IF(B16="","",IF(AND(B16="G-10",OR(I8<>"",I12<>"")),"Com CAD, o G-10 vem primeiro: as outras respostas não mudam o resultado.",IF(B16="G-07","Com mais de 8h de máquina, o G-07 vem primeiro, para quem revende ou para quem usa.",IF(I10="Básico","CAD básico conta como não modelar: o G-10 pede peça com encaixe na primeira tentativa.",""))))', font(9, False, MUTE, True), None, LEFT)
+link(se, "B29", "Ir para o Painel →", "Painel", Font(name=F, size=11, bold=True, color=GD, underline="single"))
+link(se, "F29", "Abrir a Missão 72h →", "Missão 72h", Font(name=F, size=11, bold=True, color=GD, underline="single"))
+merge(se, "I29:M29", "O Painel recebe este resultado sozinho.", font(9, False, MUTE, True), None, Alignment(horizontal="right"))
+section(se, 31, 2, 13, "OS SEIS RESULTADOS POSSÍVEIS")
+SIX = [("G-01", "Confeitarias", "Menos de 3h de máquina, sem CAD, vende para quem usa"),
+       ("G-03", "Pet shops", "Menos de 3h de máquina, vende para quem revende"),
+       ("G-04", "Restaurantes, cafés e bares", "De 3h a 8h de máquina, sem CAD, vende para quem usa"),
+       ("G-09", "Papelarias e festa", "De 3h a 8h de máquina, vende para quem revende"),
+       ("G-07", "Academias", "Mais de 8h de máquina por dia"),
+       ("G-10", "Oficinas", "Você já modela peça com encaixe em CAD")]
+for i, (cd, nm, cond) in enumerate(SIX):
+    r = 32 + i
+    c = se.cell(r, 2, cd); c.font = font(11, True, INK); c.alignment = CENTER; c.border = LINE
+    merge(se, f"C{r}:E{r}", nm, font(10, True, INK), None, LEFT)
+    merge(se, f"F{r}:M{r}", cond, font(9, False, SOFT), None, LEFT)
+    for k in range(3, 14): se.cell(r, k).border = LINE
+    se.row_dimensions[r].height = 20
+se.conditional_formatting.add("B32:M37", FormulaRule(formula=['$B32=$B$16'], fill=fill(NEON), font=Font(name=F, bold=True, color=INK)))
+merge(se, "B39:M40", "E os outros quatro? G-02 Nail, G-05 Semijoias, G-06 Lojas de celular e G-08 Imobiliárias ficam na biblioteca. Abra um deles depois da primeira venda, nunca antes. Todo G-Code é venda no balcão: todos pedem visitar o comércio.", font(9, False, SOFT), CARS, Alignment(vertical="center", indent=1, wrap_text=True))
+se.row_dimensions[39].height = 22; se.row_dimensions[40].height = 22
+setw(se, [2, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 12, 2])
 # =====================================================================
 # PAINEL
 # =====================================================================
 pa = wb.create_sheet("Painel", 0)
 header(pa, 14, "Painel", "Onde você está, o que fazer hoje e o que os seus números dizem.")
-put(pa, "B7", "Seu G-Code", font(9, True, MUTE), al=Alignment(vertical="center"))
-merge(pa, "E7:H7", None)
-for c in range(5, 9): inp(pa.cell(7, c))
-pa["E7"].font = font(12, True, INK)
+merge(pa, "B7:D7", "Seu G-Code (vem do Seletor)", font(9, True, MUTE), None, Alignment(vertical="center"))
+merge(pa, "E7:H7", '=IF(E8<>"",E8,Biblioteca!$F$23)', font(12, True, INK), P2, LEFT)
+for c in range(5, 9): pa.cell(7, c).border = BOX
 put(pa, "J7", "Dia 1 da missão", font(9, True, MUTE), al=Alignment(horizontal="right", vertical="center"))
 inp(pa["K7"], DATE); pa["K7"].font = font(12, True, INK); pa["K7"].alignment = CENTER
 merge(pa, "L7:M7", '=IF(K7="","← data do Dia 1","")', font(8, False, MUTE, True), None, LEFT)
-merge(pa, "B7:D7", "Seu G-Code (o que o Seletor indicou)", font(9, True, MUTE), None, Alignment(vertical="center"))
 pa.row_dimensions[7].height = 30
-dvp = DataValidation(type="list", formula1="=Biblioteca!$C$8:$C$17", allow_blank=True); pa.add_data_validation(dvp); dvp.add("E7")
-put(pa, "B8", '=IF(E7="","Escolha seu G-Code na lista acima. O Painel inteiro se ajusta a ele.",' + g("D") + '&" · ticket do 1º pedido "&' + g("E") + '&" · "&' + g("F") + '&" · visite "&' + g("G") + ')', font(9, False, SOFT, True))
-pa.merge_cells("B8:M8"); pa.row_dimensions[8].height = 18
+merge(pa, "B8:D8", "Trocar manualmente (opcional)", font(8, False, MUTE), None, Alignment(vertical="center"))
+merge(pa, "E8:H8", None)
+for c in range(5, 9): inp(pa.cell(8, c))
+pa["E8"].font = font(9)
+dvp = DataValidation(type="list", formula1="=Biblioteca!$C$8:$C$17", allow_blank=True); pa.add_data_validation(dvp); dvp.add("E8")
+link(pa, "J8", "↺ Refazer o Seletor", "Seletor", al=Alignment(horizontal="right", vertical="center"))
+pa.merge_cells("J8:K8")
+merge(pa, "L8:M8", '=IF(E8<>"","troca manual ativa","")', font(8, True, CAR), None, LEFT)
+pa.row_dimensions[8].height = 20
+put(pa, "B9", '=IF(E7="","Responda as três perguntas na aba Seletor: o seu G-Code aparece aqui sozinho.",' + g("D") + '&" · ticket do 1º pedido "&' + g("E") + '&" · "&' + g("F") + '&" · visite "&' + g("G") + ')', font(9, False, SOFT, True))
+pa.merge_cells("B9:M9"); pa.row_dimensions[9].height = 18
 
 DIA = f'IF({START}="","",TODAY()-{START}+1)'
 PROG = f"({DONE72})/({TOT72})"
@@ -384,7 +466,7 @@ for rr in (10, 11, 12): pa.row_dimensions[rr].height = [18, 34, 18][rr - 10]
 
 # próxima ação
 MR = f"'Missão 72h'!$H$8:$H${M_LAST}"
-NEXT = (f'=IF(E7="","Escolha seu G-Code acima e marque a data do Dia 1.",IF(K7="","Marque a data do Dia 1 ao lado do G-Code.",'
+NEXT = (f'=IF(E7="","Responda as três perguntas na aba Seletor.",IF(K7="","Marque a data do Dia 1 ao lado do G-Code.",'
         f'IFERROR("Dia "&INDEX(\'Missão 72h\'!$B$8:$B${M_LAST},MATCH("Não",{MR},0))&": "&INDEX(\'Missão 72h\'!$D$8:$D${M_LAST},MATCH("Não",{MR},0)),'
         f'"Tudo marcado. Leia a decisão da semana 2 abaixo.")))')
 section(pa, 14, 2, 13, "PRÓXIMA AÇÃO")
@@ -445,15 +527,18 @@ setw(pa, [2, 16, 10, 9, 10, 10, 12, 11, 20, 14, 14, 14, 16, 2])
 # =====================================================================
 ca = wb.create_sheet("Comece Aqui", 0)
 header(ca, 12, "Comece aqui", "O manual diz o que fazer. Este painel mostra se você está fazendo.")
-steps = [("1", "Descubra o seu G-Code", "Responda as três perguntas do Seletor, na sua área de membros. Ele indica um G-Code só. Os outros nove ficam na biblioteca, para depois da primeira venda."),
-         ("2", "Escolha no Painel", "Na aba Painel, escolha o G-Code na lista e marque a data do Dia 1. Todas as abas se ajustam a ele."),
+steps = [("1", "Descubra o seu G-Code", "Responda as três perguntas na aba Seletor. Ele indica um G-Code só, e o Painel já recebe o resultado. Os outros nove ficam na biblioteca, para depois da primeira venda."),
+         ("2", "Abra o Painel e marque o Dia 1", "O Painel já vem com o seu G-Code. Marque a data do Dia 1 e todas as abas se ajustam: datas, kit, horário de visita e metas."),
          ("3", "Faça a Missão 72h", "Dia 1 preparar, Dia 2 rua, Dia 3 fechar. Marque \"Sim\" em cada ação feita. O Painel mostra sempre a próxima."),
          ("4", "Registre tudo", "Visitas e propostas na aba Alvos, no carro, logo depois de cada visita. Vendas na aba Resultados, com as horas de máquina."),
          ("5", "Expanda no cliente", "Na entrega do primeiro pedido, faça as três perguntas da seção 11 e anote na aba Expansão. Meta: três oportunidades por cliente.")]
 r = 7
-for n, t, d in steps:
+DEST = ["Seletor", "Painel", "Missão 72h", "Alvos", "Expansão"]
+for i, (n, t, d) in enumerate(steps):
     merge(ca, f"B{r}:B{r+1}", n, font(24, True, INK), NEON, CENTER)
-    merge(ca, f"C{r}:K{r}", t, font(12, True, INK), P2, Alignment(vertical="bottom", indent=1))
+    merge(ca, f"C{r}:J{r}", t, font(12, True, INK), P2, Alignment(vertical="bottom", indent=1))
+    ca.cell(r, 11).fill = fill(P2)
+    link(ca, f"K{r}", f"Abrir {DEST[i]} →", DEST[i], al=Alignment(horizontal="right", vertical="bottom"))
     merge(ca, f"C{r+1}:K{r+1}", d, font(10, False, SOFT), None, Alignment(vertical="top", wrap_text=True, indent=1))
     ca.row_dimensions[r].height = 22; ca.row_dimensions[r + 1].height = 34
     r += 3
@@ -471,30 +556,39 @@ for i, (bg, fg, t) in enumerate(leg):
     ca.row_dimensions[rr].height = 20
 r += 6
 section(ca, r, 2, 11, "AS ABAS")
-abas = [("Painel", "onde você está, a próxima ação e a decisão da semana 2"), ("Missão 72h", "as ações dos três dias e da semana 2, com data"),
+abas = [("Seletor", "as três perguntas que indicam o seu G-Code"), ("Painel", "onde você está, a próxima ação e a decisão da semana 2"), ("Missão 72h", "as ações dos três dias e da semana 2, com data"),
         ("Alvos", "seus comércios, da lista até a proposta na mão"), ("Calculadora", "a conta do preço antes de responder um orçamento"),
         ("Resultados", "cada venda, com lucro e retorno por hora de verdade"), ("Expansão", "as oportunidades dentro de quem já comprou"),
         ("Biblioteca", "os dados dos 10 G-Codes que alimentam o Painel")]
 for i, (a, d) in enumerate(abas):
     rr = r + 1 + i
-    c = ca.cell(rr, 2, a); c.font = font(10, True, GD); c.border = LINE
+    link(ca, f"B{rr}", a, a); ca[f"B{rr}"].border = LINE
     ca.merge_cells(f"B{rr}:C{rr}")
     merge(ca, f"D{rr}:K{rr}", d, font(10, False, SOFT), None, Alignment(vertical="center", indent=1))
     ca.row_dimensions[rr].height = 20
-setw(ca, [2, 10, 12, 12, 12, 12, 12, 12, 12, 12, 12, 2])
+setw(ca, [2, 10, 12, 12, 12, 12, 12, 12, 12, 12, 18, 2])
 
 # ordem e aparência
-order = ["Comece Aqui", "Painel", "Missão 72h", "Alvos", "Calculadora", "Resultados", "Expansão", "Biblioteca"]
+order = ["Comece Aqui", "Seletor", "Painel", "Missão 72h", "Alvos", "Calculadora", "Resultados", "Expansão", "Biblioteca"]
 wb._sheets = [wb[n] for n in order]
-tabs = {"Comece Aqui": NEON, "Painel": INK, "Missão 72h": INK, "Alvos": GD, "Calculadora": GD, "Resultados": GD, "Expansão": GD, "Biblioteca": "9AA39F"}
+tabs = {"Comece Aqui": NEON, "Seletor": NEON, "Painel": INK, "Missão 72h": INK, "Alvos": GD, "Calculadora": GD, "Resultados": GD, "Expansão": GD, "Biblioteca": "9AA39F"}
 for ws in wb.worksheets:
     ws.sheet_properties.tabColor = tabs[ws.title]
     ws.page_setup.orientation = "landscape"; ws.page_setup.fitToWidth = 1; ws.page_setup.fitToHeight = 0
     ws.sheet_properties.pageSetUpPr.fitToPage = True
 wb.active = 0
+for ws in wb.worksheets:
+    lc = LASTCOL[ws.title]
+    NAV = Font(name=F, size=9, bold=True, color=GD, underline="single")
+    ws.row_dimensions[6].height = 18
+    if ws.title == "Painel":
+        link(ws, f"{L(lc - 1)}6", "Missão 72h →", "Missão 72h", NAV, Alignment(horizontal="right", vertical="center"))
+        link(ws, f"{L(lc - 3)}6", "← Seletor", "Seletor", NAV, Alignment(horizontal="right", vertical="center"))
+    elif ws.title != "Comece Aqui":
+        link(ws, f"{L(lc - 1)}6", "Ir para o Painel →", "Painel", NAV, Alignment(horizontal="right", vertical="center"))
 
 if DEMO:  # dados de teste só na cópia de verificação
-    pa["E7"] = "G-04 · Restaurantes, cafés e bares"; pa["K7"] = datetime.date.today() - datetime.timedelta(days=1)
+    se["I8"] = "De 3h a 8h"; se["I10"] = "Não"; se["I12"] = "Para quem usa"; pa["K7"] = datetime.date.today() - datetime.timedelta(days=1)
     for i in range(12):
         r = R0 + 1 + i
         alv.cell(r, 4, f"Casa {i+1}"); alv.cell(r, 5, "Centro")
