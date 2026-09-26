@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Guia do Painel G-Code 3D</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14201a;--paper:#fbfaf6;--paper2:#f2efe7;--rule:#ddd8cc;--green:#2d7a4f;--neon:#4ade80;--mint:#e6f2e8;--car:#8a5a1e;--car2:#f6ecdc;--red:#b3261e;--reds:#f6d5d1;--mute:#5d6660}
+@page{size:A4;margin:0}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:'Source Serif 4',Georgia,serif;font-size:10.6pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pg{width:210mm;min-height:297mm;padding:17mm 17mm 16mm;position:relative;break-after:page;overflow:hidden}
+.pg:last-child{break-after:auto}
+h1,h2,h3,h4,.sans,.kick,th,.tag,.step b,.foot{font-family:'Archivo',sans-serif}
+.kick{font-size:8pt;letter-spacing:.14em;text-transform:uppercase;color:var(--green);font-weight:700;margin:0 0 3mm}
+h2{font-size:23pt;line-height:1.05;margin:0 0 3mm;font-weight:800;font-stretch:92%}
+h3{font-size:12.5pt;margin:6mm 0 2mm;font-weight:750}
+h4{font-size:10pt;margin:4mm 0 1.2mm;font-weight:700}
+p{margin:0 0 2.6mm}
+.lead{font-size:11.6pt;color:#2b3630;margin-bottom:5mm}
+.foot{position:absolute;left:17mm;right:17mm;bottom:8mm;font-size:7.2pt;color:var(--mute);display:flex;justify-content:space-between;border-top:1px solid var(--rule);padding-top:2mm}
+img.shot{width:100%;display:block;border:1px solid var(--rule);border-radius:2px;margin:1mm 0 1.5mm}
+.cap{font-family:'Archivo',sans-serif;font-size:7.8pt;color:var(--mute);margin:0 0 4mm}
+table{width:100%;border-collapse:collapse;margin:1.5mm 0 4mm;font-size:9.4pt;line-height:1.38}
+th{background:var(--ink);color:#fff;text-align:left;font-size:8pt;letter-spacing:.04em;text-transform:uppercase;padding:2mm 2.4mm;font-weight:700}
+td{padding:1.8mm 2.4mm;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{font-family:'Archivo',sans-serif;font-weight:650;white-space:nowrap}
+td.w{white-space:normal}
+.box{background:var(--paper2);border-left:3px solid var(--green);padding:3.2mm 4mm;margin:3mm 0 4mm}
+.box.car{background:var(--car2);border-left-color:var(--car)}
+.box.dark{background:var(--ink);color:#e8ede9;border-left-color:var(--neon)}
+.box.dark b{color:var(--neon)}
+.box p:last-child{margin:0}
+.tag{display:inline-block;font-size:7.6pt;font-weight:700;padding:.4mm 2mm;border-radius:2px;vertical-align:1px}
+.t-mint{background:var(--mint);border:1px solid #bfd9c6}.t-white{background:#fff;border:1px solid var(--rule)}.t-neon{background:var(--neon)}.t-red{background:var(--reds);color:var(--red)}.t-ink{background:var(--ink);color:var(--neon)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+.steps{counter-reset:s}
+.step{display:grid;grid-template-columns:11mm 1fr;gap:3mm;margin:0 0 3.4mm;align-items:start}
+.step:before{counter-increment:s;content:counter(s);font-family:'Archivo',sans-serif;font-weight:800;font-size:15pt;background:var(--neon);color:var(--ink);height:11mm;display:flex;align-items:center;justify-content:center}
+.step p{margin:0}
+ul{margin:0 0 3mm;padding-left:5mm}li{margin:0 0 1.2mm}
+.faq h4{margin:5mm 0 1.2mm;font-size:11pt}
+.faq p{font-size:10.6pt}
+/* capa */
+.cover{background:var(--ink);color:#fff;padding:24mm 20mm}
+.cover .kick{color:var(--neon)}
+.cover h1{font-size:44pt;line-height:.98;margin:10mm 0 6mm;font-weight:850;font-stretch:88%}
+.cover h1 span{color:var(--neon)}
+.cover .sub{font-size:14pt;color:#cfd8d2;max-width:150mm}
+.cover .mod{display:inline-block;border:1.5px solid var(--neon);color:var(--neon);font-family:'Archivo';font-weight:700;font-size:10pt;letter-spacing:.12em;padding:2mm 4mm;text-transform:uppercase}
+.cover .prom{position:absolute;left:20mm;right:20mm;bottom:40mm;border-top:1px solid #34463b;padding-top:6mm;font-size:13pt;color:#fff}
+.cover .prom small{display:block;font-family:'Archivo';font-size:8pt;letter-spacing:.14em;color:var(--neon);text-transform:uppercase;margin-bottom:2mm}
+.cover .foot{color:#8fa097;border-color:#34463b;left:20mm;right:20mm}
+.toc td{padding:1.3mm 2.4mm;font-size:9.4pt}.toc td:last-child{text-align:right;font-family:'Archivo';color:var(--mute)}
+.cola{font-size:10.6pt}
+.cola h4{margin:5mm 0 1.6mm;color:var(--green);text-transform:uppercase;font-size:8pt;letter-spacing:.1em}
+.cola .cell{border:1px solid var(--rule);padding:4mm 4.6mm;background:#fff}
+.cola ul{margin:0;padding-left:4.2mm}.cola li{margin:0 0 1.6mm}
+</style>
+</head>
+<body>
+
+<!-- CAPA -->
+<section class="pg cover">
+  <p class="kick">LR Maker Lab · G-Code 3D</p>
+  <span class="mod">Módulo 1 · Comece aqui</span>
+  <h1>Guia do<br><span>Painel G-Code 3D</span></h1>
+  <p class="sub">O material de consulta da aula. Aba por aba, o que preencher, o que o Painel calcula sozinho e o que fazer quando bater a dúvida.</p>
+  <div class="prom"><small>A promessa do G-Code 3D</small>Em 72 horas, você sai da impressora parada para três propostas entregues na mão de um comerciante.</div>
+  <div class="foot"><span>LR Maker Lab · G-Code 3D · uso pessoal do comprador</span><span>Todo número é hipótese a validar na sua região</span></div>
+</section>
+
+<!-- SUMÁRIO + ANTES DE COMEÇAR -->
+<section class="pg">
+  <p class="kick">Como usar este guia</p>
+  <h2>Assista à aula uma vez. Volte aqui quando travar.</h2>
+  <p class="lead">A aula mostra o caminho inteiro. Este guia serve para consultar depois: procure a aba em que você está, ou vá direto para as Dúvidas frequentes.</p>
+  <table class="toc">
+    <tr><td>Antes de abrir a planilha</td><td>2</td></tr>
+    <tr><td>O caminho em 5 passos · aba Comece aqui</td><td>3</td></tr>
+    <tr><td>Seletor · descubra o seu G-Code</td><td>4</td></tr>
+    <tr><td>Painel · onde você está e o que fazer hoje</td><td>5</td></tr>
+    <tr><td>Missão 72h · os três dias, ação por ação</td><td>7</td></tr>
+    <tr><td>Alvos · da lista até a proposta na mão</td><td>8</td></tr>
+    <tr><td>Calculadora · a conta antes do preço</td><td>10</td></tr>
+    <tr><td>Resultados e Expansão · depois da venda</td><td>11</td></tr>
+    <tr><td>Decisão da semana 2 · escalar, ajustar ou trocar</td><td>12</td></tr>
+    <tr><td>Biblioteca · os 10 G-Codes</td><td>13</td></tr>
+    <tr><td>A rotina de 5 minutos e os erros mais comuns</td><td>14</td></tr>
+    <tr><td>Dúvidas frequentes</td><td>15</td></tr>
+    <tr><td>Cola do Painel · uma página para imprimir</td><td>17</td></tr>
+  </table>
+
+  <h3>Antes de abrir a planilha</h3>
+  <div class="steps">
+    <div class="step"><p><b>Salve uma cópia sua.</b> Guarde o arquivo original intacto e trabalhe numa cópia com o seu nome. Se algo quebrar, você começa de novo em um minuto.</p></div>
+    <div class="step"><p><b>Abra no Excel ou no LibreOffice Calc.</b> Os dois abrem tudo: fórmulas, cores, listas e links entre abas. No Google Planilhas as fórmulas funcionam, mas os links entre abas podem não abrir; nesse caso, use as abas no rodapé.</p></div>
+    <div class="step"><p><b>Preencha só as células verde-claras.</b> As brancas são fórmula. Se você digitar em cima delas, o Painel para de calcular aquele ponto.</p></div>
+    <div class="step"><p><b>Use as listas.</b> Onde aparece uma setinha na célula, escolha na lista em vez de digitar. "Sim" digitado com espaço no fim não conta.</p></div>
+  </div>
+
+  <p style="margin-top:3mm"><b class="sans" style="font-size:9.6pt">As quatro cores:</b> <span class="tag t-mint">você preenche</span> <span class="tag t-white">calculado, não mexa</span> <span class="tag t-neon">pronto ou para hoje</span> <span class="tag t-red">atrasado ou abaixo do piso</span></p>
+  <div class="box"><p><b>Links.</b> Todo "Abrir X →" e "Ir para o Painel →" leva para outra aba. No Excel, clique uma vez. No LibreOffice, segure Ctrl e clique.</p></div>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>2</span></div>
+</section>
+
+<!-- COMECE AQUI -->
+<section class="pg">
+  <p class="kick">Aba Comece aqui</p>
+  <h2>O caminho em 5 passos</h2>
+  <p class="lead">É a primeira aba da planilha. Cada passo tem um link que abre a aba certa. Siga na ordem.</p>
+  <img class="shot" src="img/comece.png" style="width:86%">
+  <p class="cap">A aba Comece aqui, com os 5 passos, a regra do Painel e a legenda das cores.</p>
+  <table>
+    <tr><th style="width:36mm">Passo</th><th>O que você faz</th></tr>
+    <tr><td>1 · Seletor</td><td>Responde três perguntas e recebe um G-Code.</td></tr>
+    <tr><td>2 · Painel</td><td>Marca a data do Dia 1. Todas as abas se ajustam.</td></tr>
+    <tr><td>3 · Missão 72h</td><td>Marca "Sim" em cada ação feita.</td></tr>
+    <tr><td>4 · Alvos e Resultados</td><td>Anota visitas no carro e vendas com as horas de máquina.</td></tr>
+    <tr><td>5 · Expansão</td><td>Na entrega, faz as três perguntas da seção 11 e anota.</td></tr>
+  </table>
+  <div class="box dark"><p><b>A regra do Painel.</b> Missão cumprida é três propostas entregues na mão de um comerciante. A venda depende de quem decide do outro lado do balcão; por isso ela não é a meta da missão. Ela é o que vem depois de visitas bem feitas e follow-up no prazo.</p></div>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>3</span></div>
+</section>
+
+<!-- SELETOR -->
+<section class="pg">
+  <p class="kick">Aba Seletor</p>
+  <h2>Três perguntas. Um G-Code.</h2>
+  <p class="lead">Responda com a sua realidade de hoje, não com a que você quer ter. O resultado vai sozinho para o Painel.</p>
+  <img class="shot" src="img/seletor.png" style="width:60%">
+  <p class="cap">Exemplo: 3h a 8h de máquina, sem CAD, vendendo para quem usa → G-04 Restaurantes.</p>
+  <h4>As perguntas</h4>
+  <table>
+    <tr><td>1 · Máquina livre</td><td class="w">Horas por dia em que a impressora pode rodar pedido seu, contando a noite. Menos de 3h, de 3h a 8h ou mais de 8h.</td></tr>
+    <tr><td>2 · CAD</td><td class="w">Modelar é desenhar peça com medida, furo e encaixe. Baixar um STL e editar texto não conta: responda "Básico".</td></tr>
+    <tr><td>3 · Para quem vender</td><td class="w">Quem revende compra de novo quando vende. Quem usa compra quando precisa.</td></tr>
+  </table>
+  <div class="two">
+    <div>
+      <h4>Os seis resultados</h4>
+      <table>
+        <tr><td>G-01</td><td class="w">menos de 3h · para quem usa</td></tr>
+        <tr><td>G-03</td><td class="w">menos de 3h · para quem revende</td></tr>
+        <tr><td>G-04</td><td class="w">3h a 8h · para quem usa</td></tr>
+        <tr><td>G-09</td><td class="w">3h a 8h · para quem revende</td></tr>
+        <tr><td>G-07</td><td class="w">mais de 8h</td></tr>
+        <tr><td>G-10</td><td class="w">já modela peça com encaixe</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>O que olhar depois de responder</h4>
+      <ul>
+        <li><b>Seu G-Code</b>, com nível e o porquê da indicação.</li>
+        <li><b>Ticket, retorno por hora e quando visitar.</b></li>
+        <li><b>Hoje à noite:</b> o kit de amostra para imprimir e o melhor dia para começar.</li>
+      </ul>
+      <p style="font-size:9.4pt">G-02, G-05, G-06 e G-08 ficam na Biblioteca. Abra um deles depois da primeira venda, nunca antes.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>4</span></div>
+</section>
+
+<!-- PAINEL 1 -->
+<section class="pg">
+  <p class="kick">Aba Painel</p>
+  <h2>Onde você está e o que fazer hoje</h2>
+  <p class="lead">É a aba que você abre todo dia. Nela você preenche só uma coisa: a data do Dia 1. O resto vem das outras abas.</p>
+  <img class="shot" src="img/painel-top.png">
+  <p class="cap">Topo do Painel: G-Code, data do Dia 1, os quatro cartões e a Próxima ação.</p>
+  <table>
+    <tr><th style="width:40mm">Campo</th><th>Como funciona</th></tr>
+    <tr><td>Seu G-Code</td><td class="w">Vem do Seletor. Para refazer as perguntas, clique em "↺ Refazer o Seletor".</td></tr>
+    <tr><td>Trocar manualmente</td><td class="w">Opcional. Escolha outro G-Code aqui só quando a decisão da semana 2 pedir TROCAR, ou depois da primeira venda. Apague para voltar ao do Seletor.</td></tr>
+    <tr><td>Dia 1 da missão</td><td class="w">A data em que você começa a preparar. As datas da Missão 72h saem daqui.</td></tr>
+    <tr><td>Aviso do Dia 2</td><td class="w">"✓" quando o Dia 2, o dia de rua, cai num dia de visita do seu G-Code. "⚠" quando não cai: o aviso diz em que dia começar.</td></tr>
+    <tr><td>Linha de resumo</td><td class="w">Nível, ticket do 1º pedido, retorno por hora, quando visitar e os melhores dias para começar.</td></tr>
+  </table>
+  <h4>Os quatro cartões</h4>
+  <table>
+    <tr><td>Dia da missão</td><td class="w">Dia 1, 2 ou 3 conforme a data de hoje. Depois do Dia 3, mostra "Semana 2".</td></tr>
+    <tr><td>Missão 72h concluída</td><td class="w">Quantas ações da Missão 72h estão marcadas "Sim".</td></tr>
+    <tr><td>Propostas na mão</td><td class="w">Quantas propostas você entregou, de 3. É a promessa do G-Code 3D.</td></tr>
+    <tr><td>Onde você está</td><td class="w">Preparando → Na rua → Propostas → Vendendo → Expandindo.</td></tr>
+  </table>
+  <div class="box"><p><b>Próxima ação</b> é a primeira ação da Missão 72h que ainda está como "Não". Fez? Marque "Sim" na Missão 72h e a próxima aparece.</p></div>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>5</span></div>
+</section>
+
+<!-- PAINEL 2 -->
+<section class="pg">
+  <p class="kick">Aba Painel · continuação</p>
+  <h2>O que os seus números dizem</h2>
+  <img class="shot" src="img/painel-bot.png">
+  <p class="cap">Parte de baixo do Painel: funil, resumo do G-Code, Resultados, Expansão e a decisão da semana 2.</p>
+  <table>
+    <tr><th style="width:40mm">Bloco</th><th>De onde vem e como ler</th></tr>
+    <tr><td>Funil do seu G-Code</td><td class="w">Conta as linhas da aba Alvos: listados (meta 20), visitados (meta 10), amostras (meta 3), propostas (meta 3) e fechados. "Fecharam: 1" é referência dos manuais, não meta: é expectativa, não promessa.</td></tr>
+    <tr><td>Seu G-Code em uma olhada</td><td class="w">Resumo da Biblioteca: nível, ticket, retorno por hora, quando visitar, kit e o número honesto do manual.</td></tr>
+    <tr><td>Resultados</td><td class="w">Vendas, faturamento, lucro e lucro por hora de máquina, da aba Resultados. Se alguma venda ficou abaixo do piso, o cartão avisa.</td></tr>
+    <tr><td>Expansão</td><td class="w">Oportunidades anotadas e fechadas, da aba Expansão.</td></tr>
+    <tr><td>Decisão da semana 2</td><td class="w">ESCALAR, AJUSTAR ou TROCAR, lida dos seus números. Veja a página 12.</td></tr>
+  </table>
+  <div class="box car"><p><b>O funil conta só o seu G-Code.</b> Linhas com G-Code em branco na aba Alvos contam para o G-Code do Painel. Linhas com outro G-Code, ou com "Exemplo · apague", ficam de fora.</p></div>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>6</span></div>
+</section>
+
+<!-- MISSÃO -->
+<section class="pg">
+  <p class="kick">Aba Missão 72h</p>
+  <h2>Os três dias, ação por ação</h2>
+  <p class="lead">Dia 1 preparar, Dia 2 rua, Dia 3 fechar. Depois, a semana 2. Você só mexe na coluna "Feito?".</p>
+  <img class="shot" src="img/missao-a.png">
+  <p class="cap">Dias 1 a 3: a data sai do Dia 1 do Painel. As ações usam o kit e o horário do seu G-Code.</p>
+  <table>
+    <tr><th style="width:40mm">Coluna</th><th>O que é</th></tr>
+    <tr><td>Quando</td><td class="w">A data de cada ação, calculada pelo Dia 1.</td></tr>
+    <tr><td>O que fazer</td><td class="w">A ação, já com o kit e o horário de visita do seu G-Code.</td></tr>
+    <tr><td>Como saber que está feito</td><td class="w">O sinal concreto de que a ação acabou. Sem o sinal, não está feita.</td></tr>
+    <tr><td>Os números dizem</td><td class="w">O que as abas Alvos, Resultados e Expansão já mostram, como "12 de 10 visitas".</td></tr>
+    <tr><td>Feito?</td><td class="w">Você marca "Sim" ou "Não".</td></tr>
+    <tr><td>Situação</td><td class="w"><span class="tag t-neon">Feito</span> <span class="tag t-ink">Hoje</span> <span class="tag t-red">Atrasado</span> ou "A fazer", pela data.</td></tr>
+  </table>
+  <img class="shot" src="img/missao-b.png">
+  <p class="cap">Semana 2: voltar nos alvos, segunda leva, primeiro pedido e as perguntas da entrega.</p>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>7</span></div>
+</section>
+
+<!-- ALVOS 1 -->
+<section class="pg">
+  <p class="kick">Aba Alvos</p>
+  <h2>Da lista até a proposta na mão</h2>
+  <p class="lead">Cada linha é um comércio. Preencha no carro, logo depois de cada visita: o que você anota na hora vale mais do que o que lembra à noite.</p>
+  <img class="shot" src="img/alvos-a.png">
+  <p class="cap">Os cartões do topo e as primeiras colunas: quem é o comércio e quem decide.</p>
+  <img class="shot" src="img/alvos-b.png">
+  <p class="cap">As colunas da visita: amostra, proposta, status, objeção e o próximo contato calculado.</p>
+  <div class="box car"><p><b>A linha "Exemplo · apague"</b> mostra como preencher. Ela não conta em nenhum número. Apague quando quiser.</p></div>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>8</span></div>
+</section>
+
+<!-- ALVOS 2 -->
+<section class="pg">
+  <p class="kick">Aba Alvos · continuação</p>
+  <h2>Coluna por coluna</h2>
+  <table>
+    <tr><th style="width:40mm">Coluna</th><th>O que anotar</th></tr>
+    <tr><td>G-Code</td><td class="w">Deixe em branco: conta para o G-Code do Painel.</td></tr>
+    <tr><td>Comércio, Bairro</td><td class="w">Nome e bairro. Visite um bairro por vez.</td></tr>
+    <tr><td>Quem decide</td><td class="w">Dono, gerente, sócia. Proposta entregue a quem não decide não conta.</td></tr>
+    <tr><td>WhatsApp ou Instagram</td><td class="w">Para o follow-up.</td></tr>
+    <tr><td>Nota no Google</td><td class="w">Um dos sinais da seção 02 do manual.</td></tr>
+    <tr><td>Data da visita</td><td class="w">Com data, conta como visitado.</td></tr>
+    <tr><td>Deixou amostra?</td><td class="w">"Sim" conta como amostra deixada.</td></tr>
+    <tr><td>Proposta entregue em</td><td class="w">Com data, conta como proposta na mão. É daqui que o follow-up é contado.</td></tr>
+    <tr><td>Valor proposto</td><td class="w">O nível de preço que a pessoa olhou por mais tempo.</td></tr>
+    <tr><td>Status</td><td class="w">Escolha na lista (veja abaixo).</td></tr>
+    <tr><td>Objeção</td><td class="w">As palavras exatas. Elas mostram o que ajustar na segunda leva.</td></tr>
+    <tr><td>Volto em</td><td class="w">A data combinada com a pessoa. Quando preenchida, vale mais do que a conta automática.</td></tr>
+    <tr><td>Próximo contato</td><td class="w">Calculado sozinho. Fica verde no dia.</td></tr>
+    <tr><td>Oportunidade ouvida</td><td class="w">Tudo o que a pessoa disse precisar além do seu kit.</td></tr>
+  </table>
+  <h4>O status e o próximo contato</h4>
+  <table>
+    <tr><th style="width:52mm">Status</th><th>Próximo contato</th></tr>
+    <tr><td>A visitar · Visitado · Amostra deixada</td><td class="w">Só se você preencher "Volto em".</td></tr>
+    <tr><td>Proposta entregue</td><td class="w">2 dias depois da proposta: follow-up de 48h.</td></tr>
+    <tr><td>Follow-up 48h feito</td><td class="w">7 dias depois da proposta.</td></tr>
+    <tr><td>Follow-up 7 dias feito</td><td class="w">21 dias depois da proposta: a mensagem final.</td></tr>
+    <tr><td>Fechou · Não agora</td><td class="w">Sai da agenda. "Não agora" fica cinza.</td></tr>
+  </table>
+  <div class="box"><p>G-07, G-08 e G-10 têm prazos próprios na seção 10 do manual. Nesses, use a coluna "Volto em" com a data do seu manual.</p></div>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>9</span></div>
+</section>
+
+<!-- CALCULADORA -->
+<section class="pg">
+  <p class="kick">Aba Calculadora</p>
+  <h2>A conta antes do preço</h2>
+  <p class="lead">Use sempre que alguém pedir um orçamento, antes de responder. Leva um minuto.</p>
+  <img class="shot" src="img/calc.png">
+  <p class="cap">Seus números no topo, uma vez só. Embaixo, o pedido que você está orçando.</p>
+  <h4>Seus números · preencha uma vez</h4>
+  <table>
+    <tr><td>Preço do filamento</td><td class="w">O que você paga por kg.</td></tr>
+    <tr><td>Perda e falhas</td><td class="w">15% sobre o filamento: purga, suporte e peça perdida. O mesmo valor dos manuais.</td></tr>
+    <tr><td>Potência e tarifa</td><td class="w">Watts da etiqueta da fonte e o R$/kWh da conta de luz, com impostos.</td></tr>
+    <tr><td>Piso por hora</td><td class="w">R$ 15 por hora de máquina. Regra do G-Code 3D: nenhum pedido abaixo disso.</td></tr>
+    <tr><td>Sua meta por hora</td><td class="w">Quanto você quer ganhar por hora de máquina. Define o preço sugerido.</td></tr>
+  </table>
+  <h4>O veredito</h4>
+  <table>
+    <tr><td><span class="tag t-red">Abaixo do piso</span></td><td class="w">Não feche por esse preço. Suba o preço ou mude a peça.</td></tr>
+    <tr><td><span class="tag t-white">Acima do piso</span></td><td class="w">Dá para fechar, mas veja se cabe subir o preço.</td></tr>
+    <tr><td><span class="tag t-neon">Na meta</span></td><td class="w">Pode fechar.</td></tr>
+  </table>
+  <div class="box car"><p><b>Horas de máquina</b> é o tempo do fatiador para o pedido inteiro. Arte, mensagem e ida à loja não entram na conta: é por causa desse tempo que o piso existe.</p></div>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>10</span></div>
+</section>
+
+<!-- RESULTADOS + EXPANSÃO -->
+<section class="pg">
+  <p class="kick">Abas Resultados e Expansão</p>
+  <h2>Depois da venda</h2>
+  <h3>Resultados · uma linha por venda fechada</h3>
+  <img class="shot" src="img/resultados.png">
+  <p class="cap">Você preenche data, cliente, o que vendeu, quantidade, valor, filamento, horas e extras. O resto sai sozinho.</p>
+  <p>Custo real, lucro, margem, retorno por hora e situação são calculados com os seus números da Calculadora. O retorno por hora fica vermelho abaixo do piso. Em "Pediu de novo?", anote quando o cliente voltar a comprar.</p>
+  <h3>Expansão · as três perguntas da entrega</h3>
+  <img class="shot" src="img/expansao.png">
+  <p class="cap">Cada resposta que abre uma venda vira uma linha. A última coluna conta as oportunidades de cada cliente.</p>
+  <p>Na entrega do primeiro pedido, faça as três perguntas da seção 11 do seu manual e anote a resposta com as palavras da pessoa. A meta é três oportunidades por cliente atendido; a contagem fica verde quando o cliente chega a três. Status: Anotada → Proposta feita → Fechou ou Não agora.</p>
+  <div class="box"><p>Quem já comprou de você e recebeu no prazo pode comprar de novo sem visita fria. Cliente sem três linhas aqui ainda tem pergunta para fazer.</p></div>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>11</span></div>
+</section>
+
+<!-- DECISÃO -->
+<section class="pg">
+  <p class="kick">Painel e Missão 72h</p>
+  <h2>Decisão da semana 2</h2>
+  <p class="lead">O Painel lê os seus números e diz o próximo movimento. Ele aparece no fim do Painel e no fim da Missão 72h. A regra é simples: não se troca de G-Code por ansiedade.</p>
+  <table>
+    <tr><th style="width:44mm">A decisão</th><th style="width:52mm">Quando aparece</th><th>O que fazer</th></tr>
+    <tr><td>SIGA A MISSÃO</td><td class="w">Menos de 10 visitas.</td><td class="w">Siga a próxima ação. A decisão só vale depois das primeiras 10 visitas.</td></tr>
+    <tr><td>ESCALAR</td><td class="w">Pelo menos uma venda, na aba Alvos ou em Resultados.</td><td class="w">Produza, entregue no prazo, faça as três perguntas da seção 11 e faça a segunda leva de visitas no mesmo bairro.</td></tr>
+    <tr><td>AJUSTAR O<br>FOLLOW-UP</td><td class="w">3 propostas ou mais, nenhuma venda ainda.</td><td class="w">Agora é follow-up: 48h, 7 dias e a mensagem final, como na seção 10. Não troque de G-Code antes disso.</td></tr>
+    <tr><td>AJUSTAR A<br>ABORDAGEM</td><td class="w">10 visitas ou mais e menos de 3 propostas.</td><td class="w">Releia as objeções anotadas, confira o horário de visita e faça a segunda leva de 10.</td></tr>
+    <tr><td>TROCAR</td><td class="w">20 visitas e nenhuma proposta.</td><td class="w">Troque para o G-Code da coluna "Se precisar trocar" da Biblioteca. Leve as objeções anotadas: elas valem para o próximo.</td></tr>
+  </table>
+  <h4>Como trocar, na prática</h4>
+  <div class="steps">
+    <div class="step"><p>No Painel, escolha o novo G-Code em <b>"Trocar manualmente"</b>.</p></div>
+    <div class="step"><p>Marque uma <b>nova data de Dia 1</b> e volte as ações da Missão 72h para "Não".</p></div>
+    <div class="step"><p>Na aba Alvos, <b>preencha a coluna G-Code</b> das linhas antigas com o código anterior. Assim elas saem da conta do novo G-Code, e o histórico fica guardado.</p></div>
+  </div>
+  <div class="box car"><p>A coluna "Se precisar trocar" é uma sugestão. Ela é editável: escolha outro G-Code se fizer mais sentido para a sua região.</p></div>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>12</span></div>
+</section>
+
+<!-- BIBLIOTECA -->
+<section class="pg">
+  <p class="kick">Aba Biblioteca</p>
+  <h2>Os 10 G-Codes</h2>
+  <p class="lead">São os dados que alimentam o Painel, tirados dos manuais. Consulte para comparar; não precisa editar nada, fora a coluna "Se precisar trocar".</p>
+  <img class="shot" src="img/bib-a.png">
+  <p class="cap">Código, nível, ticket, retorno por hora, quando visitar, kit, máquina do kit, número honesto e plano B.</p>
+  <img class="shot" src="img/bib-b.png" style="width:70%">
+  <p class="cap">Por que o Seletor indica, dias em que o Dia 2 pode cair e melhor dia para começar.</p>
+  <table>
+    <tr><th style="width:44mm">Coluna</th><th>Para que serve</th></tr>
+    <tr><td>Número honesto</td><td class="w">A expectativa de cada manual, como "10 visitas → 3 propostas → 1 venda". É referência, não promessa: a venda depende de quem decide do outro lado do balcão.</td></tr>
+    <tr><td>Se precisar trocar</td><td class="w">O plano B que o Painel sugere na decisão TROCAR.</td></tr>
+    <tr><td>Dia 2 pode cair em</td><td class="w">Os dias da semana em que dá para visitar (1 = segunda). É o que o aviso do Dia 2 no Painel confere.</td></tr>
+    <tr><td>Melhor dia para começar</td><td class="w">O Dia 1 que coloca o Dia 2 num dia de visita.</td></tr>
+  </table>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>13</span></div>
+</section>
+
+<!-- ROTINA + ERROS -->
+<section class="pg">
+  <p class="kick">Todo dia</p>
+  <h2>A rotina de 5 minutos</h2>
+  <div class="steps">
+    <div class="step"><p><b>Abra o Painel.</b> Leia o dia da missão e a Próxima ação.</p></div>
+    <div class="step"><p><b>Na aba Alvos, veja quem está verde</b> em Próximo contato. É o follow-up de hoje.</p></div>
+    <div class="step"><p><b>Faça a ação</b> e marque "Sim" na Missão 72h.</p></div>
+    <div class="step"><p><b>Depois de cada visita, no carro:</b> data, amostra, proposta, status e a objeção com as palavras exatas.</p></div>
+    <div class="step"><p><b>Recebeu pedido de orçamento?</b> Calculadora antes de responder. Fechou? Uma linha em Resultados.</p></div>
+  </div>
+
+  <h3>Os erros mais comuns</h3>
+  <table>
+    <tr><th style="width:62mm">O erro</th><th>O que acontece e como resolver</th></tr>
+    <tr><td class="w">Digitar em célula branca</td><td class="w">A fórmula some e aquele número para. Desfaça com Ctrl+Z, ou copie a célula da planilha original.</td></tr>
+    <tr><td class="w">Esquecer a data do Dia 1</td><td class="w">As datas da Missão 72h ficam vazias e o Painel não sabe em que dia você está.</td></tr>
+    <tr><td class="w">Começar num dia que joga o Dia 2 para fora da janela de visita</td><td class="w">O aviso "⚠" aparece ao lado da data. Mude o Dia 1 para o dia que o aviso sugere.</td></tr>
+    <tr><td class="w">Preencher a coluna G-Code em Alvos à toa</td><td class="w">Se o código não for o do Painel, a linha sai da conta. Deixe em branco.</td></tr>
+    <tr><td class="w">Anotar a visita à noite</td><td class="w">A objeção vira resumo e perde a palavra exata. Anote no carro.</td></tr>
+    <tr><td class="w">Horas de máquina sem contar o pedido inteiro</td><td class="w">O retorno por hora sai maior do que é. Use o tempo do fatiador para todas as peças.</td></tr>
+    <tr><td class="w">Trocar de G-Code antes das 20 visitas</td><td class="w">Você perde a primeira leva inteira. Siga a decisão da semana 2.</td></tr>
+    <tr><td class="w">Abrir G-02, G-05, G-06 ou G-08 antes da primeira venda</td><td class="w">Eles ficam na Biblioteca de propósito. Um G-Code até a primeira venda.</td></tr>
+  </table>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>14</span></div>
+</section>
+
+<!-- FAQ 1 -->
+<section class="pg faq">
+  <p class="kick">Consulta rápida</p>
+  <h2>Dúvidas frequentes</h2>
+
+  <h4>O Seletor não mostra nenhum G-Code.</h4>
+  <p>Faltou responder. Com "Menos de 3h" ou "De 3h a 8h", as três perguntas são necessárias. "Mais de 8h" já indica G-07, e "Sim, peça com encaixe" no CAD já indica G-10. Quando uma resposta não foi usada, o Seletor avisa embaixo do resultado.</p>
+
+  <h4>Não gostei do G-Code que saiu. Posso escolher outro?</h4>
+  <p>Pode, em "Trocar manualmente" no Painel. Antes, refaça o Seletor com a sua realidade de hoje, não com a que você quer ter. Na maioria das vezes o G-Code indicado é o que cabe na máquina e no tempo que você tem agora.</p>
+
+  <h4>Em que dia começo a missão?</h4>
+  <p>No dia em que o Dia 2, o dia de rua, cai numa janela de visita do seu G-Code. A linha de resumo do Painel e a caixa "Hoje à noite" do Seletor dizem os melhores dias. Se o aviso ao lado da data mostrar "⚠", mude o Dia 1.</p>
+
+  <h4>Perdi um dia. A missão acabou?</h4>
+  <p>Não. As ações ficam "Atrasado" em vermelho, e a Próxima ação continua mostrando o que falta. Faça, marque "Sim" e siga. Se preferir recomeçar com datas certas, marque um novo Dia 1.</p>
+
+  <h4>Marquei "Sim" e a Próxima ação não mudou.</h4>
+  <p>Confira se você escolheu "Sim" na lista, sem espaço no fim, e se não há uma ação anterior ainda como "Não". A Próxima ação é sempre a primeira da lista que falta.</p>
+
+  <h4>O funil mostra zero, mas eu preenchi a aba Alvos.</h4>
+  <p>Três causas comuns: a coluna G-Code tem um código diferente do Painel (deixe em branco); a linha ainda é "Exemplo · apague"; ou a coluna Comércio está vazia. Visitado conta pela data da visita; proposta conta pela data em "Proposta entregue em".</p>
+
+  <h4>O Próximo contato não aparece.</h4>
+  <p>Ele só é calculado com a data da proposta e o status de follow-up, ou quando você preenche "Volto em". Status "Fechou" e "Não agora" saem da agenda.</p>
+
+  <h4>O prazo de follow-up do meu manual é diferente do Painel.</h4>
+  <p>Vale o manual. G-07, G-08 e G-10 têm prazos próprios na seção 10. Preencha a data certa em "Volto em", e ela passa na frente da conta automática.</p>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>15</span></div>
+</section>
+
+<!-- FAQ 2 -->
+<section class="pg faq">
+  <p class="kick">Consulta rápida</p>
+  <h2>Dúvidas frequentes</h2>
+
+  <h4>Entreguei três propostas. E agora?</h4>
+  <p>A missão está cumprida. Agora é follow-up no prazo e a segunda leva de visitas. O Painel mostra "AJUSTAR O FOLLOW-UP" enquanto não houver venda: siga a seção 10 do manual antes de pensar em trocar.</p>
+
+  <h4>O cliente fechou. Onde anoto?</h4>
+  <p>Em dois lugares: na aba Alvos, mude o status para "Fechou"; na aba Resultados, crie uma linha com valor, filamento, horas e extras. O Painel passa para "Vendendo" e a decisão vira ESCALAR.</p>
+
+  <h4>A Calculadora deu "abaixo do piso". O que faço?</h4>
+  <p>Não feche por esse preço. Suba o preço, mude a peça para uma que gaste menos hora de máquina, ou ofereça o nível de preço de cima da proposta. O piso de R$ 15 por hora existe para pagar o tempo que não aparece no fatiador.</p>
+
+  <h4>Os números da Calculadora são os meus?</h4>
+  <p>Só depois que você trocar. Os valores iniciais (R$ 120/kg, 150 W, R$ 0,95/kWh) são exemplo. Coloque o que você paga; Resultados e Painel passam a usar os seus números.</p>
+
+  <h4>Posso usar no Google Planilhas ou no celular?</h4>
+  <p>As fórmulas funcionam no Google Planilhas, mas os links entre abas podem não abrir: use as abas no rodapé. No celular, dá para consultar e marcar "Sim", mas para preencher a aba Alvos o computador é mais confortável. O arquivo foi feito para Excel e LibreOffice.</p>
+
+  <h4>Estraguei uma fórmula.</h4>
+  <p>Ctrl+Z desfaz. Se já salvou, abra o arquivo original, copie a célula ou a linha inteira e cole no mesmo lugar da sua cópia.</p>
+
+  <h4>Os 20 alvos acabaram e não fechei nada.</h4>
+  <p>Olhe a decisão da semana 2. Com propostas na mão, é follow-up. Com visitas e sem proposta, é ajuste de abordagem: releia as objeções. Só com 20 visitas e nenhuma proposta o Painel indica TROCAR.</p>
+
+  <h4>O Painel garante que eu vou vender?</h4>
+  <p>Não. Ele garante que você sabe o que fazer hoje e o que os seus números dizem. A promessa do G-Code 3D é três propostas entregues na mão de um comerciante em 72 horas. A venda depende de quem decide do outro lado do balcão. Todo número do Painel é hipótese a validar com a sua impressora, o seu filamento e a sua região.</p>
+  <div class="foot"><span>Módulo 1 · Guia do Painel G-Code 3D</span><span>16</span></div>
+</section>
+
+<!-- COLA -->
+<section class="pg cola">
+  <p class="kick">Imprima e deixe perto da impressora</p>
+  <h2>Cola do Painel</h2>
+  <div class="two" style="gap:4mm">
+    <div class="cell">
+      <h4>Uma vez</h4>
+      <ul><li>Salve uma cópia sua.</li><li>Seletor: três perguntas.</li><li>Calculadora: seus números.</li><li>Painel: data do Dia 1, com "✓".</li></ul>
+      <h4>Dia 1 · preparar</h4>
+      <ul><li>Dois jogos do kit de amostra.</li><li>Embalagem e três propostas impressas.</li><li>20 alvos na aba Alvos.</li><li>Script de 40 s e as seis respostas.</li></ul>
+      <h4>Dia 2 · rua</h4>
+      <ul><li>10 visitas no horário do seu G-Code.</li><li>3 propostas na mão de quem decide.</li><li>Objeção com as palavras exatas, no carro.</li></ul>
+      <h4>Dia 3 · fechar</h4>
+      <ul><li>Follow-up das três propostas.</li><li>Alvos atualizada, com data de volta.</li><li>Oportunidades ouvidas anotadas.</li><li>Data da segunda leva na agenda.</li></ul>
+    </div>
+    <div class="cell">
+      <h4>Todo dia</h4>
+      <ul><li>Painel → Próxima ação.</li><li>Alvos → quem está verde hoje.</li><li>Fez? "Sim" na Missão 72h.</li></ul>
+      <h4>Follow-up · conta da proposta</h4>
+      <ul><li>48h → status "Follow-up 48h feito".</li><li>7 dias → "Follow-up 7 dias feito".</li><li>21 dias → mensagem final.</li><li>Prazo diferente no manual? Use "Volto em".</li></ul>
+      <h4>Orçamento</h4>
+      <ul><li>Calculadora antes de responder.</li><li>Abaixo de R$ 15/h de máquina: não feche.</li></ul>
+      <h4>Decisão da semana 2</h4>
+      <ul><li><b>ESCALAR:</b> houve venda.</li><li><b>AJUSTAR O FOLLOW-UP:</b> 3 propostas, sem venda.</li><li><b>AJUSTAR A ABORDAGEM:</b> 10 visitas, menos de 3 propostas.</li><li><b>TROCAR:</b> 20 visitas, zero proposta.</li></ul>
+      <h4>Cores</h4>
+      <p style="margin:0"><span class="tag t-mint">você preenche</span> <span class="tag t-white">não mexa</span> <span class="tag t-neon">pronto / hoje</span> <span class="tag t-red">atenção</span></p>
+    </div>
+  </div>
+  <div class="box dark" style="margin-top:5mm"><p><b>Em 72 horas,</b> você sai da impressora parada para três propostas entregues na mão de um comerciante.</p></div>
+  <div class="foot"><span>LR Maker Lab · G-Code 3D · todo número é hipótese a validar na sua região</span><span>17</span></div>
+</section>
+
+</body>
+</html>
