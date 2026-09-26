@@ -488,6 +488,17 @@
   .funil div:nth-child(3){width:58%;background:rgba(138,90,30,.28)}
   .funil div:nth-child(4){width:44%;background:var(--caramel);color:#fff}
 
+  /* ---------- calendário e registro ---------- */
+  .calendario{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;margin:0 0 8px;max-width:820px}
+  .mes{background:var(--paper-2);padding:10px 8px 12px;font-family:var(--sans)}
+  .mes b{display:block;font-weight:800;font-size:15px;margin-bottom:4px}
+  .mes span{display:block;font-size:12px;line-height:1.3;color:var(--ink-soft)}
+  .mes.medio{background:var(--green-wash)}
+  .mes.pico{background:var(--green-deep);color:#fff}
+  .mes.pico span{color:#e4f1e8}
+  .registro td{height:34px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
+  .registro td:last-child{border-right:0}
+
   /* ---------- cola de balcão ---------- */
   .cola{background:#fff;border:2px dashed var(--ink);padding:clamp(18px,3vw,30px);font-size:15px;line-height:1.45}
   .cola-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 20px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin:0 0 18px}
@@ -528,6 +539,7 @@
 
 
   @media (max-width:560px){
+    .calendario{grid-template-columns:repeat(3,minmax(0,1fr))}
     .cover-72h{grid-template-columns:repeat(2,minmax(0,1fr))}
     .radar div:last-child:nth-child(odd){grid-column:1/-1}
     .semana{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -596,6 +608,12 @@
     .split,.saidas{grid-template-columns:repeat(2,minmax(0,1fr))}
     .conta{grid-template-columns:repeat(4,minmax(0,1fr))}
     .obj{display:block;margin-bottom:12px}
+    table{font-size:9pt}
+    th,td{padding:5px 8px}
+    .junto{break-inside:avoid}
+    .calendario{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .mes span{font-size:8pt}
+    .registro td{height:9mm}
     .obj-head{padding:10px 16px}
     .obj-q{font-size:15pt}
     .obj-body{padding:10px 16px;gap:2px 20px}
@@ -613,7 +631,7 @@
     main > section:first-of-type{break-before:page}
     .ficha,.aviso,.obj,figure,.ill,table,.saida,.dor,.tipo,.msg,.dia-col,.grafico,.folha,.conta,.semana,.prazo,.passo{break-inside:avoid}
     h2,h3,.sec-head{break-after:avoid}
-    .ill-art svg{max-height:120mm}
+    .ill-art svg{max-height:92mm;width:auto;max-width:100%;margin:0 auto}
     .tabela{overflow:visible}
     .folha{box-shadow:none}
   }
@@ -774,6 +792,16 @@
   </div>
 
   <p>A terceira é a que fecha contrato mensal. Quem abre a porta é a segunda: você está a quinze minutos dela, e quem está perto resolve o nome errado antes de sábado.</p>
+
+  <h3>Antes de visitar: três sinais no Instagram dela</h3>
+  <div class="ficha">
+    <ul class="check">
+      <li><strong>Mesa de festa com topo ou lembrancinha 3D que não foi ela que fez.</strong> Ela já vende esse produto. Falta só um fornecedor perto.</li>
+      <li><strong>Comentário de cliente perguntando "faz com nome?" ou "faz em 3D?".</strong> É o pedido que escapa, escrito em público.</li>
+      <li><strong>Destaque de "kit festa" ou "lembrancinhas" com preço.</strong> O canal de venda está pronto. Sua peça entra numa vitrine que já funciona.</li>
+    </ul>
+    <p>Papelaria com os três sinais vai para o topo da sua rota. Com nenhum, vai para o fim.</p>
+  </div>
 </section>
 
 <!-- ===================== 04 ===================== -->
@@ -829,6 +857,24 @@
       <li>Agenda cheia, diga não na hora. Um "não consigo essa semana" dito na terça vale mais que um atraso na sexta.</li>
     </ul>
   </div>
+
+  <h3>Quando o pedido chega: o calendário da papelaria</h3>
+  <div class="calendario" aria-label="Meses de maior procura de pedidos">
+    <div class="mes medio"><b>Jan</b><span>Chaveiro de mochila com nome</span></div>
+    <div class="mes medio"><b>Fev</b><span>Volta às aulas</span></div>
+    <div class="mes medio"><b>Mar</b><span>Festas infantis voltam</span></div>
+    <div class="mes pico"><b>Abr</b><span>Páscoa e festas</span></div>
+    <div class="mes pico"><b>Mai</b><span>Dia das Mães</span></div>
+    <div class="mes medio"><b>Jun</b><span>Festa junina de escola</span></div>
+    <div class="mes"><b>Jul</b><span>Férias</span></div>
+    <div class="mes medio"><b>Ago</b><span>Dia dos Pais</span></div>
+    <div class="mes pico"><b>Set</b><span>Gráfica fecha brinde de fim de ano</span></div>
+    <div class="mes pico"><b>Out</b><span>Dia das Crianças</span></div>
+    <div class="mes pico"><b>Nov</b><span>Formatura e Natal corporativo</span></div>
+    <div class="mes medio"><b>Dez</b><span>Entrega do fim de ano</span></div>
+  </div>
+  <p class="g-nota">Verde escuro: pico provável. Verde claro: procura média. É hipótese; ajuste depois do primeiro ano de pedidos.</p>
+  <p>Festa infantil e chá de bebê acontecem o ano inteiro e sustentam os meses fracos. As datas comemorativas somam por cima. Duas regras saem daqui: ofereça o kit da data <strong>45 dias antes</strong>, e reserve a agenda da máquina de <strong>setembro a novembro</strong>, quando papelaria e gráfica pedem ao mesmo tempo.</p>
 </section>
 
 <!-- ===================== 05 ===================== -->
@@ -882,10 +928,6 @@
   </div>
   <p>São quatro crianças diferentes, e as quatro existem. Toda arte vai para ela por WhatsApp antes de imprimir, com o nome em letra grande, e só entra na fila com um "aprovado" escrito. Se ela aprovar errado, a reimpressão é cobrada. Se você imprimir errado o que ela aprovou certo, refaz em 24 horas sem custo. Essa regra protege você e é argumento de venda contra o fornecedor de longe.</p>
 
-  <figure class="ill">
-      <div class="ill-art" data-ill="topo" role="img" aria-label="Topo de bolo fixado em dois palitos de bambu; só o bambu entra no bolo e a peça plástica fica acima da cobertura"></div>
-      <figcaption>O topo sai da impressora sem haste. Quem entra no bolo é o palito de bambu.</figcaption>
-    </figure>
 
   <div class="split">
     <div class="aviso">
@@ -903,6 +945,25 @@
       <p>O pedido mais comum em festa infantil é o personagem do desenho do momento. Imprimir e vender personagem licenciado é reproduzir marca registrada sem autorização, e a responsabilidade cai em quem fabrica e em quem vende. Loja pequena é denunciada, sim, principalmente quando posta foto.</p>
       <p>Você imprime o tema: as cores, os elementos genéricos (patinha, estrela, coroa, foguete, osso), o nome e a idade da criança. Diga isso na primeira conversa, antes do primeiro pedido.</p>
     </div>
+  </div>
+
+  <figure class="ill">
+      <div class="ill-art" data-ill="topo" role="img" aria-label="Topo de bolo fixado em dois palitos de bambu; só o bambu entra no bolo e a peça plástica fica acima da cobertura"></div>
+      <figcaption>O topo sai da impressora sem haste. Quem entra no bolo é o palito de bambu.</figcaption>
+    </figure>
+
+  <h3>Antes de entregar: conferência do pedido</h3>
+  <div class="ficha">
+    <p class="ficha-tab">Cinco minutos que evitam uma reimpressão</p>
+    <ul class="check">
+      <li>Grafia conferida letra por letra contra o print da arte aprovada, com o print aberto do lado</li>
+      <li>Quantidade contada duas vezes, mais uma peça de reserva a cada vinte</li>
+      <li>Pedido inteiro impresso com o mesmo rolo: rolos diferentes da mesma cor mudam de tom</li>
+      <li>Sem fio, sem rebarba na borda e sem primeira camada esmagada nas letras</li>
+      <li>Argola fechada e girando; topo encaixado firme no bambu, testado na mão</li>
+      <li>Etiqueta de uso junto: bambu no bolo, forminha no doce, longe do sol no carro</li>
+      <li>Saco zip com o nome do pedido e a data da festa escritos por fora</li>
+    </ul>
   </div>
 </section>
 
@@ -947,9 +1008,23 @@
       <p>Compre uma caixinha milk branca lisa, dessas de R$ 1, e cole uma plaquinha na tampa. É o único item do kit que não é seu: é o produto dela, melhorado. Ela vê a caixa de R$ 4 virar uma caixa de R$ 9, e a conversa muda de "o que você faz" para "quanto custa a plaquinha".</p>
       <p>Se descobrir o nome da papelaria antes da visita, imprima o chaveiro com esse nome. Se não, use um nome de criança comum na sua região.</p>
     </div>
+    <div>
     <div class="ficha">
       <p class="ficha-tab">Mostruário, não presente</p>
       <p>Você está entrando numa loja que vive de embalagem, e não vai ganhar dela nesse jogo. Leve as peças presas com elástico numa placa de papelão cinza, do tamanho de uma folha A5, com a tabela de atacado atrás. Isso diz "fornecedor". Uma caixinha caprichada diz "concorrente".</p>
+    </div>
+  <h3 style="margin-top:18px">Quanto custa sair para a rua</h3>
+    <div class="tabela">
+    <table>
+      <tr><th>Item</th><th>Quantidade</th><th>Valor</th></tr>
+      <tr><td>Kit de amostra impresso</td><td>2 jogos</td><td class="n">R$ 9,20</td></tr>
+      <tr><td>Caixinha milk branca lisa</td><td>2 un</td><td class="n">R$ 2,00</td></tr>
+      <tr><td>Tabela de atacado impressa colorida</td><td>5 cópias</td><td class="n">R$ 10,00</td></tr>
+      <tr><td>Placa de papelão A5 e elásticos</td><td>2 mostruários</td><td class="n">R$ 5,00</td></tr>
+      <tr class="total"><td>Total para 10 visitas</td><td>—</td><td class="n">R$ 26,20</td></tr>
+    </table>
+    </div>
+    <p>Estimativa para você refazer com os preços da sua região. Um único lote-teste de 30 lembrancinhas paga esse material várias vezes.</p>
     </div>
   </div>
 
@@ -957,6 +1032,7 @@
       <div class="ill-art" data-ill="caixa" role="img" aria-label="Caixinha milk lisa de R$ 4 e a mesma caixa com plaquinha de nome, vendida a R$ 9"></div>
       <figcaption>O detalhe que fecha venda: o produto dela, melhorado.</figcaption>
     </figure>
+
 </section>
 
 <!-- ===================== 07 ===================== -->
@@ -1006,6 +1082,23 @@
   </div>
   <p>Não tem embalagem na conta. A papelaria embala: é o que ela faz melhor que você, e é parte da margem dela. Você entrega a granel, num saco zip por pedido, com o nome do pedido escrito por fora.</p>
 
+  <div class="junto">
+    <h3>A conta de um pedido real, passo a passo</h3>
+    <p>A papelaria pede 40 chaveiros com nome para uma festa. Antes de responder, faça esta conta:</p>
+    <div class="tabela">
+    <table>
+      <tr><th>Passo</th><th>Conta</th><th>Resultado</th></tr>
+      <tr><td>1 · Mesas</td><td>40 ÷ 12 por mesa</td><td class="n">3 cheias + 1 com 4</td></tr>
+      <tr><td>2 · Máquina</td><td>3 × 1h50 + 45 min</td><td class="n">6h15</td></tr>
+      <tr><td>3 · Custo</td><td>40 × R$ 1,10</td><td class="n">R$ 44</td></tr>
+      <tr><td>4 · Preço</td><td>40 × R$ 6,50</td><td class="n">R$ 260</td></tr>
+      <tr><td>5 · Margem</td><td>R$ 260 − R$ 44</td><td class="n">R$ 216</td></tr>
+      <tr class="total"><td>6 · Retorno</td><td>R$ 216 ÷ 6,25 h</td><td class="n">R$ 35/h</td></tr>
+    </table>
+    </div>
+</div>
+  <p>Acima de R$ 15/h, aceite. Abaixo, suba o preço ou mude a peça. Some também o seu tempo de mão: preparar arquivo e montar argola leva perto de um minuto por peça, e esse tempo não aparece na conta da máquina.</p>
+
   <h3>A tabela que você entrega a ela</h3>
   <div class="folha">
     <div class="folha-top"><b>Tabela de atacado</b><span>Prazo: 5 dias úteis da arte aprovada</span></div>
@@ -1024,7 +1117,19 @@
 
   <p>A coluna "ela revende por" é o que faz a tabela vender. A regra que ela entende sem conta: o atacado é metade do preço final. Nunca entregue a tabela sem essa coluna.</p>
   <p>O pedido mínimo de 20 unidades não é capricho. Abaixo de uma mesa cheia, o tempo de preparar arquivo, trocar cor e tirar peça come a margem inteira. Pedido de 5 chaveiros sai a R$ 10 cada, ou não sai.</p>
-  <p>Pagamento: 50% na aprovação da arte e 50% na entrega. Para cota mensal, dia 1 e dia 15.</p>
+
+  <div class="ficha">
+    <p class="ficha-tab">Condições que vão no verso da tabela</p>
+    <ul>
+      <li><strong>Prazo:</strong> 5 dias úteis contados da arte aprovada por escrito</li>
+      <li><strong>Pagamento:</strong> 50% na aprovação da arte, 50% na entrega. Cota mensal: dia 1 e dia 15</li>
+      <li><strong>Mínimo:</strong> 20 unidades por modelo</li>
+      <li><strong>Reimpressão:</strong> erro de impressão é por sua conta, em 24 horas; erro na arte aprovada é cobrado</li>
+      <li><strong>Cor fora do estoque:</strong> +R$ 40 por pedido</li>
+      <li><strong>Entrega:</strong> no balcão dela, até a quarta anterior à festa</li>
+      <li><strong>Validade da tabela:</strong> 90 dias. O preço do filamento muda, e a tabela acompanha</li>
+    </ul>
+  </div>
 </section>
 
 <!-- ===================== 08 ===================== -->
@@ -1173,6 +1278,12 @@
     </div>
   </div>
 
+  <div class="ficha">
+    <p class="ficha-tab">Depois da primeira entrega</p>
+    <p class="balao" style="margin-bottom:12px">"Oi [nome]! Entreguei o pedido da festa da [criança]. Se a mãe te mandar foto da mesa montada, me repassa? Quero guardar pra mostrar o acabamento, e só posto se vocês autorizarem."</p>
+    <p>A foto da mesa montada vira a amostra da próxima visita: mostrar a peça numa festa de verdade convence mais que a peça solta no mostruário. Peça autorização antes de postar qualquer coisa com nome de criança.</p>
+  </div>
+
   <p>Depois disso, reative em outubro para fim de ano corporativo e formatura, e em fevereiro para a temporada de festas infantis. Com gráfica rápida, a data que vale é setembro: é quando as empresas começam a pedir brinde de Natal.</p>
 </section>
 
@@ -1264,6 +1375,24 @@
       <div><span>O dinheiro</span><b>3º pedido</b></div>
     </div>
     <p>O lote-teste chega em até duas semanas, não em três dias. Ela precisa que uma cliente dela feche uma festa para ter o que te pedir. O primeiro pedido é pequeno e é um teste de prazo. O dinheiro deste G-Code está no terceiro pedido da mesma papelaria, e quem desiste antes do primeiro nunca chega nele.</p>
+  </div>
+
+  <h3>Registro de visitas</h3>
+  <p>Preencha no carro, logo depois de cada visita. À noite, passe para a aba 20 Alvos da planilha.</p>
+  <div class="tabela">
+  <table class="registro">
+    <tr><th>Loja e bairro</th><th>Quem decide</th><th>Festa citada e data</th><th>Objeção, nas palavras dela</th><th>Volto em</th></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
   </div>
 </section>
 
