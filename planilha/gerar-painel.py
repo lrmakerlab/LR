@@ -106,14 +106,20 @@ G = [
  ("G-09","G-09 · Papelarias e festa","Nível 3","R$ 150 a 500","~R$ 35/h","terça ou quarta, das 10h às 11h30","o kit e o mostruário","2h05 de máquina · 33 g","10 abordagens → 2 a 3 interessadas → 1 lote-teste em até 2 semanas","G-03 · Pet shops", "Máquina média e revenda: você vira o fornecedor 3D da papelaria, com tabela de atacado. Cada festa que ela fecha é um pedido seu."),
  ("G-10","G-10 · Oficinas e pequena indústria","Nível 3 · exige CAD","R$ 80 a 1.500","R$ 50 a 200/h","terça a quinta, das 14h às 16h","o gabarito, os clips e a engrenagem","3h00 de máquina · 63 g","10 visitas → 3 peças medidas → 2 pedidos","G-06 · Lojas de celular e assistências", "Você já modela peça com encaixe. Peça de reposição e gabarito pagam pelo valor da máquina parada, não pelo plástico. Nunca imprima peça de segurança."),
 ]
-header(bib, 13, "Biblioteca dos 10 G-Codes", "Os dados que alimentam o Painel. Vêm dos manuais e são hipóteses a validar na sua região.")
-th(bib, 7, 2, ["Código", "G-Code", "Nível", "Ticket do 1º pedido", "Retorno por hora", "Quando visitar", "Kit de amostra: imprima…", "Máquina do kit", "Número honesto (expectativa, não promessa)", "Se precisar trocar", "Por que o Seletor indica"])
+DIA2 = {"G-01":("234","segunda ou terça"),"G-02":("23","segunda ou terça"),"G-03":("234","segunda, terça ou quarta"),
+        "G-04":("234","segunda, terça ou quarta"),"G-05":("234","segunda, terça ou quarta"),"G-06":("234","segunda, terça ou quarta"),
+        "G-07":("1234","domingo, segunda, terça ou quarta"),"G-08":("123","domingo, segunda ou terça"),"G-09":("23","segunda ou terça"),
+        "G-10":("234","segunda, terça ou quarta")}
+header(bib, 15, "Biblioteca dos 10 G-Codes", "Os dados que alimentam o Painel. Vêm dos manuais e são hipóteses a validar na sua região.")
+th(bib, 7, 2, ["Código", "G-Code", "Nível", "Ticket do 1º pedido", "Retorno por hora", "Quando visitar", "Kit de amostra: imprima…", "Máquina do kit", "Número honesto (expectativa, não promessa)", "Se precisar trocar", "Por que o Seletor indica", "Dia 2 pode cair em (1 = segunda)", "Melhor dia para começar"])
 for i, g in enumerate(G):
     r = 8 + i
     for j, v in enumerate(g):
         c = bib.cell(r, 2 + j, v); c.font = font(9, j == 1); c.alignment = LEFT; c.border = LINE
     inp(bib.cell(r, 11)); bib.cell(r, 11).font = font(9)
     bib.cell(r, 12).font = font(9, False, SOFT)
+    c = bib.cell(r, 13, DIA2[g[0]][0]); c.font = font(9); c.alignment = CENTER; c.border = LINE; c.number_format = "@"
+    c = bib.cell(r, 14, DIA2[g[0]][1]); c.font = font(9); c.alignment = LEFT; c.border = LINE
     bib.row_dimensions[r].height = 32
 dvb = DataValidation(type="list", formula1="=$C$8:$C$17", allow_blank=True); bib.add_data_validation(dvb); dvb.add("K8:K17")
 put(bib, "B19", "A coluna \"Se precisar trocar\"", font(10, True, GD))
@@ -125,7 +131,7 @@ put(bib, "B23", "G-Code indicado pelo Seletor (automático, não mexa):", font(8
 put(bib, "F23", '=IFERROR(INDEX($C$8:$C$17,MATCH(Seletor!$B$16,$B$8:$B$17,0)),"")', font(8, False, MUTE))
 put(bib, "B24", "Linha do G-Code do Seletor (automático, não mexa):", font(8, False, MUTE))
 put(bib, "F24", '=IFERROR(MATCH(Seletor!$B$16,$B$8:$B$17,0),0)', font(8, False, MUTE))
-setw(bib, [2, 8, 34, 16, 16, 13, 30, 34, 20, 44, 34, 50, 2])
+setw(bib, [2, 8, 34, 16, 16, 13, 30, 34, 20, 44, 34, 50, 16, 26, 2])
 bib.freeze_panes = "D8"
 IDX = "Biblioteca!$F$22"
 def g(col): return f'IF({IDX}=0,"",INDEX(Biblioteca!${col}$8:${col}$17,{IDX}))'
@@ -408,7 +414,7 @@ for i, (lab, col) in enumerate([("TICKET DO 1º PEDIDO", "E"), ("RETORNO POR HOR
     for c in range(c1, c2 + 1): se.cell(22, c).border = LINE
 se.row_dimensions[22].height = 30
 section(se, 24, 2, 13, "HOJE À NOITE")
-merge(se, "B25:M26", f'=IF(B16="","",IF(B16="G-10","Leia antes a seção 05 do manual: a lista do que nunca imprimir. ","")&"Imprima "&{sg("H")}&" ("&{sg("I")}&"). Depois abra a Missão 72h: o Dia 1 já está com a data e o kit do seu G-Code.")', font(11, True, INK), MINT, Alignment(vertical="center", indent=1, wrap_text=True))
+merge(se, "B25:M26", f'=IF(B16="","",IF(B16="G-10","Leia antes a seção 05 do manual: a lista do que nunca imprimir. ","")&"Imprima "&{sg("H")}&" ("&{sg("I")}&"). Depois marque o Dia 1 no Painel: comece na "&{sg("N")}&", para o Dia 2, de rua, cair num dia de visita.")', font(11, True, INK), MINT, Alignment(vertical="center", indent=1, wrap_text=True))
 se.row_dimensions[25].height = 24; se.row_dimensions[26].height = 24
 merge(se, "B27:M27", '=IF(B16="","",IF(AND(B16="G-10",OR(I8<>"",I12<>"")),"Com CAD, o G-10 vem primeiro: as outras respostas não mudam o resultado.",IF(B16="G-07","Com mais de 8h de máquina, o G-07 vem primeiro, para quem revende ou para quem usa.",IF(I10="Básico","CAD básico conta como não modelar: o G-10 pede peça com encaixe na primeira tentativa.",""))))', font(9, False, MUTE, True), None, LEFT)
 link(se, "B29", "Ir para o Painel →", "Painel", Font(name=F, size=11, bold=True, color=GD, underline="single"))
@@ -442,7 +448,11 @@ merge(pa, "E7:H7", '=IF(E8<>"",E8,Biblioteca!$F$23)', font(12, True, INK), P2, L
 for c in range(5, 9): pa.cell(7, c).border = BOX
 put(pa, "J7", "Dia 1 da missão", font(9, True, MUTE), al=Alignment(horizontal="right", vertical="center"))
 inp(pa["K7"], DATE); pa["K7"].font = font(12, True, INK); pa["K7"].alignment = CENTER
-merge(pa, "L7:M7", '=IF(K7="","← data do Dia 1","")', font(8, False, MUTE, True), None, LEFT)
+WD = 'CHOOSE(WEEKDAY(K7+1,2),"segunda","terça","quarta","quinta","sexta","sábado","domingo")'
+OKD = f'ISNUMBER(SEARCH(WEEKDAY(K7+1,2),{g("M")}))'
+merge(pa, "L7:M7", f'=IF(OR(K7="",E7=""),"← data do Dia 1",IF({OKD},"✓ Dia 2 na "&{WD}&": dia de visita","⚠ Dia 2 cai no(a) "&{WD}&". Comece na "&{g("N")}))', font(8, True, MUTE), None, LEFT)
+pa.conditional_formatting.add("L7", FormulaRule(formula=[f'AND(K7<>"",E7<>"",{OKD})'], font=Font(name=F, size=8, bold=True, color=GD)))
+pa.conditional_formatting.add("L7", FormulaRule(formula=[f'AND(K7<>"",E7<>"",NOT({OKD}))'], fill=fill(REDS), font=Font(name=F, size=8, bold=True, color=RED)))
 pa.row_dimensions[7].height = 30
 merge(pa, "B8:D8", "Trocar manualmente (opcional)", font(8, False, MUTE), None, Alignment(vertical="center"))
 merge(pa, "E8:H8", None)
@@ -453,7 +463,7 @@ link(pa, "J8", "↺ Refazer o Seletor", "Seletor", al=Alignment(horizontal="righ
 pa.merge_cells("J8:K8")
 merge(pa, "L8:M8", '=IF(E8<>"","troca manual ativa","")', font(8, True, CAR), None, LEFT)
 pa.row_dimensions[8].height = 20
-put(pa, "B9", '=IF(E7="","Responda as três perguntas na aba Seletor: o seu G-Code aparece aqui sozinho.",' + g("D") + '&" · ticket do 1º pedido "&' + g("E") + '&" · "&' + g("F") + '&" · visite "&' + g("G") + ')', font(9, False, SOFT, True))
+put(pa, "B9", '=IF(E7="","Responda as três perguntas na aba Seletor: o seu G-Code aparece aqui sozinho.",' + g("D") + '&" · ticket do 1º pedido "&' + g("E") + '&" · "&' + g("F") + '&" · visite "&' + g("G") + '&" · comece a missão na "&' + g("N") + ')', font(9, False, SOFT, True))
 pa.merge_cells("B9:M9"); pa.row_dimensions[9].height = 18
 
 DIA = f'IF({START}="","",TODAY()-{START}+1)'
