@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G-Code 07 · Academias</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14201a;
+    --ink-soft:#42514a;
+    --ink-mute:#6b7a72;
+    --paper:#fbfaf6;
+    --paper-2:#f2efe7;
+    --rule:#ddd8cc;
+    --green-deep:#2d7a4f;
+    --green-neon:#4ade80;
+    --green-wash:#e4f1e8;
+    --plate:#1b2a22;
+    --caramel:#8a5a1e;
+    --caramel-soft:#f6ecdc;
+    --measure:66ch;
+    --wide:1080px;
+    --gut:clamp(18px,5vw,64px);
+    --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    box-sizing:border-box;
+    color-scheme:light;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 12px);-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%}
+
+  /* =========================================================
+     CAPA — a mesa de impressão
+     ========================================================= */
+  .cover{
+    background-color:var(--plate);
+    background-image:
+      linear-gradient(rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(rgba(74,222,128,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.035) 1px,transparent 1px);
+    background-size:80px 80px,80px 80px,16px 16px,16px 16px;
+    color:var(--paper);
+    padding:clamp(24px,5vw,56px) var(--gut) 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .cover-top{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;
+    font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.02em;
+    margin:0 0 clamp(28px,6vw,56px);
+  }
+  .cover-brand{color:var(--green-neon);margin:0}
+  .cover-level{color:#9fb3a8;margin:0;font-stretch:112%}
+  .cover-code{
+    font-family:var(--sans);
+    font-weight:900;
+    font-stretch:78%;
+    font-size:clamp(110px,31vw,330px);
+    line-height:.78;
+    letter-spacing:-.035em;
+    margin:0 0 0 -.04em;
+    color:var(--green-neon);
+    background:repeating-linear-gradient(180deg,var(--green-neon) 0 .052em,#2fbf63 .052em .062em);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .cover-grid{
+    display:grid;gap:clamp(18px,3vw,40px);
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));
+    align-items:end;
+    margin-top:clamp(14px,2vw,22px);
+  }
+  .cover-market{
+    font-family:var(--sans);
+    font-weight:800;
+    font-stretch:88%;
+    font-size:clamp(30px,5.4vw,58px);
+    line-height:1;
+    letter-spacing:-.025em;
+    margin:0;
+    text-wrap:balance;
+  }
+  .cover-promise{
+    max-width:46ch;
+    margin:0;
+    font-size:clamp(17px,2vw,20px);
+    color:#cdd8d0;
+  }
+  .cover > *{position:relative;z-index:1}
+  .cover > .cover-mark{
+    position:absolute;z-index:0;
+    right:clamp(-120px,-6vw,-30px);top:clamp(90px,10vw,130px);
+    width:clamp(260px,46vw,580px);height:auto;
+    fill:rgba(74,222,128,.07);
+  }
+  .cover-brand{display:flex;align-items:center;gap:10px}
+  .cover-brand .logo{width:26px;height:auto;fill:var(--green-neon);flex:none}
+  .cover-72h{
+    list-style:none;padding:0;margin:clamp(30px,5vw,48px) 0 0;max-width:none;
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;
+  }
+  .cover-72h li{max-width:none;margin:0;padding:14px 16px 16px;background:rgba(20,32,26,.78);border-top:3px solid rgba(74,222,128,.35);font-family:var(--sans)}
+  .cover-72h b{display:block;font-weight:900;font-stretch:78%;font-size:26px;letter-spacing:-.02em;line-height:1;color:var(--paper);margin-bottom:6px}
+  .cover-72h span{display:block;font-size:14px;line-height:1.35;color:#b9c8bf}
+  .cover-72h .fim{background:var(--green-neon);border-top-color:var(--green-neon)}
+  .cover-72h .fim b,.cover-72h .fim span{color:var(--ink)}
+  .cover-72h .fim span{font-weight:700}
+
+  .radar{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px;
+    background:rgba(74,222,128,.22);
+    border-top:1px solid rgba(74,222,128,.22);
+    margin:clamp(28px,5vw,44px) calc(var(--gut) * -1) 0;
+  }
+  .radar div{background:var(--ink);padding:18px var(--gut) 22px}
+  .radar dt{
+    font-family:var(--sans);
+    font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:#8ba296;margin:0 0 6px;
+  }
+  .radar dd{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:85%;font-size:24px;line-height:1.05;letter-spacing:-.02em;
+    margin:0;color:var(--paper);
+  }
+  .radar .hot dd{color:var(--green-neon)}
+
+  /* =========================================================
+     CORPO
+     ========================================================= */
+  main{padding-inline:var(--gut)}
+  section{
+    max-width:var(--wide);
+    margin-inline:auto;
+    padding-block:clamp(56px,8vw,96px) 0;
+  }
+  .sec-head{
+    display:grid;grid-template-columns:auto 1fr;gap:6px clamp(14px,2.4vw,28px);
+    align-items:end;
+    margin:0 0 clamp(22px,3vw,34px);
+    padding-bottom:clamp(16px,2vw,22px);
+    border-bottom:2px solid var(--ink);
+  }
+  .sec-num{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:72%;
+    font-size:clamp(64px,10vw,112px);
+    line-height:.8;letter-spacing:-.04em;
+    color:var(--green-deep);
+    margin:0;
+    grid-row:span 2;
+  }
+  .camadas{display:flex;gap:3px;max-width:260px;margin:0 0 10px}
+  .camadas i{flex:1;height:7px;background:var(--rule)}
+  .l1 i:nth-child(-n+1),.l2 i:nth-child(-n+2),.l3 i:nth-child(-n+3),.l4 i:nth-child(-n+4),
+  .l5 i:nth-child(-n+5),.l6 i:nth-child(-n+6),.l7 i:nth-child(-n+7),.l8 i:nth-child(-n+8),
+  .l9 i:nth-child(-n+9),.l10 i:nth-child(-n+10),.l11 i:nth-child(-n+11),.l12 i:nth-child(-n+12){background:var(--green-deep)}
+  .kicker{
+    font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--ink-mute);margin:0 0 4px;
+  }
+  h2{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;
+    font-size:clamp(28px,4.2vw,44px);
+    line-height:1.02;letter-spacing:-.028em;
+    margin:0;
+    text-wrap:balance;
+  }
+  h3{
+    font-family:var(--sans);
+    font-weight:700;font-size:19px;letter-spacing:-.012em;
+    margin:2.2em 0 .6em;
+    text-wrap:balance;
+  }
+  p,li{max-width:var(--measure)}
+  p{margin:0 0 1em}
+  ul,ol{padding-left:1.1em;margin:0 0 1em}
+  li{margin-bottom:.45em}
+  strong{font-weight:600}
+  .lead{font-size:clamp(19px,2.1vw,22px);line-height:1.5;color:var(--ink-soft);max-width:60ch;margin-bottom:1.4em}
+  .label{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);margin:0 0 10px;
+  }
+
+  .split{display:grid;gap:clamp(16px,2.6vw,28px);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));align-items:start;margin:0 0 20px}
+  .split > *{margin-bottom:0}
+
+  /* ---------- fichas e avisos ---------- */
+  .ficha{
+    border:1px solid var(--rule);
+    background:#fff;
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .ficha-tab{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);
+    margin:0 0 12px;
+  }
+  .ficha p:last-child,.ficha ul:last-child{margin-bottom:0}
+  .ficha.escura{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .ficha.escura .ficha-tab{color:var(--green-neon)}
+
+  .aviso{
+    background:var(--caramel-soft);
+    border-top:4px solid var(--caramel);
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .aviso .ficha-tab{color:var(--caramel)}
+  .aviso p:last-child,.aviso ul:last-child{margin-bottom:0}
+  .aviso-grande{
+    font-family:var(--sans);font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.1;letter-spacing:-.02em;
+    color:var(--caramel);margin:0 0 .5em;
+  }
+
+  /* ---------- fala e ação ---------- */
+  .fala{
+    font-size:clamp(19px,2.2vw,21px);
+    line-height:1.5;
+    border-left:4px solid var(--green-neon);
+    padding:2px 0 2px 18px;
+    margin:0 0 1em;
+    max-width:56ch;
+  }
+  .acao{
+    font-family:var(--sans);
+    font-weight:600;font-size:15px;
+    background:var(--paper-2);
+    padding:12px 16px 12px 44px;
+    margin:0 0 1em;
+    max-width:var(--measure);
+    position:relative;
+  }
+  .acao::before{
+    content:"";position:absolute;left:16px;top:17px;width:14px;height:10px;
+    border:2px solid var(--green-deep);border-radius:2px;
+  }
+
+  /* ---------- tabelas ---------- */
+  .tabela{overflow-x:auto;margin:0 0 20px;max-width:760px}
+  table{
+    border-collapse:collapse;
+    width:100%;
+    font-family:var(--sans);
+    font-size:15px;
+  }
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-weight:700;color:var(--ink-mute);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;border-bottom:2px solid var(--ink)}
+  td.n{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+  tr.total td{border-bottom:0;border-top:2px solid var(--ink);font-weight:800}
+
+  /* =========================================================
+     COMPONENTES VISUAIS POR SEÇÃO
+     ========================================================= */
+
+  /* 01 · filtro */
+  .filtro{list-style:none;padding:0;margin:0 0 28px;max-width:none;border-top:2px solid var(--ink)}
+  .filtro li{
+    display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 16px;align-items:center;
+    max-width:none;margin:0;padding:16px 0;border-bottom:1px solid var(--rule);
+  }
+  .filtro .ok{width:22px;height:22px;background:var(--green-deep);position:relative}
+  .filtro .ok::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid var(--green-neon);border-width:0 3px 3px 0;transform:rotate(45deg)}
+  .filtro .crit{font-family:var(--sans);font-weight:700;font-size:16px;line-height:1.25}
+  .filtro .crit small{display:block;font-family:var(--serif);font-weight:400;font-size:15px;color:var(--ink-soft);margin-top:2px}
+  .filtro .val{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.02em;text-align:right;white-space:nowrap;color:var(--green-deep)}
+
+  .conta{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:1px;
+    background:var(--ink);border:1px solid var(--ink);margin:0 0 22px;
+  }
+  .conta div{background:var(--paper);padding:18px 20px}
+  .conta div:last-child{background:var(--ink);color:var(--paper)}
+  .conta .big{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,50px);line-height:1;letter-spacing:-.03em}
+  .conta div:last-child .big{color:var(--green-neon)}
+  .conta .cap{display:block;font-family:var(--sans);font-size:14px;font-weight:600;margin-top:8px;color:var(--ink-soft)}
+  .conta div:last-child .cap{color:#b9c8bf}
+  .conta .op{font-family:var(--sans);font-weight:700;color:var(--ink-mute);font-size:13px;display:block;margin-bottom:6px}
+
+  /* 02 · tipos de cliente + semana */
+  .tipos{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));margin:0 0 22px}
+  .tipo{border-top:4px solid var(--green-deep);background:#fff;padding:16px 18px 18px;border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .tipo.principal{border-top-color:var(--green-neon);background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .tipo h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:20px;line-height:1.1;letter-spacing:-.015em;margin:0 0 6px}
+  .tipo .tag{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 10px}
+  .tipo.principal .tag{color:var(--green-neon)}
+  .tipo p{font-size:15.5px;line-height:1.5;margin:0}
+
+  .semana{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:0 0 20px;max-width:760px}
+  .dia-sem{padding:12px 8px 14px;background:var(--paper-2);min-height:112px;display:flex;flex-direction:column;gap:6px}
+  .dia-sem b{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:22px;letter-spacing:-.02em;line-height:1}
+  .dia-sem span{font-family:var(--sans);font-size:12.5px;line-height:1.3;color:var(--ink-soft)}
+  .dia-sem.ir{background:var(--green-deep);color:#fff}
+  .dia-sem.ir span{color:#e4f1e8}
+  .dia-sem.ir em{font-style:normal;font-family:var(--sans);font-weight:800;font-size:15px;color:var(--green-neon)}
+  .dia-sem.nao{background:repeating-linear-gradient(135deg,var(--paper-2) 0 8px,#e8e3d8 8px 10px)}
+
+  /* 03 · dores */
+  .dores{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 20px}
+  .dor{background:#fff;border:1px solid var(--rule);padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px}
+  .dor .dn{font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:54px;line-height:.8;color:var(--rule)}
+  .dor h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:21px;line-height:1.1;letter-spacing:-.015em;margin:0}
+  .dor p{font-size:15.5px;line-height:1.52;margin:0}
+  .dor.fecha{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .dor.fecha .dn{color:var(--green-neon)}
+  .dor.fecha h4{color:#fff}
+
+  /* 04 · níveis */
+  .niveis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));align-items:stretch;margin:0 0 24px}
+  .ficha.nivel{margin:0;display:flex;flex-direction:column;border-top:4px solid var(--rule)}
+  .nivel .preco{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:78%;font-size:clamp(30px,3.6vw,38px);line-height:1;letter-spacing:-.03em;
+    margin:.1em 0 .5em;
+  }
+  .nivel p:not(.preco):not(.ficha-tab){font-size:15.5px;line-height:1.52}
+  .ficha.nivel.meio{background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .ficha.nivel.meio .ficha-tab{color:var(--green-neon)}
+  .ficha.nivel.meio .preco{color:var(--green-neon)}
+  .selo{align-self:flex-start;font-family:var(--sans);font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--green-neon);color:var(--ink);padding:4px 8px;margin:0 0 12px}
+
+  .prazo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:6px 0 18px}
+  .prazo div{background:rgba(255,255,255,.7);padding:10px 6px;text-align:center;font-family:var(--sans)}
+  .prazo b{display:block;font-weight:800;font-size:14px}
+  .prazo span{display:block;font-size:11.5px;line-height:1.25;color:var(--ink-soft);margin-top:3px}
+  .prazo .p-ok{background:var(--green-deep);color:#fff}
+  .prazo .p-ok span{color:#e4f1e8}
+  .prazo .p-festa{background:var(--caramel);color:#fff}
+  .prazo .p-festa span{color:#f6ecdc}
+
+  /* 05 · material */
+  .cores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 20px;max-width:640px}
+  .cor{font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.25}
+  .cor i{display:block;aspect-ratio:1;max-width:100%;border:1px solid rgba(20,32,26,.18);margin-bottom:8px;
+    background-image:repeating-linear-gradient(180deg,rgba(0,0,0,.05) 0 2px,transparent 2px 5px)}
+  .painel{background:var(--plate);color:#dfe8e2;padding:18px 20px;font-family:var(--sans);font-size:14.5px}
+  .painel .ficha-tab{color:var(--green-neon)}
+  .painel dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0}
+  .painel dt,.painel dd{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1);margin:0}
+  .painel dt{color:#9fb3a8}
+  .painel dd{font-family:var(--mono);color:var(--green-neon);text-align:right;padding-left:12px}
+  .letra{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:0 0 20px}
+  .letra div{background:#fff;padding:16px 18px}
+  .letra b{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:44px;line-height:1;letter-spacing:-.03em;color:var(--green-deep)}
+  .letra span{font-family:var(--sans);font-size:13.5px;color:var(--ink-soft)}
+  .grafia{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .grafia span{font-family:var(--sans);font-weight:800;font-stretch:85%;font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;line-height:1;padding:10px 16px 12px;border:2px solid var(--ink);background:#fff}
+  .grafia span.certo{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+
+  /* 06 · kit */
+  .mesa{margin:0 0 10px;max-width:760px}
+  .mesa-bar{display:flex;gap:3px;height:64px}
+  .mesa-bar div{background:var(--green-deep);color:#fff;font-family:var(--sans);font-weight:800;font-size:15px;padding:10px 12px;display:flex;align-items:flex-end;min-width:0;overflow:hidden;white-space:nowrap}
+  .mesa-bar div:nth-child(2){background:var(--ink)}
+  .mesa-bar div:nth-child(3){background:#3d9a66}
+  .mesa-leg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px;margin:14px 0 0;padding:0;list-style:none;max-width:none}
+  .mesa-leg li{max-width:none;margin:0;font-family:var(--sans);font-size:14px;line-height:1.35;padding-left:18px;position:relative}
+  .mesa-leg li::before{content:"";position:absolute;left:0;top:4px;width:10px;height:10px;background:var(--green-deep)}
+  .mesa-leg li:nth-child(2)::before{background:var(--ink)}
+  .mesa-leg li:nth-child(3)::before{background:#3d9a66}
+  .mesa-leg b{display:block;font-size:15px}
+  .totais{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;margin:22px 0 24px;padding:16px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+  .totais div{font-family:var(--sans)}
+  .totais b{display:block;font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,48px);line-height:1;letter-spacing:-.03em}
+  .totais span{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute)}
+
+  /* 07 · gráfico de retorno por hora */
+  .grafico{margin:8px 0 12px;max-width:820px;font-family:var(--sans)}
+  .g-row{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:6px 16px;align-items:center;padding:7px 0}
+  .g-lab{font-size:14px;line-height:1.25;font-weight:600}
+  .g-lab small{display:block;font-weight:500;color:var(--ink-mute);font-size:12.5px}
+  .g-track{position:relative;height:30px;background:
+    linear-gradient(90deg,transparent calc(21.43% - 1px),var(--caramel) calc(21.43% - 1px) calc(21.43% + 1px),transparent calc(21.43% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(14.2857% - 1px),#e6e1d6 calc(14.2857% - 1px) 14.2857%)}
+  .g-bar{height:100%;width:calc(var(--v) / 70 * 100%);background:var(--green-deep);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-weight:800;font-size:13.5px;white-space:nowrap;min-width:64px}
+  .g-bar.baixo{background:var(--caramel)}
+  .g-bar.top{background:var(--green-neon);color:var(--ink)}
+  .g-axis{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:16px;font-size:11.5px;color:var(--ink-mute);font-weight:600}
+  .g-ticks{position:relative;height:18px}
+  .g-ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+  .g-ticks span:first-child{transform:none}
+  .g-ticks span.piso{color:var(--caramel);font-weight:800}
+  .g-nota{font-family:var(--sans);font-size:13px;color:var(--ink-mute);margin:6px 0 24px}
+
+
+  .folha{background:#fff;border:1px solid var(--rule);box-shadow:6px 6px 0 var(--paper-2);padding:clamp(18px,3vw,28px);margin:0 0 22px;max-width:780px}
+  .folha-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:4px}
+  .folha-top b{font-family:var(--sans);font-weight:900;font-stretch:80%;font-size:26px;letter-spacing:-.02em}
+  .folha-top span{font-family:var(--sans);font-size:13px;color:var(--ink-mute);font-weight:600}
+  .folha .tabela{margin:0;max-width:none}
+  .folha td.revende{color:var(--green-deep)}
+
+  /* 08 · os 40 segundos */
+  .relogio{position:relative;margin:6px 0 26px;padding-left:92px;max-width:780px}
+  .relogio::before{content:"";position:absolute;left:70px;top:6px;bottom:6px;width:2px;background:var(--rule)}
+  .passo{position:relative;margin:0 0 18px}
+  .passo:last-child{margin-bottom:0}
+  .passo .t{position:absolute;left:-92px;top:2px;width:60px;text-align:right;font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:17px;color:var(--green-deep);white-space:nowrap}
+  .passo::before{content:"";position:absolute;left:-27px;top:8px;width:12px;height:12px;background:var(--paper);border:3px solid var(--green-deep)}
+  .passo.cala::before{background:var(--green-neon);border-color:var(--ink)}
+  .passo .fala,.passo .acao,.passo p{margin-bottom:.6em}
+  .saidas{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0 0 18px}
+  .saida{background:#fff;border:1px solid var(--rule);padding:18px 20px}
+  .saida .quando{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:18px;line-height:1.2;letter-spacing:-.01em;margin:0 0 8px}
+  .saida p{font-size:15.5px;line-height:1.52;margin:0}
+
+  /* 09 · objeções */
+  .obj{border:1px solid var(--rule);background:#fff;margin:0 0 18px;display:grid;grid-template-columns:minmax(0,1fr)}
+  .obj-head{background:var(--ink);color:#fff;padding:clamp(18px,3vw,26px)}
+  .obj-n{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-neon);margin:0 0 8px}
+  .obj-q{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.12;letter-spacing:-.02em;
+    margin:0;text-wrap:balance;max-width:none;
+  }
+  .obj-body{padding:clamp(18px,3vw,26px);display:grid;gap:4px 28px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+  .obj-body > *{margin:0}
+  .obj-real{color:var(--ink-soft);font-style:italic;font-size:16px}
+  .obj-real::before{content:"O que ela quer dizer";display:block;font-style:normal;font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:6px}
+  .obj-resp{grid-column:1/-1}
+  .obj-resp .label{margin-top:12px}
+  .erro{
+    grid-column:1/-1;
+    color:var(--caramel);font-weight:700;font-family:var(--sans);font-size:15px;
+    background:var(--caramel-soft);margin:0;padding:12px clamp(18px,3vw,26px);
+  }
+
+  /* 10 · follow-up */
+  .fio{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 22px;align-items:start}
+  .msg{position:relative}
+  .msg .quando{font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:40px;line-height:1;letter-spacing:-.03em;color:var(--green-deep);margin:0 0 10px}
+  .msg .quando small{font-size:14px;font-weight:700;font-stretch:100%;letter-spacing:0;color:var(--ink-mute);margin-left:6px}
+  .balao{background:var(--green-wash);border-radius:14px 14px 14px 3px;padding:14px 16px;font-size:16px;line-height:1.5;margin:0}
+  .msg.fim .quando{color:var(--caramel)}
+  .msg.fim .balao{background:var(--caramel-soft)}
+  .msg .obs{font-family:var(--sans);font-size:13.5px;color:var(--ink-mute);margin:10px 0 0}
+
+  /* 11 · perguntas */
+  .perguntas{list-style:none;padding:0;margin:0 0 22px;counter-reset:q;max-width:none}
+  .perguntas li{counter-increment:q;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:baseline;max-width:none;padding:14px 0;border-bottom:1px solid var(--rule);margin:0}
+  .perguntas li::before{content:counter(q);font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:48px;line-height:.8;color:var(--green-deep)}
+  .perguntas span{font-family:var(--sans);font-weight:700;font-stretch:92%;font-size:clamp(20px,2.6vw,26px);line-height:1.2;letter-spacing:-.015em}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;padding:0;list-style:none;max-width:none}
+  .chips li{margin:0;max-width:none;font-family:var(--sans);font-size:14px;font-weight:600;border:1.5px solid var(--green-deep);color:var(--green-deep);padding:6px 12px}
+  .chips li.g01{background:var(--green-deep);color:#fff}
+
+  /* 12 · missão */
+  .dias{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));margin:0 0 26px;align-items:start}
+  .dia-col{background:#fff;border:1px solid var(--rule);padding:0 20px 8px}
+  .dia{
+    font-family:var(--sans);
+    font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);
+    margin:0 -20px 16px;padding:16px 20px 14px;border-bottom:2px solid var(--ink);
+    display:flex;align-items:baseline;gap:12px;
+  }
+  .dia b{font-weight:900;font-stretch:72%;font-size:56px;line-height:.8;letter-spacing:-.04em;color:var(--ink)}
+  .check{list-style:none;padding:0;max-width:none}
+  .check li{position:relative;padding-left:30px;margin-bottom:.75em;font-size:15.5px;line-height:1.45;max-width:none}
+  .check li::before{content:"";position:absolute;left:0;top:.2em;width:17px;height:17px;border:2px solid var(--green-deep);background:#fff}
+
+  .funil{display:grid;gap:4px;margin:6px 0 16px;font-family:var(--sans)}
+  .funil div{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(138,90,30,.14);padding:10px 14px;font-weight:600;font-size:14.5px;min-width:0}
+  .funil div b{font-weight:900;font-stretch:78%;font-size:24px;letter-spacing:-.02em;white-space:nowrap}
+  .funil div:nth-child(1){width:100%}
+  .funil div:nth-child(2){width:78%}
+  .funil div:nth-child(3){width:58%;background:rgba(138,90,30,.28)}
+  .funil div:nth-child(4){width:44%;background:var(--caramel);color:#fff}
+
+  .g100 .g-bar{width:calc(var(--v) / 100 * 100%)}
+  .g100 .g-track{background:
+    linear-gradient(90deg,transparent calc(15% - 1px),var(--caramel) calc(15% - 1px) calc(15% + 1px),transparent calc(15% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(10% - 1px),#e6e1d6 calc(10% - 1px) 10%)}
+  /* ---------- etiqueta e passos ---------- */
+  .etiqueta{border:2px dashed var(--ink);background:#fff;padding:16px 18px;font-family:var(--sans);font-size:13.5px;line-height:1.4;align-self:start}
+  .etiqueta .etq-top{font-weight:900;font-stretch:85%;font-size:18px;letter-spacing:-.01em;margin:0 0 8px;padding-bottom:8px;border-bottom:2px solid var(--green-deep);color:var(--green-deep)}
+  .etiqueta ul{margin:0 0 8px;padding-left:1em}
+  .etiqueta li{margin-bottom:.25em;max-width:none}
+  .etiqueta .etq-pe{font-size:11.5px;color:var(--ink-mute);margin:0}
+  .perguntas.passos span{font-size:clamp(16px,2vw,19px);font-weight:600;font-stretch:100%}
+  .perguntas.passos li::before{font-size:38px}
+
+  .g40 .g-bar{width:calc(var(--v) / 40 * 100%)}
+  .g40 .g-track{background:
+    linear-gradient(90deg,transparent calc(37.5% - 1px),var(--caramel) calc(37.5% - 1px) calc(37.5% + 1px),transparent calc(37.5% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(12.5% - 1px),#e6e1d6 calc(12.5% - 1px) 12.5%)}
+  .filtro .ok.meio{background:var(--caramel-soft);box-shadow:inset 0 0 0 2px var(--caramel)}
+  .filtro .ok.meio::after{left:5px;top:9px;width:12px;height:3px;border:0;background:var(--caramel);transform:none}
+  .filtro li.parcial .val{color:var(--caramel)}
+  /* ---------- calendário e registro ---------- */
+  .calendario{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;margin:0 0 8px;max-width:820px}
+  .mes{background:var(--paper-2);padding:10px 8px 12px;font-family:var(--sans)}
+  .mes b{display:block;font-weight:800;font-size:15px;margin-bottom:4px}
+  .mes span{display:block;font-size:12px;line-height:1.3;color:var(--ink-soft)}
+  .mes.medio{background:var(--green-wash)}
+  .mes.pico{background:var(--green-deep);color:#fff}
+  .mes.pico span{color:#e4f1e8}
+  .registro td{height:34px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
+  .registro td:last-child{border-right:0}
+
+  /* ---------- cola de balcão ---------- */
+  .cola{background:#fff;border:2px dashed var(--ink);padding:clamp(18px,3vw,30px);font-size:15px;line-height:1.45}
+  .cola-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 20px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin:0 0 18px}
+  .cola-top b{font-family:var(--sans);font-weight:900;font-stretch:78%;font-size:clamp(30px,4.4vw,44px);letter-spacing:-.03em;line-height:1}
+  .cola-top span{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-mute)}
+  .cola-grid{display:grid;gap:20px 30px;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr))}
+  .cola h4{font-family:var(--sans);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 8px}
+  .cola p,.cola li{max-width:none}
+  .cola ul{margin:0;padding-left:1em}
+  .cola li{margin-bottom:.3em}
+  .cola .fala{font-size:16px;margin:0 0 .6em;padding-left:12px;border-left-width:3px}
+  .cola .acao{font-size:13.5px;padding:8px 12px 8px 36px;margin:0 0 .6em}
+  .cola .acao::before{left:12px;top:12px}
+  .cola dl{margin:0}
+  .cola dt{font-family:var(--sans);font-weight:800;font-size:14.5px;margin:10px 0 2px}
+  .cola dt:first-child{margin-top:0}
+  .cola dd{margin:0;color:var(--ink-soft)}
+  .cola table{font-size:13.5px}
+  .cola th,.cola td{padding:6px 8px}
+  .cola .nunca li{color:var(--caramel);font-family:var(--sans);font-weight:600;font-size:14px}
+
+  /* ---------- ilustrações ---------- */
+  figure{margin:0 0 26px;max-width:860px}
+  .ill-art svg{display:block;width:100%;height:auto}
+  .ill figcaption{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink-mute);margin-top:10px}
+
+  footer{
+    background:var(--ink);color:#9fb3a8;
+    margin-top:clamp(64px,9vw,110px);
+    padding:clamp(28px,5vw,44px) var(--gut);
+    font-family:var(--sans);font-size:14px;
+  }
+  footer p{max-width:62ch;margin:0 0 .6em}
+  footer .logo{display:block;width:44px;height:auto;margin-bottom:18px}
+  footer strong{color:var(--green-neon);font-weight:700}
+
+  :focus-visible{outline:3px solid var(--green-neon);outline-offset:2px}
+
+
+  @media (max-width:560px){
+    .calendario{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .cover-72h{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .radar div:last-child:nth-child(odd){grid-column:1/-1}
+    .semana{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .prazo{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .cores{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .g-row,.g-axis{grid-template-columns:minmax(0,1fr)}
+    .g-axis > span:first-child{display:none}
+    .relogio{padding-left:30px}
+    .relogio::before{left:8px}
+    .passo .t{position:static;display:block;text-align:left;width:auto;margin-bottom:4px}
+    .passo::before{left:-30px;top:6px}
+    .funil div:nth-child(n){width:100%}
+    .filtro li{grid-template-columns:28px minmax(0,1fr)}
+    .filtro .val{grid-column:2;text-align:left}
+  }
+
+  @media print{
+    .radar{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .radar div{padding:12px 14px 14px}
+    .radar dd{font-size:14pt}
+    #cola .cola{font-size:9pt;padding:12px}
+    #cola .cola .fala{font-size:10pt}
+    #cola .cola-grid{gap:8px 18px;grid-template-columns:1fr 1fr}
+    #cola .sec-head{margin-bottom:8px;padding-bottom:6px}
+    #cola .sec-num{font-size:40pt}
+    #cola .cola-top{margin-bottom:8px;padding-bottom:6px}
+    #cola .cola-top b{font-size:18pt}
+    #cola .cola h4{font-size:7.5pt;margin-bottom:4px}
+    #cola .cola h4[style]{margin-top:10px!important}
+    #cola .cola dt{font-size:8.5pt;margin-top:5px}
+    #cola .cola dd,#cola .cola li{font-size:8.5pt;margin-bottom:1px}
+    #cola .cola .fala{font-size:9pt;margin-bottom:4px}
+    #cola .cola .acao{font-size:8pt;padding:5px 8px 5px 30px;margin-bottom:4px}
+    #cola .cola .acao::before{left:9px;top:7px}
+    #cola .cola table{font-size:8pt}
+    #cola .cola th,#cola .cola td{padding:3px 5px}
+    #cola .cola .nunca li{font-size:8.5pt}
+    .cola{break-inside:avoid}
+    @page{size:A4;margin:14mm 15mm}
+    @page capa{margin:0}
+    @page contracapa{margin:0}
+    :root{--paper:#ffffff;--gut:15mm}
+    body{font-size:10pt;line-height:1.5}
+    main{padding-inline:0}
+    section{max-width:none}
+    .lead{font-size:12pt;margin-bottom:1em}
+    .sec-head{margin-bottom:14px;padding-bottom:10px}
+    .sec-num{font-size:52pt}
+    h2{font-size:24pt}
+    h3{margin-top:1.4em;font-size:12.5pt}
+
+    /* capa e contracapa ocupam a folha inteira */
+    .cover{page:capa;height:297mm;box-sizing:border-box;width:210mm;display:flex;flex-direction:column;padding:18mm 15mm 0;overflow:hidden}
+    .cover > .cover-mark{right:-30mm;top:40mm;width:150mm}
+    .cover-code{font-size:210pt;margin-top:24mm;background:none;-webkit-text-fill-color:var(--green-neon)}
+    .cover-market{font-size:30pt}
+    .cover-promise{font-size:13pt}
+    .cover-grid{grid-template-columns:1.1fr 1fr;margin-top:8mm}
+    .cover-72h{margin-top:20mm}
+    .radar{margin:auto -15mm 0}
+    .radar div{padding-left:15mm}
+    footer{page:contracapa;break-before:page;height:297mm;overflow:hidden;box-sizing:border-box;margin:0;padding:0 15mm 22mm;display:flex;flex-direction:column;justify-content:flex-end;font-size:10pt}
+
+    /* colunas fixas no papel */
+    .tipos,.dores,.niveis,.fio,.dias{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .split,.saidas{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .conta{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .obj{display:block;margin-bottom:12px}
+    .filtro li{padding:8px 0}
+    .funil div{padding:6px 12px}
+    .funil div b{font-size:16pt}
+    .conta div{padding:12px 14px}
+    .etiqueta{font-size:9pt}
+    .perguntas li{padding:8px 0}
+    .perguntas.passos span{font-size:10.5pt}
+    table{font-size:9pt}
+    th,td{padding:5px 8px}
+    .junto{break-inside:avoid}
+    .calendario{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .mes span{font-size:8pt}
+    .registro td{height:9mm}
+    .obj-head{padding:10px 16px}
+    .obj-q{font-size:15pt}
+    .obj-body{padding:10px 16px;gap:2px 20px}
+    .obj-body .fala{font-size:10.5pt;line-height:1.42}
+    .obj-real{font-size:9.5pt}
+    .erro{font-size:9pt;padding:7px 16px}
+    .dia-col{break-inside:auto}
+    .check li{font-size:9.5pt;margin-bottom:.45em}
+    .tipo p,.dor p,.nivel p:not(.preco):not(.ficha-tab),.saida p{font-size:9.5pt;line-height:1.45}
+    .dia-sem{min-height:78px}
+    p,li{orphans:3;widows:3}
+    footer .logo{width:22mm;margin-bottom:8mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    section{break-before:page;padding-top:0}
+    main > section:first-of-type{break-before:page}
+    .ficha,.aviso,.obj,figure,.ill,table,.saida,.dor,.tipo,.msg,.dia-col,.grafico,.folha,.conta,.semana,.prazo,.passo{break-inside:avoid}
+    h2,h3,.sec-head{break-after:avoid}
+    .ill-art svg{max-height:92mm;width:auto;max-width:100%;margin:0 auto}
+    .tabela{overflow:visible}
+    .folha{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <svg class="cover-mark" viewBox="370 340 640 650" aria-hidden="true"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+
+  <div class="cover-top">
+    <p class="cover-brand"><svg class="logo" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>LR Maker Lab · G-Code 3D</p>
+    <p class="cover-level">Nível 2 · ticket maior</p>
+  </div>
+
+  <p class="cover-code">G-07</p>
+
+  <div class="cover-grid">
+    <h1 class="cover-market">Academias, boxes e escolas esportivas</h1>
+    <p class="cover-promise">Medalhas e troféus com a logo da academia para os desafios internos. O aluno termina o desafio para ganhar a medalha, posta a foto, e a logo da academia vai junto para o Instagram dele.</p>
+  </div>
+
+  <ol class="cover-72h" aria-label="Missão 72 horas">
+    <li><b>Dia 1</b><span>Imprimir a medalha com o nome do desafio deles</span></li>
+    <li><b>Dia 2</b><span>10 academias fora do horário de pico</span></li>
+    <li><b>Dia 3</b><span>Proposta com a data do próximo desafio</span></li>
+    <li class="fim"><b>72h</b><span>Três propostas entregues na mão de um comerciante</span></li>
+  </ol>
+
+  <dl class="radar">
+    <div><dt>Ticket do 1º pedido</dt><dd>R$ 250 a 1.500</dd></div>
+    <div><dt>Retorno por hora</dt><dd>~R$ 52/h</dd></div>
+    <div class="hot"><dt>Recompra</dt><dd>A cada desafio</dd></div>
+    <div><dt>Ciclo de venda</dt><dd>1 a 2 visitas</dd></div>
+    <div><dt>Nota no filtro</dt><dd>5 de 5</dd></div>
+  </dl>
+</header>
+
+<main>
+
+<!-- ===================== 01 ===================== -->
+<section id="s01">
+  <header class="sec-head l1">
+    <p class="sec-num">01</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Por que este G-Code funciona</h2>
+  </header>
+
+  <p class="lead">Academia vive de aluno que não desiste. Desafio interno é a ferramenta que ela usa para isso, e todo desafio termina numa premiação com data marcada. Cada data é um pedido seu.</p>
+
+  <ul class="filtro">
+    <li><span class="ok"></span><span class="crit">Ticket do primeiro pedido<small>Quinze medalhas já passam o piso; um desafio de 40 alunos vai a R$ 850</small></span><span class="val">R$ 250–1.500</span></li>
+    <li><span class="ok"></span><span class="crit">Retorno por hora de máquina<small>Medalha pequena e plana enche a mesa; troféu alto puxa para baixo</small></span><span class="val">~R$ 52/h</span></li>
+    <li><span class="ok"></span><span class="crit">Recompra<small>Desafio de verão, de meio de ano, campeonato interno, festival da escolinha</small></span><span class="val">A cada desafio</span></li>
+    <li><span class="ok"></span><span class="crit">Decisor<small>O dono ou o coordenador, que monta o calendário de desafios</small></span><span class="val">Na recepção</span></li>
+    <li><span class="ok"></span><span class="crit">Insubstituível<small>Medalha pronta de loja esportiva não tem a logo nem o nome do desafio</small></span><span class="val">Alto</span></li>
+  </ul>
+
+  <h3>A conta de uma academia por ano</h3>
+  <div class="conta">
+    <div><span class="op">desafios</span><span class="big">3</span><span class="cap">por ano: verão, meio de ano, fim de ano</span></div>
+    <div><span class="op">×</span><span class="big">40</span><span class="cap">alunos que terminam cada desafio</span></div>
+    <div><span class="op">×</span><span class="big">R$ 20</span><span class="cap">por medalha personalizada</span></div>
+    <div><span class="op">=</span><span class="big">R$ 2.400</span><span class="cap">por ano, da mesma academia</span></div>
+  </div>
+  <p>Uma academia com três desafios por ano vale mais que dez vendas avulsas. E a medalha postada pelo aluno é a propaganda que traz a próxima academia do bairro até você.</p>
+
+  <div class="aviso">
+    <p class="ficha-tab">Este G-Code tem data</p>
+    <p>O pacote Padrão consome perto de 14 horas de máquina. Premiação não adia, e o aluno está esperando no palco. Todo pedido exige 10 dias de antecedência e sinal de 50%. Sem os dois, não comece a imprimir.</p>
+  </div>
+</section>
+
+<!-- ===================== 02 ===================== -->
+<section id="s02">
+  <header class="sec-head l2">
+    <p class="sec-num">02</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Quem é o cliente</h2>
+  </header>
+
+  <p class="lead">O espaço esportivo que trabalha com turma, meta e comunidade. Aluno que se conhece pelo nome, grupo de WhatsApp e evento marcado no calendário.</p>
+
+  <div class="tipos">
+    <div class="tipo principal">
+      <p class="tag">Cliente principal</p>
+      <h4>Box de treino funcional e academia de bairro</h4>
+      <p>Desafio de 30, 60 ou 90 dias, campeonato interno, ranking na parede. A premiação faz parte do método.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Festival com data fixa</p>
+      <h4>Escolinha de esporte</h4>
+      <p>Futebol, natação, judô, ginástica. Festival de meio e de fim de ano, medalha para toda criança.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Prova interna</p>
+      <h4>Assessoria de corrida</h4>
+      <p>Grupo que treina junto e faz prova própria no parque. Quer medalha com a marca do grupo, não a da corrida oficial.</p>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="ficha">
+      <p class="ficha-tab">Como reconhecer</p>
+      <ul>
+        <li>Instagram com post de "desafio", "ranking" ou "campeonato interno"</li>
+        <li>Foto de premiação com medalha genérica ou sem medalha</li>
+        <li>Quadro de resultados na parede da recepção</li>
+      </ul>
+    </div>
+    <div class="ficha">
+      <p class="ficha-tab">Quem não é cliente</p>
+      <ul>
+        <li>Rede de academia de baixo custo, com marketing da matriz</li>
+        <li>Personal que atende sozinho, sem turma</li>
+        <li>Federação e evento oficial, que compram medalha metálica em grande volume</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Quando aparecer</h3>
+  <div class="semana">
+    <div class="dia-sem ir"><b>Seg</b><em>10h–12h</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Ter</b><em>10h–12h</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Qua</b><em>14h–16h</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Qui</b><em>14h–16h</em><span>Vá</span></div>
+    <div class="dia-sem"><b>Sex</b><span>Só com hora marcada</span></div>
+    <div class="dia-sem nao"><b>Sáb</b><span>Aulão e evento</span></div>
+  </div>
+  <p>Academia enche das 6h às 9h e das 17h às 21h. No meio da manhã e no meio da tarde, o dono está na recepção ou no escritório, e a recepcionista sabe dizer quando ele chega.</p>
+  <p>Na escolinha, procure o coordenador, não o professor da turma. Na assessoria de corrida, o treinador responsável, pelo Instagram, pedindo 10 minutos depois de um treino.</p>
+</section>
+
+<!-- ===================== 03 ===================== -->
+<section id="s03">
+  <header class="sec-head l3">
+    <p class="sec-num">03</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A dor que ele já paga para resolver</h2>
+  </header>
+
+  <p class="lead">Ele não quer medalha. Quer aluno que termina o desafio, fala bem da academia e traz um amigo.</p>
+
+  <div class="dores">
+    <div class="dor">
+      <span class="dn">1</span>
+      <h4>O desafio que esvazia na terceira semana</h4>
+      <p>Cinquenta começam, quinze terminam. Uma premiação que o aluno vê desde o primeiro dia, pendurada na recepção, é o motivo concreto para chegar ao dia 30.</p>
+    </div>
+    <div class="dor">
+      <span class="dn">2</span>
+      <h4>A medalha igual à de qualquer corrida</h4>
+      <p>Medalha pronta de loja esportiva, com adesivo colado no meio. O aluno guarda na gaveta com as outras vinte. Não conta nada sobre a academia dele.</p>
+    </div>
+    <div class="dor fecha">
+      <span class="dn">3</span>
+      <h4>A foto que a academia não consegue comprar</h4>
+      <p>Aluno com medalha no pescoço posta a foto sozinho. Com a logo da academia e o nome do desafio na medalha, a propaganda aparece para os amigos dele, com a cara de quem treinou.</p>
+    </div>
+  </div>
+
+  <p>A terceira é a que fecha. Mostre a medalha com a logo dele e pergunte quantos alunos postaram foto da última premiação.</p>
+
+  <div class="split">
+    <figure class="ill">
+      <div class="ill-art" data-ill="medalha" role="img" aria-label="Medalha frente e verso: na frente, a logo da academia em relevo com o nome do desafio; no verso, o nome do atleta e a data, com fita"></div>
+      <figcaption>Frente com a logo e o desafio. Verso com o nome e a data.</figcaption>
+    </figure>
+    <div>
+      <h3 style="margin-top:0">Antes de visitar: três sinais no Instagram dele</h3>
+      <div class="ficha">
+        <ul class="check">
+          <li><strong>Post de desafio com data de início e fim.</strong> A próxima premiação já tem dia.</li>
+          <li><strong>Foto de premiação.</strong> Veja o que eles usaram: medalha genérica, diploma ou nada.</li>
+          <li><strong>Logo forte e comunidade ativa.</strong> Aluno que comenta e marca amigo posta a medalha.</li>
+        </ul>
+        <p>Anote o nome do último desafio. Ele vai na medalha de amostra.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 ===================== -->
+<section id="s04">
+  <header class="sec-head l4">
+    <p class="sec-num">04</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A oferta, em três níveis</h2>
+  </header>
+
+  <p class="lead">Venda por desafio, não por medalha. O dono pensa em "a premiação do desafio de verão", e o preço precisa caber nessa frase.</p>
+
+  <div class="niveis">
+    <div class="ficha nivel">
+      <p class="ficha-tab">Entrada · turma pequena</p>
+      <p class="preco">R$ 250 a 350</p>
+      <p>Quinze medalhas com a logo da academia e o nome do desafio, com fita na cor da marca. Para uma turma ou um campeonato interno pequeno.</p>
+    </div>
+    <div class="ficha nivel meio">
+      <span class="selo">O que você quer vender</span>
+      <p class="ficha-tab">Padrão · o desafio inteiro</p>
+      <p class="preco">R$ 750 a 950</p>
+      <p>Quarenta medalhas personalizadas e a placa de campeões do desafio para a recepção. Perto de 14 horas de máquina: 10 dias de antecedência e sinal.</p>
+    </div>
+    <div class="ficha nivel">
+      <p class="ficha-tab">Completo · premiação com pódio</p>
+      <p class="preco">R$ 1.200 a 1.500</p>
+      <p>O Padrão mais três troféus de pódio, de 18, 15 e 12 cm, em dourado, prata e bronze. Para o campeonato que tem primeiro, segundo e terceiro lugar.</p>
+    </div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="niveis" role="img" aria-label="Os três níveis: quinze medalhas; quarenta medalhas e placa de campeões; e o conjunto com três troféus de pódio"></div>
+    <figcaption>Entrada, Padrão e Completo lado a lado.</figcaption>
+  </figure>
+
+  <div class="aviso">
+    <p class="ficha-tab">Prazo de evento é contrato</p>
+    <p class="aviso-grande">Premiação não adia. 10 dias de antecedência e 50% de sinal, sempre.</p>
+    <div class="prazo" aria-label="Linha do tempo de um pedido Padrão">
+      <div class="p-ok"><b>Dia 1</b><span>Pedido e sinal</span></div>
+      <div><b>Dia 2</b><span>Arte aprovada</span></div>
+      <div><b>Dia 3</b><span>Lista de nomes</span></div>
+      <div><b>Dias 4–6</b><span>14h de máquina</span></div>
+      <div><b>Dia 7</b><span>Conferência</span></div>
+      <div class="p-ok"><b>Dia 8</b><span>Entrega</span></div>
+      <div class="p-festa"><b>Dia 10</b><span>Premiação</span></div>
+    </div>
+    <ul>
+      <li>Sem sinal, a máquina não liga. Sem arte aprovada por escrito, também não.</li>
+      <li>A lista de nomes dos atletas tem data-limite. Nome que chegar depois vai sem nome, ou em outro lote.</li>
+      <li>Entrega sempre dois dias antes da premiação. Esses dois dias são sua margem para uma mesa que falhar.</li>
+      <li>Pedido com menos de 10 dias: só se a máquina estiver livre, com 30% de urgência. Na dúvida, diga não.</li>
+    </ul>
+  </div>
+
+  <h3>Quando o pedido chega: o calendário dos desafios</h3>
+  <div class="calendario" aria-label="Meses de maior procura">
+    <div class="mes pico"><b>Jan</b><span>Desafio de ano novo</span></div>
+    <div class="mes medio"><b>Fev</b><span>Desafio pós-carnaval</span></div>
+    <div class="mes medio"><b>Mar</b><span>Premiação do desafio de verão</span></div>
+    <div class="mes"><b>Abr</b><span>Movimento normal</span></div>
+    <div class="mes pico"><b>Mai</b><span>Ofereça para o festival de junho</span></div>
+    <div class="mes pico"><b>Jun</b><span>Festival de meio de ano</span></div>
+    <div class="mes medio"><b>Jul</b><span>Férias das escolinhas</span></div>
+    <div class="mes pico"><b>Ago</b><span>Ofereça o desafio de primavera</span></div>
+    <div class="mes medio"><b>Set</b><span>Projeto verão começa</span></div>
+    <div class="mes pico"><b>Out</b><span>Ofereça para o festival de dezembro</span></div>
+    <div class="mes pico"><b>Nov</b><span>Campeonatos internos</span></div>
+    <div class="mes pico"><b>Dez</b><span>Festival e confraternização</span></div>
+  </div>
+  <p class="g-nota">Verde escuro: meses de venda mais provável, 30 a 45 dias antes de cada premiação. É hipótese; ajuste pelo calendário de cada academia.</p>
+</section>
+
+<!-- ===================== 05 ===================== -->
+<section id="s05">
+  <header class="sec-head l5">
+    <p class="sec-num">05</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Material, peso e acabamento</h2>
+  </header>
+
+  <p class="lead">Medalha é tocada, pesada na mão e fotografada. O aluno percebe na hora se ela é leve demais ou se a logo está borrada.</p>
+
+  <div class="split">
+    <div>
+      <h3 style="margin-top:0">PLA silk para as cores de pódio, relevo em outra cor</h3>
+      <p>PLA silk dourado, prata e bronze dá o brilho de metal que a foto pede, e diferencia os lugares do pódio sem pintura. A logo sai em relevo, com troca de cor na camada.</p>
+      <p>Medalha de plástico é leve: perto de 12 gramas. Para ela pesar na mão, faça uma pausa na camada do meio e encaixe uma arruela de aço de 30 mm. A impressão cobre a arruela e ela fica invisível.</p>
+      <p>A fita passa por um furo de 12 × 3 mm, com a borda arredondada para não desfiar.</p>
+    </div>
+    <div class="painel">
+      <p class="ficha-tab">Perfil de fatiamento · PLA silk</p>
+      <dl>
+        <dt>Bico</dt><dd>210–220 °C</dd>
+        <dt>Mesa</dt><dd>55–60 °C</dd>
+        <dt>Camada</dt><dd>0,16 mm</dd>
+        <dt>Diâmetro da medalha</dt><dd>70 mm</dd>
+        <dt>Espessura</dt><dd>4 mm</dd>
+        <dt>Relevo da logo</dt><dd>0,8 mm, 2ª cor</dd>
+        <dt>Pausa da arruela</dt><dd>camada de 2,0 mm</dd>
+      </dl>
+    </div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="producao" role="img" aria-label="Mesa de impressão com nove medalhas; ao lado, a sequência da pausa na camada: base impressa, arruela encaixada, medalha fechada por cima"></div>
+    <figcaption>Nove medalhas por mesa. A arruela entra na pausa e some dentro da peça.</figcaption>
+  </figure>
+
+  <div class="split">
+    <div class="aviso">
+      <p class="ficha-tab">Risco 1 · Nome errado no pódio</p>
+      <p>Nome de atleta errado aparece na foto e no Instagram, com o aluno marcando a academia. A lista de nomes vem por escrito, numa planilha, e volta para o dono conferir antes de imprimir.</p>
+      <p>Medalha para criança pequena: fita com fecho que se solta quando puxada, e nada de peça pequena que se destaque.</p>
+    </div>
+    <div class="aviso">
+      <p class="ficha-tab">Risco 2 · Marca de terceiros</p>
+      <p>Nomes e logos de métodos de treino, federações, clubes e eventos oficiais são marcas registradas. A medalha leva a logo da academia e o nome que ela deu ao desafio.</p>
+      <p>Se o box é afiliado a uma marca de treino, quem decide o uso da marca é o contrato dele, não você. Na dúvida, fique na logo do box.</p>
+    </div>
+  </div>
+
+  <h3>Antes de entregar: conferência do lote</h3>
+  <div class="ficha">
+    <ul class="check">
+      <li>Quantidade contada duas vezes, mais duas medalhas de reserva sem nome</li>
+      <li>Cada nome conferido contra a planilha que o dono aprovou</li>
+      <li>Logo com relevo nítido, sem fio entre as letras</li>
+      <li>Arruela invisível: nenhuma medalha com a borda da arruela aparecendo</li>
+      <li>Fita passada e dobrada, na cor da marca, sem desfiar</li>
+      <li>Medalhas em ordem alfabética, em saco com a lista impressa junto</li>
+    </ul>
+  </div>
+
+  <h3>A planilha de nomes que o dono preenche</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Nome como vai na medalha</th><th>Categoria</th><th>Colocação</th></tr>
+    <tr><td>Ana Souza</td><td>Feminino</td><td>Finalista</td></tr>
+    <tr><td>Carlos M.</td><td>Masculino 40+</td><td>1º lugar</td></tr>
+    <tr><td>Bia Lima</td><td>Iniciante</td><td>Finalista</td></tr>
+  </table>
+  </div>
+  <p>Até 16 caracteres por nome, escrito como o aluno quer ver: apelido, nome e sobrenome ou inicial. A planilha volta para o dono conferir antes de imprimir, e a aprovação dele fica guardada.</p>
+</section>
+
+<!-- ===================== 06 ===================== -->
+<section id="s06">
+  <header class="sec-head l6">
+    <p class="sec-num">06</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Kit de amostra: o que imprimir hoje à noite</h2>
+  </header>
+
+  <p class="lead">Duas medalhas e um mini troféu. A que fecha é a medalha com a logo dele e o nome do último desafio que ele postou.</p>
+
+  <h3 style="margin-top:0">Uma noite de máquina</h3>
+  <div class="mesa">
+    <div class="mesa-bar" role="img" aria-label="Tempo de impressão: duas medalhas 50 minutos, mini troféu 2 horas">
+      <div style="flex:50">50 min</div>
+      <div style="flex:120">2h00</div>
+    </div>
+    <ul class="mesa-leg">
+      <li><b>2 medalhas de 7 cm</b>Dourada e prata, logo em relevo, com arruela · 24 g</li>
+      <li><b>Mini troféu de 12 cm</b>PLA silk dourado, base com a logo · 40 g</li>
+    </ul>
+  </div>
+  <div class="totais">
+    <div><b>2h50</b><span>de máquina</span></div>
+    <div><b>64 g</b><span>de PLA silk</span></div>
+    <div><b>R$ 7,00</b><span>de filamento</span></div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="kit" role="img" aria-label="Kit de amostra em escala sobre régua: medalha dourada e prata de 7 cm com fita e mini troféu de 12 cm"></div>
+    <figcaption>O kit em escala real, sobre régua em centímetros.</figcaption>
+  </figure>
+
+  <div class="split">
+    <div class="ficha escura">
+      <p class="ficha-tab">Detalhe que fecha venda</p>
+      <p>Pegue a logo da academia no Instagram e o nome do último desafio que ela postou. A medalha dourada vai com os dois. Ele vai reconhecer a própria marca antes de você terminar a frase.</p>
+      <p>Na prata, grave "Seu nome aqui" no verso. É o espaço que o aluno vai querer ver preenchido.</p>
+    </div>
+    <div>
+      <div class="ficha">
+        <p class="ficha-tab">Apresentação</p>
+        <p>Entregue a medalha pendurada pela fita, balançando, como no pódio. Medalha em caixa é lembrancinha; medalha na fita é conquista.</p>
+      </div>
+      <h3 style="margin-top:18px">Quanto custa sair para a rua</h3>
+      <div class="tabela">
+      <table>
+        <tr><th>Item</th><th>Quantidade</th><th>Valor</th></tr>
+        <tr><td>Kit de amostra</td><td>2 jogos</td><td class="n">R$ 14,00</td></tr>
+        <tr><td>Medalhas com a logo de cada academia</td><td>8 un</td><td class="n">R$ 24,00</td></tr>
+        <tr><td>Fita e arruelas</td><td>10 un</td><td class="n">R$ 15,00</td></tr>
+        <tr class="total"><td>Total para 10 visitas</td><td>—</td><td class="n">R$ 53,00</td></tr>
+      </table>
+      </div>
+      <p>Estimativa para você refazer com os preços da sua região.</p>
+    </div>
+  </div>
+
+  <h3>A arte da medalha em 15 minutos</h3>
+  <ol class="perguntas passos">
+    <li><span>Peça a logo em arquivo vetorial. Se não houver, redesenhe só o contorno principal.</span></li>
+    <li><span>Tire detalhe menor que 1 mm: no relevo, some ou vira borrão.</span></li>
+    <li><span>Texto com no mínimo 4 mm de altura e fonte grossa. Nome do desafio em uma linha só.</span></li>
+    <li><span>Duas cores: o corpo em silk e o relevo na cor da marca, com a troca na camada da logo.</span></li>
+    <li><span>Mande a imagem da medalha para o dono aprovar por escrito antes de imprimir o lote.</span></li>
+  </ol>
+</section>
+
+<!-- ===================== 07 ===================== -->
+<section id="s07">
+  <header class="sec-head l7">
+    <p class="sec-num">07</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Precificação</h2>
+  </header>
+
+  <p class="lead">Medalha pequena e plana enche a mesa e paga bem. Troféu alto ocupa a máquina a noite inteira. Venda o troféu como parte do pódio, nunca como a peça principal.</p>
+
+  <h3 style="margin-top:0">Retorno por hora, peça por peça</h3>
+  <div class="grafico" role="img" aria-label="Gráfico de barras do retorno por hora de máquina por peça e nível, com a linha do piso em R$ 15 por hora">
+    <div class="g-row"><span class="g-lab">9 medalhas<small>a R$ 20 · 3h</small></span><div class="g-track"><div class="g-bar top" style="--v:51">R$ 51/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Padrão<small>R$ 850 · 14h</small></span><div class="g-track"><div class="g-bar" style="--v:52">R$ 52/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Completo<small>R$ 1.300 · 23h</small></span><div class="g-track"><div class="g-bar" style="--v:50">R$ 50/h</div></div></div>
+    <div class="g-row"><span class="g-lab">9 medalhas<small>a R$ 18 · 3h</small></span><div class="g-track"><div class="g-bar" style="--v:45">R$ 45/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Troféu 18 cm<small>a R$ 180 · 4h</small></span><div class="g-track"><div class="g-bar" style="--v:42">R$ 42/h</div></div></div>
+    <div class="g-row"><span class="g-lab">9 medalhas<small>a R$ 15 · 3h</small></span><div class="g-track"><div class="g-bar" style="--v:36">R$ 36/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Troféu 18 cm<small>a R$ 120 · 4h</small></span><div class="g-track"><div class="g-bar" style="--v:27">R$ 27/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Troféu 18 cm<small>a R$ 80 · 4h</small></span><div class="g-track"><div class="g-bar baixo" style="--v:17">R$ 17/h</div></div></div>
+    <div class="g-axis"><span></span><div class="g-ticks"><span style="left:0">0</span><span class="piso" style="left:21.43%">piso R$ 15</span><span style="left:42.86%">30</span><span style="left:71.43%">50</span><span style="left:100%;transform:translateX(-100%)">70</span></div></div>
+  </div>
+  <p class="g-nota">Margem = preço menos custo real. Retorno/h = margem dividida pelas horas de máquina.</p>
+  <p>Troféu a R$ 80 fica perto do piso e ocupa quatro horas. Se o cliente quiser só troféus, cobre R$ 180 o maior e mantenha o pódio completo acima de R$ 400.</p>
+
+  <h3>Custo real de uma mesa de 9 medalhas</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Item</th><th>Cálculo</th><th>Valor</th></tr>
+    <tr><td>Filamento PLA silk</td><td>108 g a R$ 110/kg</td><td class="n">R$ 11,88</td></tr>
+    <tr><td>Fita de cetim com 80 cm</td><td>9 × R$ 1,20</td><td class="n">R$ 10,80</td></tr>
+    <tr><td>Arruela de aço 30 mm</td><td>9 × R$ 0,20</td><td class="n">R$ 1,80</td></tr>
+    <tr><td>Energia e perda</td><td>3h de impressão; 15% sobre filamento</td><td class="n">R$ 2,40</td></tr>
+    <tr class="total"><td>Custo da mesa</td><td>R$ 2,99 por medalha</td><td class="n">R$ 26,88</td></tr>
+  </table>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Seu piso</p>
+    <p class="aviso-grande">R$ 15 por hora de máquina. Na medalha, isso é R$ 8.</p>
+    <p>Três horas de máquina por mesa de nove, vezes R$ 15, mais R$ 3 de custo por medalha. No troféu de 18 cm, o piso é R$ 71. Longe dos dois pisos, o risco aqui é o prazo, não o preço.</p>
+  </div>
+
+  <div class="junto">
+    <h3>A conta de um pedido real, passo a passo</h3>
+    <p>Um box vai premiar 40 alunos no fim do desafio de verão, daqui a três semanas, com medalha e placa de campeões. Antes de responder, faça esta conta:</p>
+    <div class="tabela">
+    <table>
+      <tr><th>Passo</th><th>Conta</th><th>Resultado</th></tr>
+      <tr><td>1 · Máquina</td><td>40 ÷ 9 = 5 mesas × 3h (a última pela metade) + placa</td><td class="n">14h</td></tr>
+      <tr><td>2 · Custo</td><td>40 × R$ 2,99 + placa R$ 6</td><td class="n">R$ 125,60</td></tr>
+      <tr><td>3 · Preço</td><td>40 × R$ 20 + placa R$ 50</td><td class="n">R$ 850</td></tr>
+      <tr><td>4 · Sinal</td><td>50% na aprovação</td><td class="n">R$ 425</td></tr>
+      <tr><td>5 · Retorno</td><td>(R$ 850 − R$ 125,60) ÷ 14 h</td><td class="n">R$ 52/h</td></tr>
+      <tr class="total"><td>6 · Agenda</td><td>14h com troca de cor: 3 noites em 2 impressoras</td><td class="n">Cabe em 10 dias</td></tr>
+    </table>
+    </div>
+  </div>
+  <p>A troca de cor da logo exige você perto da máquina em cada mesa. Distribua as mesas nas noites em que você está em casa, com as duas impressoras rodando juntas.</p>
+
+  <div class="ficha">
+    <p class="ficha-tab">Condições que vão escritas na proposta</p>
+    <ul>
+      <li><strong>Antecedência:</strong> 10 dias entre o pedido e a premiação</li>
+      <li><strong>Sinal:</strong> 50% para reservar a máquina; o restante na entrega</li>
+      <li><strong>Nomes:</strong> planilha até o dia 3; nomes depois disso vão sem nome</li>
+      <li><strong>Nome do atleta no verso:</strong> +R$ 5 por medalha</li>
+      <li><strong>Reserva:</strong> duas medalhas extras sem nome em todo pedido</li>
+      <li><strong>Urgência abaixo de 10 dias:</strong> +30%, só com máquina livre</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== 08 ===================== -->
+<section id="s08">
+  <header class="sec-head l8">
+    <p class="sec-num">08</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A abordagem em 40 segundos</h2>
+  </header>
+
+  <div class="relogio">
+    <div class="passo">
+      <span class="t">antes</span>
+      <p class="acao">Chegue fora do horário de pico. Pergunte à recepção se o dono está e espere sentado, com a medalha no bolso.</p>
+    </div>
+    <div class="passo">
+      <span class="t">0–8 s</span>
+      <p class="fala">"Oi, tudo bem? Eu faço medalha e troféu com a logo da academia, pros desafios de vocês. Fiz uma do [nome do desafio] pra você ver."</p>
+    </div>
+    <div class="passo cala">
+      <span class="t">8–20 s</span>
+      <p class="acao">Tire a medalha do bolso pela fita e entregue balançando. Pare de falar.</p>
+      <p>Ele vai pesar na mão, virar para ver o verso e reconhecer a logo. O peso da arruela é o primeiro detalhe que ele comenta.</p>
+    </div>
+    <div class="passo">
+      <span class="t">20–28 s</span>
+      <p class="fala">"Quando é a premiação do próximo desafio?"</p>
+    </div>
+    <div class="passo">
+      <span class="t">28–40 s</span>
+      <p>Anote a data na frente dele. Se faltarem menos de 10 dias, diga isso agora, antes de falar de preço.</p>
+    </div>
+  </div>
+
+  <div class="saidas">
+    <div class="saida">
+      <p class="quando">"Daqui a um mês e pouco."</p>
+      <p>"Dá tempo com folga. Quantos alunos devem terminar?" Com o número, dê a faixa do nível que serve.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">"A gente dá diploma."</p>
+      <p>"E o aluno posta o diploma?" Deixe a pergunta no ar e mostre a medalha de novo.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">"É na semana que vem."</p>
+      <p>"Pra essa, eu consigo no máximo 15 medalhas, com urgência. Pro próximo desafio, faço o completo com calma. Qual é o próximo?"</p>
+    </div>
+    <div class="saida">
+      <p class="quando">O dono não está.</p>
+      <p>Deixe a medalha com a recepção, pela fita, pendurada no balcão, com seu cartão. "Volto quarta às 15h."</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 09 ===================== -->
+<section id="s09">
+  <header class="sec-head l9">
+    <p class="sec-num">09</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Objeções</h2>
+  </header>
+
+  <p class="lead">Seis frases de quem cuida de orçamento apertado e de aluno que cobra resultado.</p>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 1 de 6 · preço</p><p class="obj-q">"Medalha de loja esportiva sai por R$ 6."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Já pesquisei e sei o preço da pronta.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Sai, e é a mesma de qualquer corrida da cidade. O aluno guarda na gaveta com as outras. A minha tem a logo de vocês em relevo e o nome do desafio. É a que ele posta, com a marca da academia no pescoço."</p></div>
+    </div>
+    <p class="erro">Erro fatal: dizer que a metálica é ruim. Ela é boa para outra coisa; a sua é para este desafio.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 2 de 6 · material</p><p class="obj-q">"Medalha de plástico?"</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Tenho medo de parecer brinde de festa infantil.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Pesa aí na mão. Tem uma arruela de aço dentro, por isso ela pesa como medalha. E o dourado é o filamento, sem pintura que descasca. Olha a sua logo em relevo."</p>
+      <p class="acao">Entregue a medalha pela fita. Espere ele pesar.</p></div>
+    </div>
+    <p class="erro">Erro fatal: dizer que é metal ou deixar ele achar que é. Diga o que é, e deixe o peso convencer.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 3 de 6 · prazo</p><p class="obj-q">"E se não ficar pronto até a premiação?"</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Já fiquei na mão com fornecedor em dia de evento.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Por isso eu trabalho com 10 dias e entrego dois dias antes. Se o pedido não couber na minha agenda, eu te digo não hoje, não na véspera. E vai sempre medalha de reserva."</p></div>
+    </div>
+    <p class="erro">Erro fatal: aceitar pedido para depois de amanhã para não perder a venda. Um palco sem medalha encerra a parceria.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 4 de 6 · valor</p><p class="obj-q">"R$ 850 é muito para o desafio."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Não sei se o desafio paga isso.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Quanto cada aluno pagou de inscrição, ou de mensalidade no período? Divide os R$ 850 pelos 40: são R$ 21 por aluno. Muitas academias colocam a medalha dentro da inscrição do desafio."</p>
+      <p class="acao">Se ainda hesitar: ofereça medalha só para quem terminar o desafio, com a lista fechada no fim.</p></div>
+    </div>
+    <p class="erro">Erro fatal: baixar o preço da medalha. Ofereça menos medalhas, nunca medalha abaixo de R$ 15.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 5 de 6 · marca</p><p class="obj-q">"Coloca o logo da marca de treino que a gente segue."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu quero mostrar que somos oficiais.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Logo de marca de treino, de federação ou de evento oficial é marca registrada, e o uso depende do seu contrato com eles. Eu coloco a logo do box e o nome do desafio de vocês. Se o seu contrato permitir, você me manda a autorização por escrito."</p></div>
+    </div>
+    <p class="erro">Erro fatal: imprimir sem autorização "porque todo mundo faz". Quem fabricou responde junto.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 6 de 6 · adiamento</p><p class="obj-q">"Ainda não fechamos a data do desafio."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Sem data, eu não decido.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Sem problema. Quando fechar a data, me avisa com 10 dias de folga. Posso deixar essa medalha com vocês na recepção? Ela ajuda a divulgar o desafio quando vocês anunciarem."</p>
+      <p class="acao">Deixe a medalha pendurada no balcão da recepção.</p></div>
+    </div>
+    <p class="erro">Erro fatal: levar a amostra embora. Medalha na recepção vende o desafio para os alunos e o pedido para o dono.</p>
+  </div>
+</section>
+
+<!-- ===================== 10 ===================== -->
+<section id="s10">
+  <header class="sec-head l10">
+    <p class="sec-num">10</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Follow-up</h2>
+  </header>
+
+  <p class="lead">Neste G-Code, o follow-up é contado a partir da data da premiação, não da visita.</p>
+
+  <div class="fio">
+    <div class="msg">
+      <p class="quando">48h<small>depois da visita</small></p>
+      <p class="balao">"Oi [nome], aqui é o [você], da medalha do [desafio]. Te mando a proposta pros 40 alunos, com a data-limite pra pedido. Posso?"</p>
+    </div>
+    <div class="msg">
+      <p class="quando">15 dias<small>antes do prazo</small></p>
+      <p class="balao">"Oi [nome]! Pra premiação do dia [data], o último dia pra fechar é [data menos 10 dias]. Separo a máquina pra vocês?"</p>
+    </div>
+    <div class="msg fim">
+      <p class="quando">21 dias<small>desistência</small></p>
+      <p class="balao">"Oi [nome], não vou mais insistir. Guardei a arte da medalha de vocês; no próximo desafio, é só me chamar com 10 dias. Bom treino!"</p>
+    </div>
+  </div>
+
+  <div class="ficha">
+    <p class="ficha-tab">Dois dias depois da premiação</p>
+    <p class="balao" style="margin-bottom:12px">"Oi [nome]! Como foi a premiação? Se tiver fotos dos alunos com a medalha, me manda? E já me conta qual é o próximo desafio, que eu reservo a data."</p>
+    <p>A foto do pódio com a logo dele é a amostra mais forte para a próxima academia. E a data do próximo desafio, anotada agora, é o próximo pedido com 10 dias de folga garantidos.</p>
+  </div>
+
+  <p>Reative quem não comprou em maio, antes dos festivais de junho, e em outubro, antes dos de dezembro.</p>
+</section>
+
+<!-- ===================== 11 ===================== -->
+<section id="s11">
+  <header class="sec-head l11">
+    <p class="sec-num">11</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Depois de entrar: as três perguntas</h2>
+  </header>
+
+  <p class="lead">Na entrega das medalhas, você está dentro da academia com o dono de bom humor. Olhe a recepção e a parede de resultados.</p>
+
+  <ol class="perguntas">
+    <li><span>"Como vocês mostram o ranking e os recordes dos alunos hoje?"</span></li>
+    <li><span>"Que outros eventos vocês fazem no ano, além deste desafio?"</span></li>
+    <li><span>"Vocês têm parceria com nutricionista, fisioterapeuta ou outra academia?"</span></li>
+  </ol>
+
+  <p class="label">O que costuma aparecer</p>
+  <ul class="chips">
+    <li>Placa de recordes com nomes trocáveis</li>
+    <li>Troféu rotativo do campeão do mês</li>
+    <li>Chaveiro de brinde para aluno novo</li>
+    <li>Suporte de garrafa e toalha na recepção</li>
+    <li>Medalha de graduação da escolinha</li>
+    <li class="g01">Indicação da assessoria de corrida parceira</li>
+  </ul>
+
+  <div class="ficha escura">
+    <p class="ficha-tab">Meta</p>
+    <p>Três oportunidades por academia atendida e a data do próximo desafio anotada. A data é o pedido seguinte; as oportunidades são o ano inteiro.</p>
+  </div>
+</section>
+
+<!-- ===================== 12 ===================== -->
+<section id="s12">
+  <header class="sec-head l12">
+    <p class="sec-num">12</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Missão 72 horas</h2>
+  </header>
+
+  <p class="lead">Em 72 horas, você sai da impressora parada para três propostas entregues na mão de um comerciante. Aqui, proposta é a medalha com a logo dele e o preço do próximo desafio, com a data-limite escrita.</p>
+
+  <div class="dias">
+    <div class="dia-col">
+      <p class="dia"><b>1</b> Preparar</p>
+      <ul class="check">
+        <li>Listar 20 academias, boxes, escolinhas e assessorias no Maps e no Instagram</li>
+        <li>Anotar o nome do último desafio de cada uma</li>
+        <li>Imprimir o kit e 8 medalhas com a logo e o desafio de cada uma</li>
+        <li>Decorar o script de 40 segundos e as seis respostas</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>2</b> Rua</p>
+      <ul class="check">
+        <li>Visitar 10 academias fora do horário de pico</li>
+        <li>Entregar a medalha de cada uma pela fita</li>
+        <li>Anotar a data e o número de alunos do próximo desafio</li>
+        <li>Deixar medalha pendurada na recepção de quem não decidiu</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>3</b> Fechar</p>
+      <ul class="check">
+        <li>Mandar a proposta com a data-limite de pedido de cada uma</li>
+        <li>Registrar tudo na aba 20 Alvos da planilha</li>
+        <li>Marcar na agenda o follow-up de 15 dias antes de cada prazo</li>
+        <li>Separar as noites de máquina dos pedidos prováveis</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Número honesto</p>
+    <div class="funil" role="img" aria-label="De 10 visitas, 5 conversas boas, 3 datas de desafio anotadas e 1 pedido fechado">
+      <div><span>Visitas</span><b>10</b></div>
+      <div><span>Conversas boas</span><b>5</b></div>
+      <div><span>Datas de desafio anotadas</span><b>3</b></div>
+      <div><span>Pedido fechado</span><b>1</b></div>
+    </div>
+    <p>A medalha com a logo abre muita conversa. O pedido só fecha quando a academia tem desafio marcado, e isso pode estar a dois meses. Cada data anotada é uma venda com dia marcado para acontecer: não descarte ninguém por "ainda não".</p>
+  </div>
+
+  <h3>Depois das 72 horas: a semana 2</h3>
+  <ul class="check">
+    <li>Voltar nas academias onde a medalha ficou na recepção</li>
+    <li>Fazer a segunda leva de 10 visitas, incluindo escolinhas e assessorias</li>
+    <li>No primeiro pedido, receber o sinal e a planilha de nomes antes de imprimir</li>
+    <li>Conferir o lote com a lista da seção 05 e entregar dois dias antes</li>
+    <li>Pedir as fotos da premiação dois dias depois</li>
+  </ul>
+
+  <h3>Registro de visitas</h3>
+  <p>Preencha no carro, logo depois de cada visita. À noite, passe para a aba 20 Alvos da planilha.</p>
+  <div class="tabela">
+  <table class="registro">
+    <tr><th>Academia e bairro</th><th>Quem decide</th><th>Próximo desafio: data e alunos</th><th>Objeção, nas palavras dele</th><th>Volto em</th></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================== COLA ===================== -->
+<section id="cola">
+  <header class="sec-head">
+    <p class="sec-num">+</p>
+    <p class="kicker">Anexo · leia no carro, antes de entrar</p>
+    <h2>Cola de balcão</h2>
+  </header>
+
+  <div class="cola">
+    <div class="cola-top"><b>G-07 · Academias, boxes e escolas esportivas</b><span>Fora do pico · 10h–12h ou 14h–16h</span></div>
+    <div class="cola-grid">
+
+      <div>
+        <h4>Na mão antes de entrar</h4>
+        <ul>
+          <li>Medalha com a logo e o nome do último desafio deles</li>
+          <li>Medalha prata com "Seu nome aqui" no verso</li>
+          <li>Mini troféu de 12 cm</li>
+          <li>Pergunte à recepção pelo dono e espere sentado</li>
+        </ul>
+
+        <h4 style="margin-top:18px">Os 40 segundos</h4>
+        <p class="fala">"Eu faço medalha e troféu com a logo da academia. Fiz uma do [desafio] pra você ver."</p>
+        <p class="acao">Entregue pela fita, balançando. Deixe ele pesar.</p>
+        <p class="fala">"Quando é a premiação do próximo desafio?"</p>
+
+        <h4 style="margin-top:18px">As saídas</h4>
+        <dl>
+          <dt>"Daqui a um mês."</dt><dd>Quantos alunos devem terminar?</dd>
+          <dt>"A gente dá diploma."</dt><dd>E o aluno posta o diploma?</dd>
+          <dt>"Semana que vem."</dt><dd>No máximo 15, com urgência. E o próximo?</dd>
+          <dt>Dono ausente.</dt><dd>Medalha pendurada na recepção; volto quarta 15h.</dd>
+        </dl>
+      </div>
+
+      <div>
+        <h4>As 6 objeções</h4>
+        <dl>
+          <dt>"Pronta sai por R$ 6."</dt><dd>A pronta vai pra gaveta; a sua é postada com a logo.</dd>
+          <dt>"De plástico?"</dt><dd>Pesa aí: arruela de aço dentro. Dourado sem pintura.</dd>
+          <dt>"E se atrasar?"</dt><dd>10 dias, entrega dois antes, medalha de reserva.</dd>
+          <dt>"R$ 850 é muito."</dt><dd>R$ 21 por aluno; cabe na inscrição.</dd>
+          <dt>"Põe o logo da marca de treino."</dt><dd>Só com autorização escrita. Vai a logo do box.</dd>
+          <dt>"Sem data ainda."</dt><dd>Me avisa com 10 dias. A medalha fica aqui.</dd>
+        </dl>
+
+        <h4 style="margin-top:18px">Os números</h4>
+        <table>
+          <tr><th>Nível</th><th>Preço</th><th>O que leva</th></tr>
+          <tr><td>Entrada</td><td class="n">R$ 250–350</td><td>15 medalhas</td></tr>
+          <tr><td>Padrão</td><td class="n">R$ 750–950</td><td>40 medalhas e placa · ~14h</td></tr>
+          <tr><td>Completo</td><td class="n">R$ 1.200–1.500</td><td>+ 3 troféus de pódio</td></tr>
+        </table>
+        <p style="font-family:var(--sans);font-size:13.5px;font-weight:600;margin:8px 0 0">10 dias de antecedência · 50% de sinal · nome no verso +R$ 5</p>
+
+        <h4 style="margin-top:18px">Nunca</h4>
+        <ul class="nunca">
+          <li>Ligar a máquina sem sinal e arte aprovada</li>
+          <li>Aceitar pedido que não cabe em 10 dias sem urgência</li>
+          <li>Imprimir logo de marca de treino sem autorização</li>
+          <li>Deixar o aluno achar que a medalha é de metal</li>
+          <li>Levar a amostra embora</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <svg class="logo" style="fill:var(--green-neon)" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+  <p><strong>G-Code 07 · Academias, boxes e escolas esportivas</strong></p>
+  <p>LR Maker Lab · G-Code 3D. Uso pessoal do comprador. Proibida a revenda ou redistribuição deste material.</p>
+  <p>Todo número deste manual é hipótese a validar: tempos, gramaturas e preços mudam com a sua impressora, o seu filamento e a sua região. Refaça as contas antes da primeira proposta.</p>
+  <p>Não reproduza logotipos ou marcas de métodos de treino, federações, clubes e eventos sem autorização do titular.</p>
+</footer>
+
+<script>
+/* Ilustrações do manual, desenhadas em SVG por JavaScript. Tudo em escala e na paleta da marca. */
+(function(){
+  var G="#2d7a4f", GD="#1f5c3b", INK="#14201a", SOFT="#42514a", MUTE="#6b7a72", CAR="#8a5a1e", WHITE="#f7f6f1", F="Archivo, system-ui, sans-serif";
+  function defs(id){
+    return '<defs><pattern id="'+id+'-l" width="6" height="3.2" patternUnits="userSpaceOnUse">'+
+      '<rect width="6" height="3.2" fill="'+G+'"/><rect y="2.55" width="6" height=".65" fill="'+GD+'" opacity=".5"/></pattern></defs>';
+  }
+  function svg(id,w,h,body,bg){
+    return '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+defs(id)+
+      (bg?'<rect width="'+w+'" height="'+h+'" fill="'+bg+'"/>':'')+body+'</svg>';
+  }
+  function txt(x,y,s,o){
+    o=o||{};
+    return '<text x="'+x+'" y="'+y+'" font-family="'+F+'" font-size="'+(o.size||16)+'" font-weight="'+(o.weight||700)+'" fill="'+(o.fill||INK)+'"'+
+      (o.anchor?' text-anchor="'+o.anchor+'"':'')+(o.len?' textLength="'+o.len+'" lengthAdjust="spacingAndGlyphs"':'')+
+      (o.ls?' letter-spacing="'+o.ls+'"':'')+'>'+s+'</text>';
+  }
+  function sombra(x,y,w,h,r){return '<rect x="'+(x+4)+'" y="'+(y+5)+'" width="'+w+'" height="'+h+'" rx="'+(r||0)+'" fill="rgba(20,32,26,.16)"/>';}
+
+  /* peças */
+  function chaveiro(p,x,y,w,h,nome,fundo){
+    var r=h*.22, cx=x+h*.36, tx=x+h*.64;
+    return sombra(x,y,w,h,r)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+r+'" fill="url(#'+p+'-l)"/>'+
+      '<circle cx="'+cx+'" cy="'+(y+h/2)+'" r="'+(h*.13)+'" fill="'+fundo+'"/>'+
+      '<circle cx="'+(x-h*.1)+'" cy="'+(y+h/2)+'" r="'+(h*.34)+'" fill="none" stroke="#98a29d" stroke-width="'+(h*.07)+'"/>'+
+      txt(tx+(x+w-h*.18-tx)/2,y+h*.7,nome,{size:h*.52,weight:800,fill:WHITE,anchor:"middle",len:(x+w-h*.18-tx)*.86});
+  }
+  function plaquinha(p,x,y,w,h,nome){
+    return sombra(x,y,w,h,h*.12)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(h*.12)+'" fill="url(#'+p+'-l)"/>'+
+      txt(x+w/2,y+h*.68,nome,{size:h*.5,weight:800,fill:WHITE,anchor:"middle",len:w*.52});
+  }
+  function topo(p,x,y,w){
+    var h=w*.3, sx=x+h*.46, sy=y+h*.44, R=h*.42, pts=[];
+    for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5, rr=i%2?R*.45:R; pts.push((sx+rr*Math.cos(a)).toFixed(1)+","+(sy+rr*Math.sin(a)).toFixed(1));}
+    var cx=x+w-h*.4, t0=x+h*1.0, t1=cx-h*.46;
+    return '<g opacity=".16" transform="translate(4 5)"><polygon points="'+pts.join(" ")+'" fill="'+INK+'"/><rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" fill="'+INK+'"/></g>'+
+      '<rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" rx="'+(h*.05)+'" fill="url(#'+p+'-l)"/>'+
+      '<polygon points="'+pts.join(" ")+'" fill="url(#'+p+'-l)"/>'+
+      txt(t0+(t1-t0)/2,y+h*.78,"Ísis",{size:h*.66,weight:900,fill:"url(#"+p+"-l)",anchor:"middle",len:t1-t0})+
+      '<circle cx="'+cx+'" cy="'+(y+h*.46)+'" r="'+(h*.36)+'" fill="url(#'+p+'-l)"/>'+
+      txt(cx,y+h*.64,"5",{size:h*.5,weight:900,fill:WHITE,anchor:"middle"});
+  }
+  function bambu(x1,y1,x2,y2,w){
+    w=w||7;
+    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#cfa964" stroke-width="'+w+'" stroke-linecap="round"/>'+
+      '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#ead19c" stroke-width="'+(w*.28)+'" stroke-linecap="round" transform="translate('+(-w*.18)+' 0)"/>';
+  }
+  function caixaMilk(p,x,y,w,h,comPlaca){
+    var t=y+h*.28;
+    var s='<ellipse cx="'+(x+w/2+6)+'" cy="'+(y+h+2)+'" rx="'+(w*.58)+'" ry="'+(h*.035)+'" fill="rgba(20,32,26,.14)"/>'+
+      '<rect x="'+(x+w*.32)+'" y="'+y+'" width="'+(w*.36)+'" height="'+(h*.08)+'" fill="#e9e5da" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<polygon points="'+x+','+t+' '+(x+w/2)+','+(y+h*.07)+' '+(x+w)+','+t+'" fill="#efece4" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+x+'" y="'+t+'" width="'+w+'" height="'+(h*.72)+'" fill="'+WHITE+'" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+(x+w*.82)+'" y="'+t+'" width="'+(w*.18)+'" height="'+(h*.72)+'" fill="rgba(20,32,26,.05)"/>';
+    if(comPlaca) s+=plaquinha(p,x+w*.14,y+h*.52,w*.62,w*.24,"Ísis");
+    return s;
+  }
+  function placa(x,y,w,h){
+    var s='<rect x="'+(x+6)+'" y="'+(y+7)+'" width="'+w+'" height="'+h+'" fill="rgba(20,32,26,.18)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#bdb6a7"/>';
+    for(var i=x+9;i<x+w;i+=9) s+='<line x1="'+i+'" y1="'+y+'" x2="'+i+'" y2="'+(y+h)+'" stroke="rgba(20,32,26,.05)" stroke-width="1"/>';
+    return s;
+  }
+  function elastico(x1,x2,y){return '<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" stroke="#1d1f1e" stroke-width="3.5" stroke-linecap="round" opacity=".88"/>';}
+  function mesa(x,y,s){
+    var m='<rect x="'+(x+6)+'" y="'+(y+8)+'" width="'+s+'" height="'+s+'" rx="10" fill="rgba(20,32,26,.2)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" rx="10" fill="#1b2a22"/>';
+    for(var i=1;i<10;i++){var d=s*i/10;
+      m+='<line x1="'+(x+d)+'" y1="'+(y+6)+'" x2="'+(x+d)+'" y2="'+(y+s-6)+'" stroke="rgba(74,222,128,.1)"/>'+
+         '<line x1="'+(x+6)+'" y1="'+(y+d)+'" x2="'+(x+s-6)+'" y2="'+(y+d)+'" stroke="rgba(74,222,128,.1)"/>';}
+    return m;
+  }
+  function cota(x1,x2,y,rotulo){
+    return '<g stroke="'+MUTE+'" stroke-width="1.5"><line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'"/><line x1="'+x1+'" y1="'+(y-7)+'" x2="'+x1+'" y2="'+(y+7)+'"/><line x1="'+x2+'" y1="'+(y-7)+'" x2="'+x2+'" y2="'+(y+7)+'"/></g>'+
+      '<rect x="'+((x1+x2)/2-(rotulo.length*5+12))+'" y="'+(y-12)+'" width="'+(rotulo.length*10+24)+'" height="24" fill="#eceae4"/>'+
+      txt((x1+x2)/2,y+6,rotulo,{size:15,weight:700,fill:SOFT,anchor:"middle"});
+  }
+
+  /* cenas */
+  /* peças de premiação */
+  var OUROM="#d4a72c", PRATA="#c3c9cc", BRONZE="#b07a45";
+  function medalha(p,cx,cy,r,cor,frente,texto,fita){
+    var s='';
+    if(fita!==false){
+      s+='<path d="M'+(cx-r*.42)+' '+(cy-r*2.2)+' L'+(cx-r*.18)+' '+(cy-r*.9)+' L'+(cx+r*.18)+' '+(cy-r*.9)+' L'+(cx+r*.42)+' '+(cy-r*2.2)+'" fill="none" stroke="'+G+'" stroke-width="'+(r*.34)+'" stroke-linejoin="round"/>';
+      s+='<rect x="'+(cx-r*.24)+'" y="'+(cy-r*1.14)+'" width="'+(r*.48)+'" height="'+(r*.2)+'" rx="'+(r*.05)+'" fill="#bfa15a"/>';
+    }
+    s+='<circle cx="'+(cx+4)+'" cy="'+(cy+5)+'" r="'+r+'" fill="rgba(20,32,26,.18)"/>';
+    s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+cor+'"/><circle cx="'+cx+'" cy="'+cy+'" r="'+(r*.86)+'" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="'+(r*.04)+'"/>';
+    s+='<circle cx="'+(cx-r*.35)+'" cy="'+(cy-r*.4)+'" r="'+(r*.28)+'" fill="rgba(255,255,255,.28)"/>';
+    if(frente){
+      var L=r*.38;
+      s+='<polygon points="'+cx+','+(cy-L*1.3)+' '+(cx+L)+','+(cy-L*.3)+' '+cx+','+(cy+L*.7)+' '+(cx-L)+','+(cy-L*.3)+'" fill="'+G+'"/>';
+      s+=txt(cx,cy+r*.62,texto||"DESAFIO 30 DIAS",{size:r*.15,weight:900,fill:G,anchor:"middle",len:r*1.2});
+    } else if(texto){
+      s+=txt(cx,cy-r*.05,texto,{size:r*.2,weight:900,fill:INK,anchor:"middle",len:r*1.2})+txt(cx,cy+r*.3,"MARÇO 2027",{size:r*.13,weight:800,fill:SOFT,anchor:"middle"});
+    }
+    return s;
+  }
+  function trofeu(cx,by,h,cor){
+    var w=h*.55, s='';
+    s+='<rect x="'+(cx-w*.45)+'" y="'+(by-h*.14)+'" width="'+(w*.9)+'" height="'+(h*.14)+'" rx="4" fill="url(#an-l)"/>';
+    s+='<rect x="'+(cx-w*.08)+'" y="'+(by-h*.42)+'" width="'+(w*.16)+'" height="'+(h*.28)+'" fill="'+cor+'"/>';
+    s+='<path d="M'+(cx-w*.5)+' '+(by-h)+' L'+(cx+w*.5)+' '+(by-h)+' Q'+(cx+w*.46)+' '+(by-h*.42)+' '+cx+' '+(by-h*.4)+' Q'+(cx-w*.46)+' '+(by-h*.42)+' '+(cx-w*.5)+' '+(by-h)+' Z" fill="'+cor+'"/>';
+    s+='<path d="M'+(cx-w*.48)+' '+(by-h*.92)+' Q'+(cx-w*.82)+' '+(by-h*.8)+' '+(cx-w*.4)+' '+(by-h*.6)+'" fill="none" stroke="'+cor+'" stroke-width="'+(h*.04)+'"/><path d="M'+(cx+w*.48)+' '+(by-h*.92)+' Q'+(cx+w*.82)+' '+(by-h*.8)+' '+(cx+w*.4)+' '+(by-h*.6)+'" fill="none" stroke="'+cor+'" stroke-width="'+(h*.04)+'"/>';
+    s+='<ellipse cx="'+(cx-w*.18)+'" cy="'+(by-h*.82)+'" rx="'+(w*.08)+'" ry="'+(h*.1)+'" fill="rgba(255,255,255,.3)"/>';
+    return s;
+  }
+
+  var ILL={
+    medalha:function(){
+      var p="am", b='';
+      b+=medalha(p,160,230,110,OUROM,true,"DESAFIO VERÃO");
+      b+=medalha(p,450,230,110,OUROM,false,"ANA SOUZA");
+      b+=txt(160,375,"Frente",{size:18,weight:800,fill:SOFT,anchor:"middle"})+txt(450,375,"Verso",{size:18,weight:800,fill:SOFT,anchor:"middle"});
+      return svg(p,610,395,b,"#f2efe7");
+    },
+    niveis:function(){
+      var p="an", b='';
+      for(var i=0;i<6;i++) b+=medalha(p,80+(i%3)*80,110+Math.floor(i/3)*110,34,OUROM,true,"DESAFIO",false);
+      for(var j=0;j<10;j++) b+=medalha(p,420+(j%5)*52,90+Math.floor(j/5)*70,22,OUROM,true,"DESAFIO",false);
+      b+=plaquinha(p,430,250,200,50,"Campeões do desafio");
+      b+=trofeu(1000,300,190,OUROM)+trofeu(880,300,160,PRATA)+trofeu(1115,300,130,BRONZE);
+      for(var k=0;k<5;k++) b+=medalha(p,860+k*56,60,20,OUROM,true,"D",false);
+      [[200,"R$ 250–350","ENTRADA · 15 MEDALHAS"],[560,"R$ 750–950","PADRÃO · 40 MEDALHAS E PLACA"],[1000,"R$ 1.200–1.500","COMPLETO · COM PÓDIO"]].forEach(function(r){
+        b+=txt(r[0],356,r[1],{size:30,weight:900,fill:INK,anchor:"middle"})+txt(r[0],384,r[2],{size:14,weight:700,fill:G,anchor:"middle",ls:1.2});
+      });
+      return svg(p,1200,400,b,"#f2efe7");
+    },
+    producao:function(){
+      var p="ap", b='';
+      b+=mesa(40,30,330);
+      for(var i=0;i<9;i++) b+=medalha(p,40+62+(i%3)*103,30+62+Math.floor(i/3)*103,40,OUROM,true,"DESAFIO",false);
+      b+=txt(205,392,"Mesa de 9 medalhas · 3h",{size:16,weight:800,fill:SOFT,anchor:"middle"});
+      var X=[470,640,810];
+      b+='<circle cx="'+X[0]+'" cy="180" r="62" fill="'+OUROM+'" opacity=".55"/>'+'<circle cx="'+X[0]+'" cy="180" r="62" fill="none" stroke="'+OUROM+'" stroke-width="3"/>';
+      b+='<circle cx="'+X[1]+'" cy="180" r="62" fill="'+OUROM+'" opacity=".55"/><circle cx="'+X[1]+'" cy="180" r="30" fill="#aeb4b8" stroke="#8b9195" stroke-width="3"/><circle cx="'+X[1]+'" cy="180" r="11" fill="#f2efe7"/>';
+      b+=medalha(p,X[2],180,62,OUROM,true,"DESAFIO",false);
+      b+='<polygon points="548,180 536,172 536,188" fill="'+G+'"/><polygon points="718,180 706,172 706,188" fill="'+G+'"/>';
+      b+=txt(X[0],272,"1 · Base até 2 mm",{size:15,weight:800,fill:SOFT,anchor:"middle"})+txt(X[1],272,"2 · Pausa: arruela",{size:15,weight:800,fill:CAR,anchor:"middle"})+txt(X[2],272,"3 · Fecha por cima",{size:15,weight:800,fill:SOFT,anchor:"middle"});
+      return svg(p,900,410,b,"#f2efe7");
+    },
+    kit:function(){
+      var p="ak", b='', u=36;
+      b+=medalha(p,60+3.5*u,300,3.5*u,OUROM,true,"DESAFIO VERÃO")+cota(60,60+7*u,470,"7 cm");
+      b+=medalha(p,340+3.5*u,300,3.5*u,PRATA,false,"SEU NOME AQUI")+cota(340,340+7*u,470,"7 cm");
+      b+=trofeu(620+3*u,440,12*u*.9,OUROM).replace(/url\(#an-l\)/g,"url(#ak-l)")+cota(620+3*u-12*u*.9*.55*.5,620+3*u+12*u*.9*.55*.5,470,"12 cm alt.");
+      var rx=30, ry=500;
+      b+='<rect x="'+rx+'" y="'+ry+'" width="'+(24*u+18)+'" height="56" rx="3" fill="#d3d9d6" stroke="#b3bdb8"/>';
+      for(var mm=0;mm<=240;mm++){var x=rx+18+mm*u/10, hh=mm%10===0?20:(mm%5===0?13:7);
+        b+='<line x1="'+x.toFixed(1)+'" y1="'+ry+'" x2="'+x.toFixed(1)+'" y2="'+(ry+hh)+'" stroke="#55615b" stroke-width="'+(mm%10===0?1.4:.8)+'"/>';
+        if(mm%10===0) b+=txt(x,ry+40,String(mm/10),{size:12,weight:600,fill:SOFT,anchor:"middle"});}
+      return svg(p,930,580,b,"#eceae4");
+    }
+  };
+  var alvos=document.querySelectorAll("[data-ill]");
+  for(var i=0;i<alvos.length;i++){var f=ILL[alvos[i].getAttribute("data-ill")]; if(f) alvos[i].innerHTML=f();}
+})();
+</script>
+
+</body>
+</html>
