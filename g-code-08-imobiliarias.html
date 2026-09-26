@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G-Code 08 · Imobiliárias</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14201a;
+    --ink-soft:#42514a;
+    --ink-mute:#6b7a72;
+    --paper:#fbfaf6;
+    --paper-2:#f2efe7;
+    --rule:#ddd8cc;
+    --green-deep:#2d7a4f;
+    --green-neon:#4ade80;
+    --green-wash:#e4f1e8;
+    --plate:#1b2a22;
+    --caramel:#8a5a1e;
+    --caramel-soft:#f6ecdc;
+    --measure:66ch;
+    --wide:1080px;
+    --gut:clamp(18px,5vw,64px);
+    --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    box-sizing:border-box;
+    color-scheme:light;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 12px);-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%}
+
+  /* =========================================================
+     CAPA — a mesa de impressão
+     ========================================================= */
+  .cover{
+    background-color:var(--plate);
+    background-image:
+      linear-gradient(rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.07) 1px,transparent 1px),
+      linear-gradient(rgba(74,222,128,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(74,222,128,.035) 1px,transparent 1px);
+    background-size:80px 80px,80px 80px,16px 16px,16px 16px;
+    color:var(--paper);
+    padding:clamp(24px,5vw,56px) var(--gut) 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .cover-top{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;
+    font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.02em;
+    margin:0 0 clamp(28px,6vw,56px);
+  }
+  .cover-brand{color:var(--green-neon);margin:0}
+  .cover-level{color:#9fb3a8;margin:0;font-stretch:112%}
+  .cover-code{
+    font-family:var(--sans);
+    font-weight:900;
+    font-stretch:78%;
+    font-size:clamp(110px,31vw,330px);
+    line-height:.78;
+    letter-spacing:-.035em;
+    margin:0 0 0 -.04em;
+    color:var(--green-neon);
+    background:repeating-linear-gradient(180deg,var(--green-neon) 0 .052em,#2fbf63 .052em .062em);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .cover-grid{
+    display:grid;gap:clamp(18px,3vw,40px);
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));
+    align-items:end;
+    margin-top:clamp(14px,2vw,22px);
+  }
+  .cover-market{
+    font-family:var(--sans);
+    font-weight:800;
+    font-stretch:88%;
+    font-size:clamp(30px,5.4vw,58px);
+    line-height:1;
+    letter-spacing:-.025em;
+    margin:0;
+    text-wrap:balance;
+  }
+  .cover-promise{
+    max-width:46ch;
+    margin:0;
+    font-size:clamp(17px,2vw,20px);
+    color:#cdd8d0;
+  }
+  .cover > *{position:relative;z-index:1}
+  .cover > .cover-mark{
+    position:absolute;z-index:0;
+    right:clamp(-120px,-6vw,-30px);top:clamp(90px,10vw,130px);
+    width:clamp(260px,46vw,580px);height:auto;
+    fill:rgba(74,222,128,.07);
+  }
+  .cover-brand{display:flex;align-items:center;gap:10px}
+  .cover-brand .logo{width:26px;height:auto;fill:var(--green-neon);flex:none}
+  .cover-72h{
+    list-style:none;padding:0;margin:clamp(30px,5vw,48px) 0 0;max-width:none;
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;
+  }
+  .cover-72h li{max-width:none;margin:0;padding:14px 16px 16px;background:rgba(20,32,26,.78);border-top:3px solid rgba(74,222,128,.35);font-family:var(--sans)}
+  .cover-72h b{display:block;font-weight:900;font-stretch:78%;font-size:26px;letter-spacing:-.02em;line-height:1;color:var(--paper);margin-bottom:6px}
+  .cover-72h span{display:block;font-size:14px;line-height:1.35;color:#b9c8bf}
+  .cover-72h .fim{background:var(--green-neon);border-top-color:var(--green-neon)}
+  .cover-72h .fim b,.cover-72h .fim span{color:var(--ink)}
+  .cover-72h .fim span{font-weight:700}
+
+  .radar{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px;
+    background:rgba(74,222,128,.22);
+    border-top:1px solid rgba(74,222,128,.22);
+    margin:clamp(28px,5vw,44px) calc(var(--gut) * -1) 0;
+  }
+  .radar div{background:var(--ink);padding:18px var(--gut) 22px}
+  .radar dt{
+    font-family:var(--sans);
+    font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:#8ba296;margin:0 0 6px;
+  }
+  .radar dd{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:85%;font-size:24px;line-height:1.05;letter-spacing:-.02em;
+    margin:0;color:var(--paper);
+  }
+  .radar .hot dd{color:var(--green-neon)}
+
+  /* =========================================================
+     CORPO
+     ========================================================= */
+  main{padding-inline:var(--gut)}
+  section{
+    max-width:var(--wide);
+    margin-inline:auto;
+    padding-block:clamp(56px,8vw,96px) 0;
+  }
+  .sec-head{
+    display:grid;grid-template-columns:auto 1fr;gap:6px clamp(14px,2.4vw,28px);
+    align-items:end;
+    margin:0 0 clamp(22px,3vw,34px);
+    padding-bottom:clamp(16px,2vw,22px);
+    border-bottom:2px solid var(--ink);
+  }
+  .sec-num{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:72%;
+    font-size:clamp(64px,10vw,112px);
+    line-height:.8;letter-spacing:-.04em;
+    color:var(--green-deep);
+    margin:0;
+    grid-row:span 2;
+  }
+  .camadas{display:flex;gap:3px;max-width:260px;margin:0 0 10px}
+  .camadas i{flex:1;height:7px;background:var(--rule)}
+  .l1 i:nth-child(-n+1),.l2 i:nth-child(-n+2),.l3 i:nth-child(-n+3),.l4 i:nth-child(-n+4),
+  .l5 i:nth-child(-n+5),.l6 i:nth-child(-n+6),.l7 i:nth-child(-n+7),.l8 i:nth-child(-n+8),
+  .l9 i:nth-child(-n+9),.l10 i:nth-child(-n+10),.l11 i:nth-child(-n+11),.l12 i:nth-child(-n+12){background:var(--green-deep)}
+  .kicker{
+    font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--ink-mute);margin:0 0 4px;
+  }
+  h2{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;
+    font-size:clamp(28px,4.2vw,44px);
+    line-height:1.02;letter-spacing:-.028em;
+    margin:0;
+    text-wrap:balance;
+  }
+  h3{
+    font-family:var(--sans);
+    font-weight:700;font-size:19px;letter-spacing:-.012em;
+    margin:2.2em 0 .6em;
+    text-wrap:balance;
+  }
+  p,li{max-width:var(--measure)}
+  p{margin:0 0 1em}
+  ul,ol{padding-left:1.1em;margin:0 0 1em}
+  li{margin-bottom:.45em}
+  strong{font-weight:600}
+  .lead{font-size:clamp(19px,2.1vw,22px);line-height:1.5;color:var(--ink-soft);max-width:60ch;margin-bottom:1.4em}
+  .label{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);margin:0 0 10px;
+  }
+
+  .split{display:grid;gap:clamp(16px,2.6vw,28px);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));align-items:start;margin:0 0 20px}
+  .split > *{margin-bottom:0}
+
+  /* ---------- fichas e avisos ---------- */
+  .ficha{
+    border:1px solid var(--rule);
+    background:#fff;
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .ficha-tab{
+    font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;
+    color:var(--green-deep);
+    margin:0 0 12px;
+  }
+  .ficha p:last-child,.ficha ul:last-child{margin-bottom:0}
+  .ficha.escura{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .ficha.escura .ficha-tab{color:var(--green-neon)}
+
+  .aviso{
+    background:var(--caramel-soft);
+    border-top:4px solid var(--caramel);
+    padding:clamp(18px,3vw,26px);
+    margin:0 0 18px;
+  }
+  .aviso .ficha-tab{color:var(--caramel)}
+  .aviso p:last-child,.aviso ul:last-child{margin-bottom:0}
+  .aviso-grande{
+    font-family:var(--sans);font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.1;letter-spacing:-.02em;
+    color:var(--caramel);margin:0 0 .5em;
+  }
+
+  /* ---------- fala e ação ---------- */
+  .fala{
+    font-size:clamp(19px,2.2vw,21px);
+    line-height:1.5;
+    border-left:4px solid var(--green-neon);
+    padding:2px 0 2px 18px;
+    margin:0 0 1em;
+    max-width:56ch;
+  }
+  .acao{
+    font-family:var(--sans);
+    font-weight:600;font-size:15px;
+    background:var(--paper-2);
+    padding:12px 16px 12px 44px;
+    margin:0 0 1em;
+    max-width:var(--measure);
+    position:relative;
+  }
+  .acao::before{
+    content:"";position:absolute;left:16px;top:17px;width:14px;height:10px;
+    border:2px solid var(--green-deep);border-radius:2px;
+  }
+
+  /* ---------- tabelas ---------- */
+  .tabela{overflow-x:auto;margin:0 0 20px;max-width:760px}
+  table{
+    border-collapse:collapse;
+    width:100%;
+    font-family:var(--sans);
+    font-size:15px;
+  }
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-weight:700;color:var(--ink-mute);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-stretch:112%;border-bottom:2px solid var(--ink)}
+  td.n{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+  tr.total td{border-bottom:0;border-top:2px solid var(--ink);font-weight:800}
+
+  /* =========================================================
+     COMPONENTES VISUAIS POR SEÇÃO
+     ========================================================= */
+
+  /* 01 · filtro */
+  .filtro{list-style:none;padding:0;margin:0 0 28px;max-width:none;border-top:2px solid var(--ink)}
+  .filtro li{
+    display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 16px;align-items:center;
+    max-width:none;margin:0;padding:16px 0;border-bottom:1px solid var(--rule);
+  }
+  .filtro .ok{width:22px;height:22px;background:var(--green-deep);position:relative}
+  .filtro .ok::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid var(--green-neon);border-width:0 3px 3px 0;transform:rotate(45deg)}
+  .filtro .crit{font-family:var(--sans);font-weight:700;font-size:16px;line-height:1.25}
+  .filtro .crit small{display:block;font-family:var(--serif);font-weight:400;font-size:15px;color:var(--ink-soft);margin-top:2px}
+  .filtro .val{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.02em;text-align:right;white-space:nowrap;color:var(--green-deep)}
+
+  .conta{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:1px;
+    background:var(--ink);border:1px solid var(--ink);margin:0 0 22px;
+  }
+  .conta div{background:var(--paper);padding:18px 20px}
+  .conta div:last-child{background:var(--ink);color:var(--paper)}
+  .conta .big{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,50px);line-height:1;letter-spacing:-.03em}
+  .conta div:last-child .big{color:var(--green-neon)}
+  .conta .cap{display:block;font-family:var(--sans);font-size:14px;font-weight:600;margin-top:8px;color:var(--ink-soft)}
+  .conta div:last-child .cap{color:#b9c8bf}
+  .conta .op{font-family:var(--sans);font-weight:700;color:var(--ink-mute);font-size:13px;display:block;margin-bottom:6px}
+
+  /* 02 · tipos de cliente + semana */
+  .tipos{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));margin:0 0 22px}
+  .tipo{border-top:4px solid var(--green-deep);background:#fff;padding:16px 18px 18px;border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .tipo.principal{border-top-color:var(--green-neon);background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .tipo h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:20px;line-height:1.1;letter-spacing:-.015em;margin:0 0 6px}
+  .tipo .tag{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 10px}
+  .tipo.principal .tag{color:var(--green-neon)}
+  .tipo p{font-size:15.5px;line-height:1.5;margin:0}
+
+  .semana{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:0 0 20px;max-width:760px}
+  .dia-sem{padding:12px 8px 14px;background:var(--paper-2);min-height:112px;display:flex;flex-direction:column;gap:6px}
+  .dia-sem b{font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:22px;letter-spacing:-.02em;line-height:1}
+  .dia-sem span{font-family:var(--sans);font-size:12.5px;line-height:1.3;color:var(--ink-soft)}
+  .dia-sem.ir{background:var(--green-deep);color:#fff}
+  .dia-sem.ir span{color:#e4f1e8}
+  .dia-sem.ir em{font-style:normal;font-family:var(--sans);font-weight:800;font-size:15px;color:var(--green-neon)}
+  .dia-sem.nao{background:repeating-linear-gradient(135deg,var(--paper-2) 0 8px,#e8e3d8 8px 10px)}
+
+  /* 03 · dores */
+  .dores{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 20px}
+  .dor{background:#fff;border:1px solid var(--rule);padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px}
+  .dor .dn{font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:54px;line-height:.8;color:var(--rule)}
+  .dor h4{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:21px;line-height:1.1;letter-spacing:-.015em;margin:0}
+  .dor p{font-size:15.5px;line-height:1.52;margin:0}
+  .dor.fecha{background:var(--ink);border-color:var(--ink);color:#dfe8e2}
+  .dor.fecha .dn{color:var(--green-neon)}
+  .dor.fecha h4{color:#fff}
+
+  /* 04 · níveis */
+  .niveis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));align-items:stretch;margin:0 0 24px}
+  .ficha.nivel{margin:0;display:flex;flex-direction:column;border-top:4px solid var(--rule)}
+  .nivel .preco{
+    font-family:var(--sans);
+    font-weight:900;font-stretch:78%;font-size:clamp(30px,3.6vw,38px);line-height:1;letter-spacing:-.03em;
+    margin:.1em 0 .5em;
+  }
+  .nivel p:not(.preco):not(.ficha-tab){font-size:15.5px;line-height:1.52}
+  .ficha.nivel.meio{background:var(--ink);color:#dfe8e2;border-color:var(--ink);border-top-color:var(--green-neon)}
+  .ficha.nivel.meio .ficha-tab{color:var(--green-neon)}
+  .ficha.nivel.meio .preco{color:var(--green-neon)}
+  .selo{align-self:flex-start;font-family:var(--sans);font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--green-neon);color:var(--ink);padding:4px 8px;margin:0 0 12px}
+
+  .prazo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:6px 0 18px}
+  .prazo div{background:rgba(255,255,255,.7);padding:10px 6px;text-align:center;font-family:var(--sans)}
+  .prazo b{display:block;font-weight:800;font-size:14px}
+  .prazo span{display:block;font-size:11.5px;line-height:1.25;color:var(--ink-soft);margin-top:3px}
+  .prazo .p-ok{background:var(--green-deep);color:#fff}
+  .prazo .p-ok span{color:#e4f1e8}
+  .prazo .p-festa{background:var(--caramel);color:#fff}
+  .prazo .p-festa span{color:#f6ecdc}
+
+  /* 05 · material */
+  .cores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 20px;max-width:640px}
+  .cor{font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.25}
+  .cor i{display:block;aspect-ratio:1;max-width:100%;border:1px solid rgba(20,32,26,.18);margin-bottom:8px;
+    background-image:repeating-linear-gradient(180deg,rgba(0,0,0,.05) 0 2px,transparent 2px 5px)}
+  .painel{background:var(--plate);color:#dfe8e2;padding:18px 20px;font-family:var(--sans);font-size:14.5px}
+  .painel .ficha-tab{color:var(--green-neon)}
+  .painel dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0}
+  .painel dt,.painel dd{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1);margin:0}
+  .painel dt{color:#9fb3a8}
+  .painel dd{font-family:var(--mono);color:var(--green-neon);text-align:right;padding-left:12px}
+  .letra{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:0 0 20px}
+  .letra div{background:#fff;padding:16px 18px}
+  .letra b{display:block;font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:44px;line-height:1;letter-spacing:-.03em;color:var(--green-deep)}
+  .letra span{font-family:var(--sans);font-size:13.5px;color:var(--ink-soft)}
+  .grafia{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .grafia span{font-family:var(--sans);font-weight:800;font-stretch:85%;font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;line-height:1;padding:10px 16px 12px;border:2px solid var(--ink);background:#fff}
+  .grafia span.certo{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+
+  /* 06 · kit */
+  .mesa{margin:0 0 10px;max-width:760px}
+  .mesa-bar{display:flex;gap:3px;height:64px}
+  .mesa-bar div{background:var(--green-deep);color:#fff;font-family:var(--sans);font-weight:800;font-size:15px;padding:10px 12px;display:flex;align-items:flex-end;min-width:0;overflow:hidden;white-space:nowrap}
+  .mesa-bar div:nth-child(2){background:var(--ink)}
+  .mesa-bar div:nth-child(3){background:#3d9a66}
+  .mesa-leg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px;margin:14px 0 0;padding:0;list-style:none;max-width:none}
+  .mesa-leg li{max-width:none;margin:0;font-family:var(--sans);font-size:14px;line-height:1.35;padding-left:18px;position:relative}
+  .mesa-leg li::before{content:"";position:absolute;left:0;top:4px;width:10px;height:10px;background:var(--green-deep)}
+  .mesa-leg li:nth-child(2)::before{background:var(--ink)}
+  .mesa-leg li:nth-child(3)::before{background:#3d9a66}
+  .mesa-leg b{display:block;font-size:15px}
+  .totais{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;margin:22px 0 24px;padding:16px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+  .totais div{font-family:var(--sans)}
+  .totais b{display:block;font-weight:900;font-stretch:75%;font-size:clamp(34px,5vw,48px);line-height:1;letter-spacing:-.03em}
+  .totais span{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute)}
+
+  /* 07 · gráfico de retorno por hora */
+  .grafico{margin:8px 0 12px;max-width:820px;font-family:var(--sans)}
+  .g-row{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:6px 16px;align-items:center;padding:7px 0}
+  .g-lab{font-size:14px;line-height:1.25;font-weight:600}
+  .g-lab small{display:block;font-weight:500;color:var(--ink-mute);font-size:12.5px}
+  .g-track{position:relative;height:30px;background:
+    linear-gradient(90deg,transparent calc(21.43% - 1px),var(--caramel) calc(21.43% - 1px) calc(21.43% + 1px),transparent calc(21.43% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(14.2857% - 1px),#e6e1d6 calc(14.2857% - 1px) 14.2857%)}
+  .g-bar{height:100%;width:calc(var(--v) / 70 * 100%);background:var(--green-deep);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-weight:800;font-size:13.5px;white-space:nowrap;min-width:64px}
+  .g-bar.baixo{background:var(--caramel)}
+  .g-bar.top{background:var(--green-neon);color:var(--ink)}
+  .g-axis{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:16px;font-size:11.5px;color:var(--ink-mute);font-weight:600}
+  .g-ticks{position:relative;height:18px}
+  .g-ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+  .g-ticks span:first-child{transform:none}
+  .g-ticks span.piso{color:var(--caramel);font-weight:800}
+  .g-nota{font-family:var(--sans);font-size:13px;color:var(--ink-mute);margin:6px 0 24px}
+
+
+  .folha{background:#fff;border:1px solid var(--rule);box-shadow:6px 6px 0 var(--paper-2);padding:clamp(18px,3vw,28px);margin:0 0 22px;max-width:780px}
+  .folha-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:4px}
+  .folha-top b{font-family:var(--sans);font-weight:900;font-stretch:80%;font-size:26px;letter-spacing:-.02em}
+  .folha-top span{font-family:var(--sans);font-size:13px;color:var(--ink-mute);font-weight:600}
+  .folha .tabela{margin:0;max-width:none}
+  .folha td.revende{color:var(--green-deep)}
+
+  /* 08 · os 40 segundos */
+  .relogio{position:relative;margin:6px 0 26px;padding-left:92px;max-width:780px}
+  .relogio::before{content:"";position:absolute;left:70px;top:6px;bottom:6px;width:2px;background:var(--rule)}
+  .passo{position:relative;margin:0 0 18px}
+  .passo:last-child{margin-bottom:0}
+  .passo .t{position:absolute;left:-92px;top:2px;width:60px;text-align:right;font-family:var(--sans);font-weight:800;font-stretch:80%;font-size:17px;color:var(--green-deep);white-space:nowrap}
+  .passo::before{content:"";position:absolute;left:-27px;top:8px;width:12px;height:12px;background:var(--paper);border:3px solid var(--green-deep)}
+  .passo.cala::before{background:var(--green-neon);border-color:var(--ink)}
+  .passo .fala,.passo .acao,.passo p{margin-bottom:.6em}
+  .saidas{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0 0 18px}
+  .saida{background:#fff;border:1px solid var(--rule);padding:18px 20px}
+  .saida .quando{font-family:var(--sans);font-weight:800;font-stretch:90%;font-size:18px;line-height:1.2;letter-spacing:-.01em;margin:0 0 8px}
+  .saida p{font-size:15.5px;line-height:1.52;margin:0}
+
+  /* 09 · objeções */
+  .obj{border:1px solid var(--rule);background:#fff;margin:0 0 18px;display:grid;grid-template-columns:minmax(0,1fr)}
+  .obj-head{background:var(--ink);color:#fff;padding:clamp(18px,3vw,26px)}
+  .obj-n{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-neon);margin:0 0 8px}
+  .obj-q{
+    font-family:var(--sans);
+    font-weight:800;font-stretch:88%;font-size:clamp(22px,3vw,30px);line-height:1.12;letter-spacing:-.02em;
+    margin:0;text-wrap:balance;max-width:none;
+  }
+  .obj-body{padding:clamp(18px,3vw,26px);display:grid;gap:4px 28px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+  .obj-body > *{margin:0}
+  .obj-real{color:var(--ink-soft);font-style:italic;font-size:16px}
+  .obj-real::before{content:"O que ela quer dizer";display:block;font-style:normal;font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:6px}
+  .obj-resp{grid-column:1/-1}
+  .obj-resp .label{margin-top:12px}
+  .erro{
+    grid-column:1/-1;
+    color:var(--caramel);font-weight:700;font-family:var(--sans);font-size:15px;
+    background:var(--caramel-soft);margin:0;padding:12px clamp(18px,3vw,26px);
+  }
+
+  /* 10 · follow-up */
+  .fio{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin:0 0 22px;align-items:start}
+  .msg{position:relative}
+  .msg .quando{font-family:var(--sans);font-weight:900;font-stretch:75%;font-size:40px;line-height:1;letter-spacing:-.03em;color:var(--green-deep);margin:0 0 10px}
+  .msg .quando small{font-size:14px;font-weight:700;font-stretch:100%;letter-spacing:0;color:var(--ink-mute);margin-left:6px}
+  .balao{background:var(--green-wash);border-radius:14px 14px 14px 3px;padding:14px 16px;font-size:16px;line-height:1.5;margin:0}
+  .msg.fim .quando{color:var(--caramel)}
+  .msg.fim .balao{background:var(--caramel-soft)}
+  .msg .obs{font-family:var(--sans);font-size:13.5px;color:var(--ink-mute);margin:10px 0 0}
+
+  /* 11 · perguntas */
+  .perguntas{list-style:none;padding:0;margin:0 0 22px;counter-reset:q;max-width:none}
+  .perguntas li{counter-increment:q;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:baseline;max-width:none;padding:14px 0;border-bottom:1px solid var(--rule);margin:0}
+  .perguntas li::before{content:counter(q);font-family:var(--sans);font-weight:900;font-stretch:72%;font-size:48px;line-height:.8;color:var(--green-deep)}
+  .perguntas span{font-family:var(--sans);font-weight:700;font-stretch:92%;font-size:clamp(20px,2.6vw,26px);line-height:1.2;letter-spacing:-.015em}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;padding:0;list-style:none;max-width:none}
+  .chips li{margin:0;max-width:none;font-family:var(--sans);font-size:14px;font-weight:600;border:1.5px solid var(--green-deep);color:var(--green-deep);padding:6px 12px}
+  .chips li.g01{background:var(--green-deep);color:#fff}
+
+  /* 12 · missão */
+  .dias{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));margin:0 0 26px;align-items:start}
+  .dia-col{background:#fff;border:1px solid var(--rule);padding:0 20px 8px}
+  .dia{
+    font-family:var(--sans);
+    font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);
+    margin:0 -20px 16px;padding:16px 20px 14px;border-bottom:2px solid var(--ink);
+    display:flex;align-items:baseline;gap:12px;
+  }
+  .dia b{font-weight:900;font-stretch:72%;font-size:56px;line-height:.8;letter-spacing:-.04em;color:var(--ink)}
+  .check{list-style:none;padding:0;max-width:none}
+  .check li{position:relative;padding-left:30px;margin-bottom:.75em;font-size:15.5px;line-height:1.45;max-width:none}
+  .check li::before{content:"";position:absolute;left:0;top:.2em;width:17px;height:17px;border:2px solid var(--green-deep);background:#fff}
+
+  .funil{display:grid;gap:4px;margin:6px 0 16px;font-family:var(--sans)}
+  .funil div{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(138,90,30,.14);padding:10px 14px;font-weight:600;font-size:14.5px;min-width:0}
+  .funil div b{font-weight:900;font-stretch:78%;font-size:24px;letter-spacing:-.02em;white-space:nowrap}
+  .funil div:nth-child(1){width:100%}
+  .funil div:nth-child(2){width:78%}
+  .funil div:nth-child(3){width:58%;background:rgba(138,90,30,.28)}
+  .funil div:nth-child(4){width:44%;background:var(--caramel);color:#fff}
+
+  .g100 .g-bar{width:calc(var(--v) / 100 * 100%)}
+  .g100 .g-track{background:
+    linear-gradient(90deg,transparent calc(15% - 1px),var(--caramel) calc(15% - 1px) calc(15% + 1px),transparent calc(15% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(10% - 1px),#e6e1d6 calc(10% - 1px) 10%)}
+  /* ---------- etiqueta e passos ---------- */
+  .etiqueta{border:2px dashed var(--ink);background:#fff;padding:16px 18px;font-family:var(--sans);font-size:13.5px;line-height:1.4;align-self:start}
+  .etiqueta .etq-top{font-weight:900;font-stretch:85%;font-size:18px;letter-spacing:-.01em;margin:0 0 8px;padding-bottom:8px;border-bottom:2px solid var(--green-deep);color:var(--green-deep)}
+  .etiqueta ul{margin:0 0 8px;padding-left:1em}
+  .etiqueta li{margin-bottom:.25em;max-width:none}
+  .etiqueta .etq-pe{font-size:11.5px;color:var(--ink-mute);margin:0}
+  .perguntas.passos span{font-size:clamp(16px,2vw,19px);font-weight:600;font-stretch:100%}
+  .perguntas.passos li::before{font-size:38px}
+
+  .g40 .g-bar{width:calc(var(--v) / 40 * 100%)}
+  .g40 .g-track{background:
+    linear-gradient(90deg,transparent calc(37.5% - 1px),var(--caramel) calc(37.5% - 1px) calc(37.5% + 1px),transparent calc(37.5% + 1px)),
+    repeating-linear-gradient(90deg,var(--paper-2) 0 calc(12.5% - 1px),#e6e1d6 calc(12.5% - 1px) 12.5%)}
+  .filtro .ok.meio{background:var(--caramel-soft);box-shadow:inset 0 0 0 2px var(--caramel)}
+  .filtro .ok.meio::after{left:5px;top:9px;width:12px;height:3px;border:0;background:var(--caramel);transform:none}
+  .filtro li.parcial .val{color:var(--caramel)}
+  /* ---------- calendário e registro ---------- */
+  .calendario{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;margin:0 0 8px;max-width:820px}
+  .mes{background:var(--paper-2);padding:10px 8px 12px;font-family:var(--sans)}
+  .mes b{display:block;font-weight:800;font-size:15px;margin-bottom:4px}
+  .mes span{display:block;font-size:12px;line-height:1.3;color:var(--ink-soft)}
+  .mes.medio{background:var(--green-wash)}
+  .mes.pico{background:var(--green-deep);color:#fff}
+  .mes.pico span{color:#e4f1e8}
+  .registro td{height:34px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
+  .registro td:last-child{border-right:0}
+
+  /* ---------- cola de balcão ---------- */
+  .cola{background:#fff;border:2px dashed var(--ink);padding:clamp(18px,3vw,30px);font-size:15px;line-height:1.45}
+  .cola-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 20px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin:0 0 18px}
+  .cola-top b{font-family:var(--sans);font-weight:900;font-stretch:78%;font-size:clamp(30px,4.4vw,44px);letter-spacing:-.03em;line-height:1}
+  .cola-top span{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-mute)}
+  .cola-grid{display:grid;gap:20px 30px;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr))}
+  .cola h4{font-family:var(--sans);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--green-deep);margin:0 0 8px}
+  .cola p,.cola li{max-width:none}
+  .cola ul{margin:0;padding-left:1em}
+  .cola li{margin-bottom:.3em}
+  .cola .fala{font-size:16px;margin:0 0 .6em;padding-left:12px;border-left-width:3px}
+  .cola .acao{font-size:13.5px;padding:8px 12px 8px 36px;margin:0 0 .6em}
+  .cola .acao::before{left:12px;top:12px}
+  .cola dl{margin:0}
+  .cola dt{font-family:var(--sans);font-weight:800;font-size:14.5px;margin:10px 0 2px}
+  .cola dt:first-child{margin-top:0}
+  .cola dd{margin:0;color:var(--ink-soft)}
+  .cola table{font-size:13.5px}
+  .cola th,.cola td{padding:6px 8px}
+  .cola .nunca li{color:var(--caramel);font-family:var(--sans);font-weight:600;font-size:14px}
+
+  /* ---------- ilustrações ---------- */
+  figure{margin:0 0 26px;max-width:860px}
+  .ill-art svg{display:block;width:100%;height:auto}
+  .ill figcaption{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink-mute);margin-top:10px}
+
+  footer{
+    background:var(--ink);color:#9fb3a8;
+    margin-top:clamp(64px,9vw,110px);
+    padding:clamp(28px,5vw,44px) var(--gut);
+    font-family:var(--sans);font-size:14px;
+  }
+  footer p{max-width:62ch;margin:0 0 .6em}
+  footer .logo{display:block;width:44px;height:auto;margin-bottom:18px}
+  footer strong{color:var(--green-neon);font-weight:700}
+
+  :focus-visible{outline:3px solid var(--green-neon);outline-offset:2px}
+
+
+  @media (max-width:560px){
+    .calendario{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .cover-72h{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .radar div:last-child:nth-child(odd){grid-column:1/-1}
+    .semana{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .prazo{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .cores{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .g-row,.g-axis{grid-template-columns:minmax(0,1fr)}
+    .g-axis > span:first-child{display:none}
+    .relogio{padding-left:30px}
+    .relogio::before{left:8px}
+    .passo .t{position:static;display:block;text-align:left;width:auto;margin-bottom:4px}
+    .passo::before{left:-30px;top:6px}
+    .funil div:nth-child(n){width:100%}
+    .filtro li{grid-template-columns:28px minmax(0,1fr)}
+    .filtro .val{grid-column:2;text-align:left}
+  }
+
+  @media print{
+    .radar{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .radar div{padding:12px 14px 14px}
+    .radar dd{font-size:14pt}
+    #cola .cola{font-size:9pt;padding:12px}
+    #cola .cola .fala{font-size:10pt}
+    #cola .cola-grid{gap:8px 18px;grid-template-columns:1fr 1fr}
+    #cola .sec-head{margin-bottom:8px;padding-bottom:6px}
+    #cola .sec-num{font-size:40pt}
+    #cola .cola-top{margin-bottom:8px;padding-bottom:6px}
+    #cola .cola-top b{font-size:18pt}
+    #cola .cola h4{font-size:7.5pt;margin-bottom:4px}
+    #cola .cola h4[style]{margin-top:10px!important}
+    #cola .cola dt{font-size:8.5pt;margin-top:5px}
+    #cola .cola dd,#cola .cola li{font-size:8.5pt;margin-bottom:1px}
+    #cola .cola .fala{font-size:9pt;margin-bottom:4px}
+    #cola .cola .acao{font-size:8pt;padding:5px 8px 5px 30px;margin-bottom:4px}
+    #cola .cola .acao::before{left:9px;top:7px}
+    #cola .cola table{font-size:8pt}
+    #cola .cola th,#cola .cola td{padding:3px 5px}
+    #cola .cola .nunca li{font-size:8.5pt}
+    .cola{break-inside:avoid}
+    @page{size:A4;margin:14mm 15mm}
+    @page capa{margin:0}
+    @page contracapa{margin:0}
+    :root{--paper:#ffffff;--gut:15mm}
+    body{font-size:10pt;line-height:1.5}
+    main{padding-inline:0}
+    section{max-width:none}
+    .lead{font-size:12pt;margin-bottom:1em}
+    .sec-head{margin-bottom:14px;padding-bottom:10px}
+    .sec-num{font-size:52pt}
+    h2{font-size:24pt}
+    h3{margin-top:1.4em;font-size:12.5pt}
+
+    /* capa e contracapa ocupam a folha inteira */
+    .cover{page:capa;height:297mm;box-sizing:border-box;width:210mm;display:flex;flex-direction:column;padding:18mm 15mm 0;overflow:hidden}
+    .cover > .cover-mark{right:-30mm;top:40mm;width:150mm}
+    .cover-code{font-size:210pt;margin-top:24mm;background:none;-webkit-text-fill-color:var(--green-neon)}
+    .cover-market{font-size:30pt}
+    .cover-promise{font-size:13pt}
+    .cover-grid{grid-template-columns:1.1fr 1fr;margin-top:8mm}
+    .cover-72h{margin-top:20mm}
+    .radar{margin:auto -15mm 0}
+    .radar div{padding-left:15mm}
+    footer{page:contracapa;break-before:page;height:297mm;overflow:hidden;box-sizing:border-box;margin:0;padding:0 15mm 22mm;display:flex;flex-direction:column;justify-content:flex-end;font-size:10pt}
+
+    /* colunas fixas no papel */
+    .tipos,.dores,.niveis,.fio,.dias{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .split,.saidas{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .conta{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .obj{display:block;margin-bottom:12px}
+    .filtro li{padding:8px 0}
+    .funil div{padding:6px 12px}
+    .funil div b{font-size:16pt}
+    .conta div{padding:12px 14px}
+    .etiqueta{font-size:9pt}
+    .perguntas li{padding:8px 0}
+    .perguntas.passos span{font-size:10.5pt}
+    table{font-size:9pt}
+    th,td{padding:5px 8px}
+    .junto{break-inside:avoid}
+    .calendario{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .mes span{font-size:8pt}
+    .registro td{height:9mm}
+    .obj-head{padding:10px 16px}
+    .obj-q{font-size:15pt}
+    .obj-body{padding:10px 16px;gap:2px 20px}
+    .obj-body .fala{font-size:10.5pt;line-height:1.42}
+    .obj-real{font-size:9.5pt}
+    .erro{font-size:9pt;padding:7px 16px}
+    .dia-col{break-inside:auto}
+    .check li{font-size:9.5pt;margin-bottom:.45em}
+    .tipo p,.dor p,.nivel p:not(.preco):not(.ficha-tab),.saida p{font-size:9.5pt;line-height:1.45}
+    .dia-sem{min-height:78px}
+    p,li{orphans:3;widows:3}
+    footer .logo{width:22mm;margin-bottom:8mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    section{break-before:page;padding-top:0}
+    main > section:first-of-type{break-before:page}
+    .ficha,.aviso,.obj,figure,.ill,table,.saida,.dor,.tipo,.msg,.dia-col,.grafico,.folha,.conta,.semana,.prazo,.passo{break-inside:avoid}
+    h2,h3,.sec-head{break-after:avoid}
+    .ill-art svg{max-height:92mm;width:auto;max-width:100%;margin:0 auto}
+    .tabela{overflow:visible}
+    .folha{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <svg class="cover-mark" viewBox="370 340 640 650" aria-hidden="true"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+
+  <div class="cover-top">
+    <p class="cover-brand"><svg class="logo" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>LR Maker Lab · G-Code 3D</p>
+    <p class="cover-level">Nível 2 · ticket maior</p>
+  </div>
+
+  <p class="cover-code">G-08</p>
+
+  <div class="cover-grid">
+    <h1 class="cover-market">Imobiliárias e corretores</h1>
+    <p class="cover-promise">Kit de entrega de chaves com o nome da família e a marca do corretor, e organização das chaves da locação. A imobiliária decide devagar; o corretor autônomo decide hoje.</p>
+  </div>
+
+  <ol class="cover-72h" aria-label="Missão 72 horas">
+    <li><b>Dia 1</b><span>Imprimir o kit de entrega e as tags</span></li>
+    <li><b>Dia 2</b><span>10 corretores e imobiliárias</span></li>
+    <li><b>Dia 3</b><span>Proposta do pacote de três kits</span></li>
+    <li class="fim"><b>72h</b><span>Três propostas entregues na mão de um comerciante</span></li>
+  </ol>
+
+  <dl class="radar">
+    <div><dt>Ticket do 1º pedido</dt><dd>R$ 225 a 1.200</dd></div>
+    <div><dt>Retorno por hora</dt><dd>~R$ 30/h</dd></div>
+    <div class="hot"><dt>Recompra</dt><dd>Contrato mensal</dd></div>
+    <div><dt>Ciclo de venda</dt><dd>1 a 4 visitas</dd></div>
+    <div><dt>Nota no filtro</dt><dd>3 de 5</dd></div>
+  </dl>
+</header>
+
+<main>
+
+<!-- ===================== 01 ===================== -->
+<section id="s01">
+  <header class="sec-head l1">
+    <p class="sec-num">01</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Por que este G-Code funciona</h2>
+  </header>
+
+  <p class="lead">Corretor vive de indicação, e a indicação nasce no dia da entrega de chaves. Um porta-chaves na parede da casa nova, com o nome da família e a marca discreta do corretor, lembra dele todo dia por anos.</p>
+
+  <ul class="filtro">
+    <li><span class="ok"></span><span class="crit">Ticket do primeiro pedido<small>Três kits de entrega já passam o piso; a organização de chaves vai a R$ 1.200</small></span><span class="val">R$ 225–1.200</span></li>
+    <li><span class="ok"></span><span class="crit">Retorno por hora de máquina<small>Kit de entrega paga perto de R$ 30/h; tag de chave paga bem mais</small></span><span class="val">~R$ 30/h</span></li>
+    <li><span class="ok"></span><span class="crit">Recompra<small>Cada venda fechada é um kit; contrato mensal com a imobiliária</small></span><span class="val">Mensal</span></li>
+    <li class="parcial"><span class="ok meio"></span><span class="crit">Decisor<small>Na imobiliária, gerente e sócios decidem devagar. O corretor autônomo decide sozinho</small></span><span class="val">Lento</span></li>
+    <li class="parcial"><span class="ok meio"></span><span class="crit">Insubstituível<small>Cesta, vinho e brinde de gráfica concorrem pelo mesmo orçamento</small></span><span class="val">Parcial</span></li>
+  </ul>
+
+  <h3>A conta que o corretor faz</h3>
+  <div class="conta">
+    <div><span class="op">venda de</span><span class="big">R$ 400 mil</span><span class="cap">um apartamento médio</span></div>
+    <div><span class="op">comissão</span><span class="big">~R$ 20 mil</span><span class="cap">em torno de 5%, dividida conforme a imobiliária</span></div>
+    <div><span class="op">kit</span><span class="big">R$ 90</span><span class="cap">de entrega de chaves</span></div>
+    <div><span class="op">=</span><span class="big">0,45%</span><span class="cap">da comissão para ser lembrado na próxima indicação</span></div>
+  </div>
+  <p>O percentual de comissão varia por região e por acordo. A conta serve para o corretor enxergar o kit como parte da venda, não como gasto de marketing.</p>
+
+  <div class="aviso">
+    <p class="ficha-tab">O atalho deste G-Code</p>
+    <p>Imobiliária leva semanas e várias reuniões para decidir. O corretor autônomo decide na primeira conversa, com o dinheiro dele, porque o kit ajuda ele a fechar a próxima venda. Comece pelos autônomos; a imobiliária vem depois, com o resultado deles na mão.</p>
+  </div>
+
+  <h3>Onde o kit entra na venda</h3>
+  <div class="prazo" aria-label="Linha do tempo de uma venda de imóvel">
+    <div><b>Semana 0</b><span>Proposta aceita</span></div>
+    <div><b>Semanas 1–3</b><span>Documentação</span></div>
+    <div><b>Semanas 3–8</b><span>Financiamento</span></div>
+    <div><b>Assinatura</b><span>Escritura ou contrato</span></div>
+    <div class="p-ok"><b>5 dias antes</b><span>Seu pedido chega</span></div>
+    <div class="p-festa"><b>Entrega</b><span>Kit na mão da família</span></div>
+  </div>
+  <p>Entre a proposta aceita e a entrega de chaves passam semanas, às vezes meses. O corretor sabe a data com antecedência; você só precisa estar na lista dele. Prazos variam por banco e por cidade: é hipótese.</p>
+  <div class="split">
+    <div class="ficha">
+      <p class="ficha-tab">O que você vende</p>
+      <ul>
+        <li>A lembrança do corretor na parede da família</li>
+        <li>Uma entrega de chaves que vira foto no Instagram dele</li>
+        <li>Chaves da locação achadas em segundos, sem papel rasgado</li>
+      </ul>
+    </div>
+    <div class="ficha">
+      <p class="ficha-tab">O que você não vende</p>
+      <ul>
+        <li>Indicação garantida: isso depende da família, não de você</li>
+        <li>Controle de acesso ou segurança do imóvel</li>
+        <li>Brinde genérico com a logo em tudo</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 02 ===================== -->
+<section id="s02">
+  <header class="sec-head l2">
+    <p class="sec-num">02</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Quem é o cliente</h2>
+  </header>
+
+  <p class="lead">Quem vende ou administra imóvel e depende de relacionamento. O corretor que posta foto da entrega de chaves é o cliente mais fácil do kit.</p>
+
+  <div class="tipos">
+    <div class="tipo principal">
+      <p class="tag">O atalho</p>
+      <h4>Corretor autônomo</h4>
+      <p>Vende com CRECI próprio, posta cada entrega de chaves e compra com o próprio dinheiro. Decide na hora.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Contrato mensal</p>
+      <h4>Imobiliária de vendas</h4>
+      <p>Várias vendas por mês. Um kit por venda vira contrato, mas passa por gerente e marketing.</p>
+    </div>
+    <div class="tipo">
+      <p class="tag">Compra organização</p>
+      <h4>Administradora de locação</h4>
+      <p>Centenas de chaves de imóveis para alugar. Precisa de tag numerada e quadro organizado.</p>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="ficha">
+      <p class="ficha-tab">Como reconhecer</p>
+      <ul>
+        <li>Instagram com foto de "entrega de chaves" e cliente segurando a chave</li>
+        <li>CRECI na bio, marca pessoal e cartão de visita caprichado</li>
+        <li>Na locação: parede de chaves atrás do balcão, com etiqueta de papel</li>
+      </ul>
+    </div>
+    <div class="ficha">
+      <p class="ficha-tab">Quem não é cliente</p>
+      <ul>
+        <li>Franquia de rede imobiliária, com brinde padronizado pela matriz</li>
+        <li>Corretor que vende pouco e não posta nada</li>
+        <li>Plataforma de aluguel sem escritório físico</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Quando aparecer</h3>
+  <div class="semana">
+    <div class="dia-sem ir"><b>Seg</b><em>9h–11h</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Ter</b><em>9h–11h</em><span>Vá</span></div>
+    <div class="dia-sem ir"><b>Qua</b><em>9h–11h</em><span>Vá</span></div>
+    <div class="dia-sem"><b>Qui</b><span>Só com hora marcada</span></div>
+    <div class="dia-sem nao"><b>Sex</b><span>Visitas a imóveis</span></div>
+    <div class="dia-sem nao"><b>Sáb</b><span>Plantão e visitas</span></div>
+  </div>
+  <p>Corretor passa a tarde e o fim de semana em visita a imóvel. De manhã, no começo da semana, está no escritório organizando a agenda.</p>
+  <p>Corretor autônomo raramente tem escritório fixo. Chegue pelo Instagram, elogiando a última entrega de chaves que ele postou, e marque 15 minutos num café.</p>
+</section>
+
+<!-- ===================== 03 ===================== -->
+<section id="s03">
+  <header class="sec-head l3">
+    <p class="sec-num">03</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A dor que ele já paga para resolver</h2>
+  </header>
+
+  <p class="lead">Corretor não precisa de brinde. Precisa ser lembrado quando o cliente for indicar alguém, e precisa de uma foto de entrega que valha a postagem.</p>
+
+  <div class="dores">
+    <div class="dor">
+      <span class="dn">1</span>
+      <h4>A entrega sem momento</h4>
+      <p>A chave sai num chaveiro de propaganda genérico, e a foto da entrega é igual à de todo corretor. O momento mais feliz da venda passa sem nada para mostrar.</p>
+    </div>
+    <div class="dor">
+      <span class="dn">2</span>
+      <h4>A indicação que não vem</h4>
+      <p>Seis meses depois, o cliente satisfeito não lembra o nome do corretor quando o vizinho pergunta. O vinho foi bebido; a cesta, comida.</p>
+    </div>
+    <div class="dor fecha">
+      <span class="dn">3</span>
+      <h4>A chave errada na visita</h4>
+      <p>Na administradora, a chave com etiqueta de papel apagada vai para a visita errada, o cliente espera na porta, e a imobiliária perde a locação. Aqui fecha o pedido grande.</p>
+    </div>
+  </div>
+
+  <p>Para o corretor, a dor 2 fecha a venda. Para a administradora, a dor 3. Descubra na primeira pergunta com qual dos dois você está falando.</p>
+
+  <div class="split">
+    <figure class="ill">
+      <div class="ill-art" data-ill="entrega" role="img" aria-label="Kit de entrega de chaves: chaveiro em formato de casa com o nome da família e a data, e porta-chaves de parede com o nome da família e a marca discreta do corretor"></div>
+      <figcaption>O chaveiro vai na mão; o porta-chaves fica na parede por anos.</figcaption>
+    </figure>
+    <div>
+      <h3 style="margin-top:0">Antes de visitar: três sinais no Instagram dele</h3>
+      <div class="ficha">
+        <ul class="check">
+          <li><strong>Post de entrega de chaves.</strong> Ele já valoriza o momento; falta o objeto.</li>
+          <li><strong>Marca pessoal definida.</strong> Logo, cor e nome: ele vai querer ver isso no kit.</li>
+          <li><strong>Mais de uma entrega por mês.</strong> Pacote de três kits faz sentido para ele.</li>
+        </ul>
+        <p>Anote o nome dele e a cor da marca. O kit de amostra sai com a logo dele no porta-chaves.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 ===================== -->
+<section id="s04">
+  <header class="sec-head l4">
+    <p class="sec-num">04</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A oferta, em três níveis</h2>
+  </header>
+
+  <p class="lead">O corretor compra por pacote; a imobiliária, por contrato; a administradora, por quantidade de chaves. Cada nível fala com um deles.</p>
+
+  <div class="niveis">
+    <div class="ficha nivel">
+      <p class="ficha-tab">Entrada · corretor autônomo</p>
+      <p class="preco">R$ 225 a 300</p>
+      <p>Pacote de três kits de entrega: chaveiro em formato de casa e porta-chaves de parede com o nome da família e a data. Ele pede cada kit quando fechar a venda, com entrega em cinco dias úteis.</p>
+    </div>
+    <div class="ficha nivel meio">
+      <span class="selo">O que você quer vender</span>
+      <p class="ficha-tab">Padrão · contrato da imobiliária</p>
+      <p class="preco">R$ 450 a 600/mês</p>
+      <p>Cinco kits de entrega por mês e as placas de mesa dos corretores com nome e CRECI. Entrega por venda, faturamento mensal.</p>
+    </div>
+    <div class="ficha nivel">
+      <p class="ficha-tab">Completo · chaves da locação</p>
+      <p class="preco">R$ 900 a 1.200</p>
+      <p>Organização de até 200 chaves: tags numeradas em cores por situação do imóvel e painéis de parede numerados. Mais os kits de entrega do mês.</p>
+    </div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="niveis" role="img" aria-label="Os três níveis: três kits de entrega; cinco kits e placas de mesa com CRECI; e o painel de chaves com tags numeradas coloridas"></div>
+    <figcaption>Entrada, Padrão e Completo lado a lado.</figcaption>
+  </figure>
+
+  <h3>As cores das tags da locação</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Cor</th><th>Situação do imóvel</th><th>Por quê</th></tr>
+    <tr><td>Verde</td><td>Disponível para visita</td><td>O atendente pega sem consultar o sistema</td></tr>
+    <tr><td>Azul</td><td>Alugado, chave reserva</td><td>Não sai para visita</td></tr>
+    <tr><td>Amarelo</td><td>Em manutenção ou vistoria</td><td>Sai com o prestador, com registro</td></tr>
+    <tr><td>Vermelho</td><td>Chave única, sem cópia</td><td>Nunca sai sem autorização</td></tr>
+  </table>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Contrato mensal, por escrito</p>
+    <p class="aviso-grande">Kit por venda, faturamento no fim do mês, prazo de cinco dias úteis.</p>
+    <p>A imobiliária manda nome da família e data da entrega pelo WhatsApp quando a venda fecha. Você entrega em cinco dias úteis e fatura os kits do mês juntos. Kit que não foi usado no mês não acumula: o contrato é por kit entregue.</p>
+  </div>
+
+  <h3>Quando o pedido chega: o calendário do mercado</h3>
+  <div class="calendario" aria-label="Meses de maior procura">
+    <div class="mes pico"><b>Jan</b><span>Locação no pico: organize as chaves antes</span></div>
+    <div class="mes pico"><b>Fev</b><span>Volta às aulas: aluguel perto de escola e faculdade</span></div>
+    <div class="mes medio"><b>Mar</b><span>Vendas retomam</span></div>
+    <div class="mes medio"><b>Abr</b><span>Vendas</span></div>
+    <div class="mes medio"><b>Mai</b><span>Vendas</span></div>
+    <div class="mes medio"><b>Jun</b><span>Vendas</span></div>
+    <div class="mes pico"><b>Jul</b><span>Ofereça o contrato do segundo semestre</span></div>
+    <div class="mes medio"><b>Ago</b><span>Vendas</span></div>
+    <div class="mes medio"><b>Set</b><span>Vendas</span></div>
+    <div class="mes pico"><b>Out</b><span>Ofereça a organização de chaves</span></div>
+    <div class="mes pico"><b>Nov</b><span>Entregas antes das festas</span></div>
+    <div class="mes"><b>Dez</b><span>Mercado mais lento</span></div>
+  </div>
+  <p class="g-nota">Verde escuro: meses de venda mais provável. É hipótese; o mercado imobiliário muda muito por cidade.</p>
+
+  <h3>A proposta de uma página</h3>
+  <div class="ficha">
+    <ul class="check">
+      <li>Foto do kit de amostra com o sobrenome fictício "Família Silva"</li>
+      <li>Os três níveis, com o preço por kit e o que entra em cada um</li>
+      <li>Prazo: cinco dias úteis a partir do sobrenome e da data</li>
+      <li>Como pedir: uma mensagem no WhatsApp com sobrenome, data e quantidade</li>
+      <li>Regra fixa: nenhuma peça leva endereço</li>
+      <li>Seu nome, telefone e validade da proposta: 15 dias</li>
+    </ul>
+  </div>
+  <p>Uma página só. Se o gerente precisa virar a folha, a proposta volta para a gaveta.</p>
+</section>
+
+<!-- ===================== 05 ===================== -->
+<section id="s05">
+  <header class="sec-head l5">
+    <p class="sec-num">05</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Material, segurança das chaves e dados</h2>
+  </header>
+
+  <p class="lead">Este é o único G-Code em que a peça carrega informação que pode ser usada contra o cliente. A regra da seção é simples: nenhuma peça revela onde fica a porta que a chave abre.</p>
+
+  <div class="split">
+    <div>
+      <h3 style="margin-top:0">PLA fosco no kit, PETG na chave</h3>
+      <p>O porta-chaves de parede fica dentro de casa: PLA fosco, na cor da marca, com o nome da família em relevo de outra cor. É peça de decoração e precisa parecer uma.</p>
+      <p>Chaveiro e tag de chave vão para o bolso e para a mão de dezenas de pessoas. PETG aguenta queda, suor e o atrito com as chaves sem lascar.</p>
+      <p>Porta-chaves com ganchos de 5 mm de espessura e inclinação para cima, para o molho não cair quando alguém fecha a porta.</p>
+    </div>
+    <div class="painel">
+      <p class="ficha-tab">Perfil de fatiamento · PETG</p>
+      <dl>
+        <dt>Bico</dt><dd>235–245 °C</dd>
+        <dt>Mesa</dt><dd>75–85 °C</dd>
+        <dt>Camada</dt><dd>0,20 mm</dd>
+        <dt>Chaveiro casa</dt><dd>6 cm · 4 mm</dd>
+        <dt>Tag de chave</dt><dd>4 × 2 cm · 3 mm</dd>
+        <dt>Número da tag</dt><dd>relevo 0,8 mm</dd>
+        <dt>Preenchimento</dt><dd>100% na tag</dd>
+      </dl>
+    </div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="tags" role="img" aria-label="Tags de chave numeradas em quatro cores; ao lado, uma tag riscada com endereço, que nunca deve ser feita"></div>
+    <figcaption>Número e cor, sim. Endereço, nunca.</figcaption>
+  </figure>
+
+  <div class="split">
+    <div class="aviso">
+      <p class="ficha-tab">Risco 1 · Endereço na chave</p>
+      <p>Tag de chave nunca leva endereço, nome de rua, número de apartamento ou nome do proprietário. Chave perdida com endereço é convite para arrombamento.</p>
+      <p>A tag leva só um código. A relação entre código e imóvel fica no sistema da imobiliária, que você não precisa conhecer.</p>
+    </div>
+    <div class="aviso">
+      <p class="ficha-tab">Risco 2 · Dados da família</p>
+      <p>O kit de entrega leva o sobrenome e a data, e só isso, com a autorização do cliente dada ao corretor. Nada de endereço da casa nova, mesmo que o corretor mande.</p>
+      <p>Apague a mensagem com os dados depois da entrega. Foto do kit para o seu portfólio, só com o nome coberto ou com autorização.</p>
+    </div>
+  </div>
+
+  <h3>Antes de entregar: conferência do kit</h3>
+  <div class="ficha">
+    <ul class="check">
+      <li>Sobrenome e data conferidos contra a mensagem do corretor, letra por letra</li>
+      <li>Nenhum endereço, rua ou número de imóvel em nenhuma peça</li>
+      <li>Ganchos do porta-chaves testados com um molho de cinco chaves</li>
+      <li>Argola do chaveiro fechada e girando</li>
+      <li>CRECI da placa de mesa conferido com o registro do corretor</li>
+      <li>Caixa com cartão do corretor e parafusos para fixar o porta-chaves</li>
+    </ul>
+  </div>
+
+  <h3>Material por peça</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Peça</th><th>Material</th><th>Por quê</th></tr>
+    <tr><td>Porta-chaves de parede</td><td>PLA fosco</td><td>Fica dentro de casa, sem calor; acabamento bonito na foto</td></tr>
+    <tr><td>Chaveiro casa</td><td>PETG</td><td>Vai no bolso e na bolsa, leva pancada e dobra</td></tr>
+    <tr><td>Tag de chave da locação</td><td>PETG</td><td>Manuseio diário, argola puxando o furo</td></tr>
+    <tr><td>Placa de mesa com CRECI</td><td>PLA fosco</td><td>Parada na mesa; letra nítida importa</td></tr>
+    <tr><td>Painel de chaves</td><td>PETG</td><td>Ganchos com peso de dezenas de chaves</td></tr>
+  </table>
+  </div>
+  <p>Furo da argola com no mínimo 3 mm de parede em volta. Teste puxando com força antes de entregar: tag que rasga no furo perde a chave junto.</p>
+</section>
+
+<!-- ===================== 06 ===================== -->
+<section id="s06">
+  <header class="sec-head l6">
+    <p class="sec-num">06</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Kit de amostra: o que imprimir hoje à noite</h2>
+  </header>
+
+  <p class="lead">Três peças: o chaveiro que vai na mão do cliente, o porta-chaves que fica na parede e as tags que organizam a locação.</p>
+
+  <h3 style="margin-top:0">Uma noite de máquina</h3>
+  <div class="mesa">
+    <div class="mesa-bar" role="img" aria-label="Tempo de impressão: chaveiro 30 minutos, mini porta-chaves 100 minutos, cinco tags 25 minutos">
+      <div style="flex:30">30 min</div>
+      <div style="flex:100">1h40</div>
+      <div style="flex:25">25 min</div>
+    </div>
+    <ul class="mesa-leg">
+      <li><b>Chaveiro casa 6 cm</b>"Família Silva" e data, duas cores · 10 g</li>
+      <li><b>Mini porta-chaves 12 × 10 cm</b>Três ganchos, logo do corretor · 35 g</li>
+      <li><b>5 tags de chave</b>Numeradas, uma de cada cor · 15 g</li>
+    </ul>
+  </div>
+  <div class="totais">
+    <div><b>2h35</b><span>de máquina</span></div>
+    <div><b>60 g</b><span>de PLA e PETG</span></div>
+    <div><b>R$ 7,50</b><span>de filamento</span></div>
+  </div>
+
+  <figure class="ill">
+    <div class="ill-art" data-ill="kit" role="img" aria-label="Kit de amostra em escala sobre régua: chaveiro casa de 6 cm, mini porta-chaves de 12 cm e cinco tags de 4 cm"></div>
+    <figcaption>O kit em escala real, sobre régua em centímetros.</figcaption>
+  </figure>
+
+  <div class="split">
+    <div class="ficha escura">
+      <p class="ficha-tab">Detalhe que fecha venda</p>
+      <p>Imprima o porta-chaves com a logo e o nome do corretor que você vai visitar, tirados do Instagram dele. Pendure uma chave sua no chaveiro casa e entregue o molho na mão dele, como ele entrega ao cliente.</p>
+      <p>Ele vai imaginar a foto da próxima entrega antes de você terminar de falar.</p>
+    </div>
+    <div>
+      <div class="ficha">
+        <p class="ficha-tab">Apresentação</p>
+        <p>O kit numa caixa kraft com tampa, como o cliente vai receber. Aqui a embalagem é parte do produto: é ela que aparece na foto da entrega.</p>
+      </div>
+      <h3 style="margin-top:18px">Quanto custa sair para a rua</h3>
+      <div class="tabela">
+      <table>
+        <tr><th>Item</th><th>Quantidade</th><th>Valor</th></tr>
+        <tr><td>Kit de amostra</td><td>2 jogos</td><td class="n">R$ 15,00</td></tr>
+        <tr><td>Porta-chaves com a logo de cada corretor</td><td>5 un</td><td class="n">R$ 25,00</td></tr>
+        <tr><td>Caixas kraft com tampa</td><td>2 un</td><td class="n">R$ 10,00</td></tr>
+        <tr class="total"><td>Total para 10 visitas</td><td>—</td><td class="n">R$ 50,00</td></tr>
+      </table>
+      </div>
+      <p>Estimativa para você refazer com os preços da sua região.</p>
+    </div>
+  </div>
+
+  <h3>Como chegar ao corretor autônomo</h3>
+  <ol class="perguntas passos">
+    <li><span>No Instagram, procure corretores do seu bairro com posts de entrega de chaves recentes.</span></li>
+    <li><span>Comente a última entrega com uma frase real sobre o imóvel ou a família, sem vender nada.</span></li>
+    <li><span>No dia seguinte, mande mensagem: "Faço kit de entrega de chaves com o nome da família. Fiz um com a sua marca; posso te mostrar em 15 minutos?"</span></li>
+    <li><span>Marque num café perto de onde ele trabalha, de manhã, no começo da semana.</span></li>
+  </ol>
+</section>
+
+<!-- ===================== 07 ===================== -->
+<section id="s07">
+  <header class="sec-head l7">
+    <p class="sec-num">07</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Precificação</h2>
+  </header>
+
+  <p class="lead">O kit de entrega paga o seu tempo sem folga. A tag de chave paga bem. A placa de mesa paga pouco e entra no pacote como porta de entrada.</p>
+
+  <h3 style="margin-top:0">Retorno por hora, peça por peça</h3>
+  <div class="grafico" role="img" aria-label="Gráfico de barras do retorno por hora de máquina por peça e nível, com a linha do piso em R$ 15 por hora">
+    <div class="g-row"><span class="g-lab">50 tags de chave<small>a R$ 4 · 2h</small></span><div class="g-track"><div class="g-bar top" style="--v:70">R$ 80/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Completo<small>R$ 1.150 · 20h30</small></span><div class="g-track"><div class="g-bar" style="--v:45">R$ 45/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Kit de entrega<small>a R$ 90 · 2h30</small></span><div class="g-track"><div class="g-bar" style="--v:30">R$ 30/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Entrada<small>3 kits a R$ 90 · 7h30</small></span><div class="g-track"><div class="g-bar" style="--v:30">R$ 30/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Padrão<small>R$ 570 · 17h30</small></span><div class="g-track"><div class="g-bar" style="--v:28">R$ 28/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Placa de mesa<small>a R$ 60 · 2h30</small></span><div class="g-track"><div class="g-bar" style="--v:21">R$ 21/h</div></div></div>
+    <div class="g-row"><span class="g-lab">Kit de entrega<small>a R$ 60 · 2h30</small></span><div class="g-track"><div class="g-bar" style="--v:18">R$ 18/h</div></div></div>
+    <div class="g-axis"><span></span><div class="g-ticks"><span style="left:0">0</span><span class="piso" style="left:21.43%">piso R$ 15</span><span style="left:42.86%">30</span><span style="left:71.43%">50</span><span style="left:100%;transform:translateX(-100%)">70+</span></div></div>
+  </div>
+  <p class="g-nota">A barra das tags passa do fim da escala: R$ 80/h. Margem = preço menos custo real; retorno/h = margem dividida pelas horas de máquina.</p>
+  <p>Kit a R$ 60 ainda passa o piso, mas não paga o tempo de mensagem, arte e entrega de cada venda. Mantenha R$ 90 e ofereça pacote, nunca desconto por kit.</p>
+
+  <h3>Custo real de um kit de entrega</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Item</th><th>Cálculo</th><th>Valor</th></tr>
+    <tr><td>Porta-chaves de parede</td><td>40 g de PLA fosco, energia e perda</td><td class="n">R$ 5,50</td></tr>
+    <tr><td>Chaveiro casa</td><td>10 g de PETG, argola e perda</td><td class="n">R$ 2,20</td></tr>
+    <tr><td>Caixa kraft com tampa</td><td>—</td><td class="n">R$ 5,00</td></tr>
+    <tr><td>Parafusos, buchas e cartão</td><td>—</td><td class="n">R$ 1,80</td></tr>
+    <tr class="total"><td>Custo total</td><td>2h30 de máquina</td><td class="n">R$ 14,50</td></tr>
+  </table>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Seu piso</p>
+    <p class="aviso-grande">R$ 15 por hora de máquina. No kit de entrega, isso é R$ 52.</p>
+    <p>Duas horas e meia vezes R$ 15, mais R$ 14,50 de custo. Na tag de chave, o piso é R$ 1,40 por unidade, longe do preço. O risco aqui é o tempo que não aparece na máquina: mensagem, arte e ida até a imobiliária.</p>
+  </div>
+
+  <div class="junto">
+    <h3>A conta de um pedido real, passo a passo</h3>
+    <p>Uma administradora quer tags para 200 chaves e dois painéis de parede numerados. Antes de responder, faça esta conta:</p>
+    <div class="tabela">
+    <table>
+      <tr><th>Passo</th><th>Conta</th><th>Resultado</th></tr>
+      <tr><td>1 · Máquina</td><td>200 tags ÷ 50 por mesa × 2h + 2 painéis × 3h</td><td class="n">14h</td></tr>
+      <tr><td>2 · Custo</td><td>200 × R$ 0,80 + 2 painéis × R$ 12</td><td class="n">R$ 184</td></tr>
+      <tr><td>3 · Preço</td><td>200 × R$ 3,50 + 2 × R$ 90</td><td class="n">R$ 880</td></tr>
+      <tr><td>4 · Margem</td><td>R$ 880 − R$ 184</td><td class="n">R$ 696</td></tr>
+      <tr class="total"><td>5 · Retorno</td><td>R$ 696 ÷ 14 h</td><td class="n">R$ 50/h</td></tr>
+    </table>
+    </div>
+  </div>
+  <p>A organização de chaves paga quase o dobro por hora do kit de entrega, e a administradora compra de uma vez. É a venda mais difícil de conseguir e a melhor de fechar.</p>
+
+  <div class="ficha">
+    <p class="ficha-tab">Condições que vão escritas na proposta</p>
+    <ul>
+      <li><strong>Pacote do corretor:</strong> três kits pagos na compra, pedidos quando ele fechar cada venda</li>
+      <li><strong>Prazo do kit:</strong> 5 dias úteis a partir do sobrenome e da data recebidos</li>
+      <li><strong>Contrato da imobiliária:</strong> faturamento mensal pelos kits entregues</li>
+      <li><strong>Tags de chave:</strong> a partir de 50 unidades; reposição a R$ 4</li>
+      <li><strong>Dados:</strong> só sobrenome e data; nenhum endereço em nenhuma peça</li>
+      <li><strong>Garantia:</strong> 30 dias para defeito de impressão</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== 08 ===================== -->
+<section id="s08">
+  <header class="sec-head l8">
+    <p class="sec-num">08</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>A abordagem em 40 segundos</h2>
+  </header>
+
+  <div class="relogio">
+    <div class="passo">
+      <span class="t">antes</span>
+      <p class="acao">Com o corretor autônomo, você já marcou o café. Na imobiliária, pergunte na recepção pelo gerente comercial e espere.</p>
+    </div>
+    <div class="passo">
+      <span class="t">0–8 s</span>
+      <p class="fala">"Oi, tudo bem? Eu faço kit de entrega de chaves com o nome da família e a sua marca. Fiz um com a sua logo pra você ver."</p>
+    </div>
+    <div class="passo cala">
+      <span class="t">8–20 s</span>
+      <p class="acao">Tire o kit da caixa. Entregue o molho com a chave na mão dele, como ele entrega ao cliente. Pare de falar.</p>
+      <p>Ele vai segurar a chave, olhar o porta-chaves com a logo e, quase sempre, lembrar de uma entrega recente. Deixe ele contar.</p>
+    </div>
+    <div class="passo">
+      <span class="t">20–28 s</span>
+      <p class="fala">"Na última entrega de chaves que você fez, o que o cliente levou pra casa além da chave?"</p>
+    </div>
+    <div class="passo">
+      <span class="t">28–40 s</span>
+      <p>A resposta costuma ser "um vinho", "uma cesta" ou "nada". Mostre o porta-chaves: "Esse fica na parede da casa. Todo dia."</p>
+    </div>
+  </div>
+
+  <div class="saidas">
+    <div class="saida">
+      <p class="quando">"Um vinho, uma cesta."</p>
+      <p>"E daqui a um ano, quando o vizinho perguntar por um corretor, o que lembra ele de você?" Aponte o porta-chaves.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">"Quem decide é a imobiliária."</p>
+      <p>"E você, como corretor, compraria pra você?" Se não, pergunte o nome do gerente e peça para ser apresentado.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">É uma administradora.</p>
+      <p>Mostre as tags coloridas. "Como vocês organizam as chaves dos imóveis para alugar?" Peça para ver a parede de chaves.</p>
+    </div>
+    <div class="saida">
+      <p class="quando">Está saindo para visita.</p>
+      <p>Deixe o kit com a logo dele e seu cartão. "Te chamo segunda de manhã pra ouvir o que achou."</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 09 ===================== -->
+<section id="s09">
+  <header class="sec-head l9">
+    <p class="sec-num">09</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Objeções</h2>
+  </header>
+
+  <p class="lead">Seis frases de quem negocia o dia inteiro e sabe reconhecer um vendedor no primeiro minuto.</p>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 1 de 6 · concorrente</p><p class="obj-q">"Eu já dou um vinho na entrega."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Já resolvi o presente.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"E é um bom presente pro dia. O vinho acaba na primeira semana. O porta-chaves fica na parede da casa, com o nome da família, e com a sua marca num canto. Daqui a dois anos, quando alguém perguntar por um corretor, ele está ali."</p></div>
+    </div>
+    <p class="erro">Erro fatal: dizer que o vinho não serve. Sugira os dois juntos; o kit não substitui o gesto dele.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 2 de 6 · decisão</p><p class="obj-q">"Isso é com o marketing da imobiliária."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Eu gostei, mas não tenho verba.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Faz sentido. Posso te fazer uma pergunta? Você compraria pra suas próprias vendas, como corretor? Muitos corretores pegam o pacote de três e depois mostram pra imobiliária o resultado."</p>
+      <p class="acao">Se ele não comprar, peça o nome do gerente e para ser apresentado por ele.</p></div>
+    </div>
+    <p class="erro">Erro fatal: sair sem o nome de quem decide. "Fala com o marketing" sem nome é não.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 3 de 6 · volume</p><p class="obj-q">"Eu vendo pouco por mês."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Não quero pagar por algo que vou demorar a usar.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Por isso é pacote de três, sem validade. Você me manda o sobrenome da família quando fechar a venda, e em cinco dias úteis o kit está com você. Se levar seis meses pra usar os três, tudo bem."</p></div>
+    </div>
+    <p class="erro">Erro fatal: imprimir os três kits antecipados. Sem sobrenome, o kit não é personalizado, e personalizar é o que ele comprou.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 4 de 6 · valor</p><p class="obj-q">"R$ 90 por kit é muito para brinde."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Não liguei o kit à próxima venda.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Qual foi a sua comissão na última venda? O kit é menos de meio por cento dela. E a pergunta é quantas indicações ele precisa trazer pra se pagar. Uma basta, e sobra."</p></div>
+    </div>
+    <p class="erro">Erro fatal: baixar o kit para R$ 60. Você cruza o tempo que não aparece na máquina e trabalha quase de graça.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 5 de 6 · segurança</p><p class="obj-q">"Coloca o endereço na tag, facilita."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Quero achar a chave mais rápido.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Facilita pra quem achar a chave perdida também. Endereço na chave é convite pra arrombamento. A tag leva número e cor; a cor diz se a chave pode sair, e o número vocês consultam no sistema em dois segundos."</p></div>
+    </div>
+    <p class="erro">Erro fatal: aceitar "só dessa vez". Uma chave perdida com endereço vira problema da imobiliária e seu.</p>
+  </div>
+
+  <div class="obj">
+    <div class="obj-head"><p class="obj-n">Objeção 6 de 6 · adiamento</p><p class="obj-q">"Vou levar para a reunião dos sócios."</p></div>
+    <div class="obj-body">
+      <p class="obj-real">Aqui ninguém decide sozinho.</p>
+      <div class="obj-resp"><p class="label">Você responde</p><p class="fala">"Ótimo. Posso deixar o kit e uma proposta de uma página pra você mostrar? E quando é a reunião? Eu te mando no dia anterior um resumo com o preço por venda, pra facilitar a conversa."</p>
+      <p class="acao">Deixe o kit com a logo da imobiliária e a proposta impressa. Anote a data da reunião.</p></div>
+    </div>
+    <p class="erro">Erro fatal: não saber a data da reunião. Sem data, a proposta fica na gaveta do gerente.</p>
+  </div>
+
+  <h3>As seis objeções numa linha</h3>
+  <div class="tabela">
+  <table>
+    <tr><th>Ele diz</th><th>Você faz</th></tr>
+    <tr><td>"Eu já dou um vinho."</td><td>Mostra o que fica na parede por anos</td></tr>
+    <tr><td>"Isso é com o marketing."</td><td>Pede o nome e o horário de quem decide</td></tr>
+    <tr><td>"Eu vendo pouco por mês."</td><td>Pacote de três, sem validade</td></tr>
+    <tr><td>"R$ 90 é muito para brinde."</td><td>Compara com a comissão, sem baixar preço</td></tr>
+    <tr><td>"Coloca o endereço na tag."</td><td>Recusa e explica a cor e o número</td></tr>
+    <tr><td>"Vou levar para a reunião dos sócios."</td><td>Deixa kit e proposta; anota a data</td></tr>
+  </table>
+  </div>
+  <p>Treine as respostas em voz alta antes da primeira visita. Na hora, você vai lembrar da primeira frase; o resto vem.</p>
+</section>
+
+<!-- ===================== 10 ===================== -->
+<section id="s10">
+  <header class="sec-head l10">
+    <p class="sec-num">10</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Follow-up</h2>
+  </header>
+
+  <p class="lead">Ciclo lento pede follow-up mais longo. Aqui a desistência vem só depois de 45 dias, e sempre com a porta aberta.</p>
+
+  <div class="fio">
+    <div class="msg">
+      <p class="quando">48h<small>depois da visita</small></p>
+      <p class="balao">"Oi [nome], aqui é o [você], do kit de entrega de chaves. Separei a proposta do pacote de três com a sua marca. Te mando?"</p>
+    </div>
+    <div class="msg">
+      <p class="quando">15 dias<small>próxima entrega</small></p>
+      <p class="balao">"Oi [nome]! Tem alguma entrega de chaves marcada pras próximas semanas? Se me passar o sobrenome até sexta, o kit fica pronto a tempo."</p>
+    </div>
+    <div class="msg fim">
+      <p class="quando">45 dias<small>desistência</small></p>
+      <p class="balao">"Oi [nome], não vou mais insistir. Deixo a arte do seu porta-chaves guardada; quando quiser pra alguma entrega, é só me mandar o sobrenome. Boas vendas!"</p>
+    </div>
+  </div>
+
+  <div class="ficha">
+    <p class="ficha-tab">Depois da primeira entrega de chaves</p>
+    <p class="balao" style="margin-bottom:12px">"Oi [nome]! Como foi a entrega da família [sobrenome]? Se postar a foto, me marca? E se algum colega corretor perguntar do kit, me indica."</p>
+    <p>A foto da entrega postada pelo corretor é a vitrine deste G-Code: todos os corretores da região seguem uns aos outros. Um post bom traz o próximo cliente sem você bater em porta.</p>
+  </div>
+
+  <p>Reative quem não comprou em julho, antes do segundo semestre, e em outubro, para a organização de chaves antes da temporada de locação.</p>
+</section>
+
+<!-- ===================== 11 ===================== -->
+<section id="s11">
+  <header class="sec-head l11">
+    <p class="sec-num">11</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Depois de entrar: as três perguntas</h2>
+  </header>
+
+  <p class="lead">Na entrega do primeiro kit, ou na instalação do painel de chaves, você conhece o escritório por dentro.</p>
+
+  <ol class="perguntas">
+    <li><span>"O que acontece com a chave quando ela sai para uma visita?"</span></li>
+    <li><span>"Tem alguma coisa no escritório ou no plantão que vocês improvisam?"</span></li>
+    <li><span>"Com quem você trabalha junto: construtora, decoradora, despachante?"</span></li>
+  </ol>
+
+  <p class="label">O que costuma aparecer</p>
+  <ul class="chips">
+    <li>Placa de mesa com nome e CRECI</li>
+    <li>Porta-cartão do plantão de vendas</li>
+    <li>Tag de chave de obra para a construtora</li>
+    <li>Chaveiro do empreendimento para cada comprador</li>
+    <li>Painel de chaves da recepção</li>
+    <li class="g01">Indicação da construtora parceira</li>
+  </ul>
+
+  <div class="ficha escura">
+    <p class="ficha-tab">Meta</p>
+    <p>Três oportunidades por cliente e uma indicação de corretor. Construtora com lançamento é o pedido grande escondido aqui: um chaveiro para cada comprador do prédio inteiro.</p>
+  </div>
+</section>
+
+<!-- ===================== 12 ===================== -->
+<section id="s12">
+  <header class="sec-head l12">
+    <p class="sec-num">12</p>
+    <div class="camadas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2>Missão 72 horas</h2>
+  </header>
+
+  <p class="lead">Em 72 horas, você sai da impressora parada para três propostas entregues na mão de um comerciante. Aqui, proposta é o kit com a marca dele e o preço do pacote de três.</p>
+
+  <div class="dias">
+    <div class="dia-col">
+      <p class="dia"><b>1</b> Preparar</p>
+      <ul class="check">
+        <li>Listar 10 corretores autônomos com posts de entrega de chaves</li>
+        <li>Listar 10 imobiliárias e administradoras no Google Maps</li>
+        <li>Imprimir o kit e 5 porta-chaves com a logo de corretores da lista</li>
+        <li>Mandar mensagem para 5 corretores pedindo 15 minutos</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>2</b> Rua</p>
+      <ul class="check">
+        <li>Fazer os cafés marcados com corretores, de manhã</li>
+        <li>Visitar 5 imobiliárias e administradoras</li>
+        <li>Pedir para ver a parede de chaves das administradoras</li>
+        <li>Anotar nome de gerente e data de reunião de sócios</li>
+      </ul>
+    </div>
+    <div class="dia-col">
+      <p class="dia"><b>3</b> Fechar</p>
+      <ul class="check">
+        <li>Mandar as propostas do pacote de três e do contrato mensal</li>
+        <li>Registrar tudo na aba 20 Alvos da planilha</li>
+        <li>Marcar os follow-ups de 15 e 45 dias</li>
+        <li>Pedir a cada corretor o nome de um colega</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aviso">
+    <p class="ficha-tab">Número honesto</p>
+    <div class="funil" role="img" aria-label="De 10 contatos, 4 conversas, 3 propostas e 1 pacote vendido, em geral para um corretor autônomo">
+      <div><span>Contatos</span><b>10</b></div>
+      <div><span>Conversas</span><b>4</b></div>
+      <div><span>Propostas</span><b>3</b></div>
+      <div><span>Pacote vendido</span><b>1</b></div>
+    </div>
+    <p>A primeira venda quase sempre vem de um corretor autônomo. A imobiliária pode levar um mês e três visitas. Não pare de prospectar enquanto espera a reunião dos sócios: é o autônomo que paga o seu primeiro mês.</p>
+  </div>
+
+  <h3>Depois das 72 horas: a semana 2</h3>
+  <ul class="check">
+    <li>Mandar mensagem para os corretores indicados pelos primeiros</li>
+    <li>Voltar na imobiliária no dia seguinte à reunião dos sócios</li>
+    <li>Guardar a arte de cada corretor para o primeiro pedido</li>
+    <li>No primeiro kit, conferir com a lista da seção 05 e entregar em cinco dias úteis</li>
+    <li>Pedir a foto da entrega de chaves, com autorização da família</li>
+  </ul>
+
+  <h3>Registro de visitas</h3>
+  <p>Preencha logo depois de cada conversa. À noite, passe para a aba 20 Alvos da planilha.</p>
+  <div class="tabela">
+  <table class="registro">
+    <tr><th>Corretor ou imobiliária</th><th>Quem decide</th><th>Vendas por mês · chaves</th><th>Objeção, nas palavras dele</th><th>Volto em</th></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================== COLA ===================== -->
+<section id="cola">
+  <header class="sec-head">
+    <p class="sec-num">+</p>
+    <p class="kicker">Anexo · leia antes do café ou da visita</p>
+    <h2>Cola de balcão</h2>
+  </header>
+
+  <div class="cola">
+    <div class="cola-top"><b>G-08 · Imobiliárias e corretores</b><span>Seg a qua · 9h às 11h</span></div>
+    <div class="cola-grid">
+
+      <div>
+        <h4>Na mão antes de entrar</h4>
+        <ul>
+          <li>Kit na caixa kraft, com a logo deste corretor</li>
+          <li>Uma chave sua no chaveiro casa</li>
+          <li>Tags coloridas, se for administradora</li>
+          <li>Proposta de uma página impressa</li>
+        </ul>
+
+        <h4 style="margin-top:18px">Os 40 segundos</h4>
+        <p class="fala">"Eu faço kit de entrega de chaves com o nome da família e a sua marca. Fiz um com a sua logo."</p>
+        <p class="acao">Entregue o molho na mão dele. Deixe ele lembrar de uma entrega.</p>
+        <p class="fala">"Na última entrega, o que o cliente levou pra casa além da chave?"</p>
+
+        <h4 style="margin-top:18px">As saídas</h4>
+        <dl>
+          <dt>"Um vinho."</dt><dd>E daqui a um ano, o que lembra ele de você?</dd>
+          <dt>"Decide a imobiliária."</dt><dd>E você, pra você? Senão, o nome do gerente.</dd>
+          <dt>Administradora.</dt><dd>Tags coloridas. Posso ver a parede de chaves?</dd>
+          <dt>Saindo para visita.</dt><dd>Deixe o kit; te chamo segunda.</dd>
+        </dl>
+      </div>
+
+      <div>
+        <h4>As 6 objeções</h4>
+        <dl>
+          <dt>"Já dou vinho."</dt><dd>O vinho acaba; o porta-chaves fica na parede.</dd>
+          <dt>"É com o marketing."</dt><dd>Você compraria pra você? Nome do gerente.</dd>
+          <dt>"Vendo pouco."</dt><dd>Pacote de três, sem validade, kit em cinco dias.</dd>
+          <dt>"R$ 90 é muito."</dt><dd>Menos de meio por cento da comissão.</dd>
+          <dt>"Põe o endereço na tag."</dt><dd>Nunca. Número e cor; endereço no sistema.</dd>
+          <dt>"Reunião dos sócios."</dt><dd>Deixo kit e proposta. Quando é a reunião?</dd>
+        </dl>
+
+        <h4 style="margin-top:18px">Os números</h4>
+        <table>
+          <tr><th>Nível</th><th>Preço</th><th>O que leva</th></tr>
+          <tr><td>Entrada</td><td class="n">R$ 225–300</td><td>3 kits de entrega</td></tr>
+          <tr><td>Padrão</td><td class="n">R$ 450–600/mês</td><td>5 kits e placas com CRECI</td></tr>
+          <tr><td>Completo</td><td class="n">R$ 900–1.200</td><td>200 chaves organizadas</td></tr>
+        </table>
+        <p style="font-family:var(--sans);font-size:13.5px;font-weight:600;margin:8px 0 0">Kit R$ 90 · piso R$ 52 · tag R$ 3,50 a 4</p>
+
+        <h4 style="margin-top:18px">Nunca</h4>
+        <ul class="nunca">
+          <li>Gravar endereço em chave ou kit</li>
+          <li>Guardar dados da família depois da entrega</li>
+          <li>Imprimir kit antes de ter o sobrenome</li>
+          <li>Baixar o kit para R$ 60</li>
+          <li>Sair sem o nome de quem decide</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <svg class="logo" style="fill:var(--green-neon)" viewBox="370 340 640 650" role="img" aria-label="LR Maker Lab"><path d="M463 475 L706 349 L941 476 L708 597 Z M581 474 L706 537 L825 476 L705 412 Z" fill-rule="evenodd"/><path d="M503 561 L709 668 L1001 518 L1001 577 L709 727 L560 651 L560 717 L712 797 L1001 649 L1001 835 L712 984 L377 812 L377 512 L434 541 L434 780 L712 924 L946 804 L946 736 L712 856 L503 747 Z"/></svg>
+  <p><strong>G-Code 08 · Imobiliárias e corretores</strong></p>
+  <p>LR Maker Lab · G-Code 3D. Uso pessoal do comprador. Proibida a revenda ou redistribuição deste material.</p>
+  <p>Todo número deste manual é hipótese a validar: tempos, gramaturas, preços e comissões mudam com a sua impressora, o seu filamento, a sua cidade e cada acordo comercial. Refaça as contas antes da primeira proposta.</p>
+  <p>Trate os dados de clientes conforme a LGPD. Nenhuma peça deve identificar o endereço de um imóvel.</p>
+</footer>
+
+<script>
+/* Ilustrações do manual, desenhadas em SVG por JavaScript. Tudo em escala e na paleta da marca. */
+(function(){
+  var G="#2d7a4f", GD="#1f5c3b", INK="#14201a", SOFT="#42514a", MUTE="#6b7a72", CAR="#8a5a1e", WHITE="#f7f6f1", F="Archivo, system-ui, sans-serif";
+  function defs(id){
+    return '<defs><pattern id="'+id+'-l" width="6" height="3.2" patternUnits="userSpaceOnUse">'+
+      '<rect width="6" height="3.2" fill="'+G+'"/><rect y="2.55" width="6" height=".65" fill="'+GD+'" opacity=".5"/></pattern></defs>';
+  }
+  function svg(id,w,h,body,bg){
+    return '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+defs(id)+
+      (bg?'<rect width="'+w+'" height="'+h+'" fill="'+bg+'"/>':'')+body+'</svg>';
+  }
+  function txt(x,y,s,o){
+    o=o||{};
+    return '<text x="'+x+'" y="'+y+'" font-family="'+F+'" font-size="'+(o.size||16)+'" font-weight="'+(o.weight||700)+'" fill="'+(o.fill||INK)+'"'+
+      (o.anchor?' text-anchor="'+o.anchor+'"':'')+(o.len?' textLength="'+o.len+'" lengthAdjust="spacingAndGlyphs"':'')+
+      (o.ls?' letter-spacing="'+o.ls+'"':'')+'>'+s+'</text>';
+  }
+  function sombra(x,y,w,h,r){return '<rect x="'+(x+4)+'" y="'+(y+5)+'" width="'+w+'" height="'+h+'" rx="'+(r||0)+'" fill="rgba(20,32,26,.16)"/>';}
+
+  /* peças */
+  function chaveiro(p,x,y,w,h,nome,fundo){
+    var r=h*.22, cx=x+h*.36, tx=x+h*.64;
+    return sombra(x,y,w,h,r)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+r+'" fill="url(#'+p+'-l)"/>'+
+      '<circle cx="'+cx+'" cy="'+(y+h/2)+'" r="'+(h*.13)+'" fill="'+fundo+'"/>'+
+      '<circle cx="'+(x-h*.1)+'" cy="'+(y+h/2)+'" r="'+(h*.34)+'" fill="none" stroke="#98a29d" stroke-width="'+(h*.07)+'"/>'+
+      txt(tx+(x+w-h*.18-tx)/2,y+h*.7,nome,{size:h*.52,weight:800,fill:WHITE,anchor:"middle",len:(x+w-h*.18-tx)*.86});
+  }
+  function plaquinha(p,x,y,w,h,nome){
+    return sombra(x,y,w,h,h*.12)+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(h*.12)+'" fill="url(#'+p+'-l)"/>'+
+      txt(x+w/2,y+h*.68,nome,{size:h*.5,weight:800,fill:WHITE,anchor:"middle",len:w*.52});
+  }
+  function topo(p,x,y,w){
+    var h=w*.3, sx=x+h*.46, sy=y+h*.44, R=h*.42, pts=[];
+    for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5, rr=i%2?R*.45:R; pts.push((sx+rr*Math.cos(a)).toFixed(1)+","+(sy+rr*Math.sin(a)).toFixed(1));}
+    var cx=x+w-h*.4, t0=x+h*1.0, t1=cx-h*.46;
+    return '<g opacity=".16" transform="translate(4 5)"><polygon points="'+pts.join(" ")+'" fill="'+INK+'"/><rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" fill="'+INK+'"/></g>'+
+      '<rect x="'+(x+h*.2)+'" y="'+(y+h*.8)+'" width="'+(w-h*.4)+'" height="'+(h*.14)+'" rx="'+(h*.05)+'" fill="url(#'+p+'-l)"/>'+
+      '<polygon points="'+pts.join(" ")+'" fill="url(#'+p+'-l)"/>'+
+      txt(t0+(t1-t0)/2,y+h*.78,"Ísis",{size:h*.66,weight:900,fill:"url(#"+p+"-l)",anchor:"middle",len:t1-t0})+
+      '<circle cx="'+cx+'" cy="'+(y+h*.46)+'" r="'+(h*.36)+'" fill="url(#'+p+'-l)"/>'+
+      txt(cx,y+h*.64,"5",{size:h*.5,weight:900,fill:WHITE,anchor:"middle"});
+  }
+  function bambu(x1,y1,x2,y2,w){
+    w=w||7;
+    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#cfa964" stroke-width="'+w+'" stroke-linecap="round"/>'+
+      '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#ead19c" stroke-width="'+(w*.28)+'" stroke-linecap="round" transform="translate('+(-w*.18)+' 0)"/>';
+  }
+  function caixaMilk(p,x,y,w,h,comPlaca){
+    var t=y+h*.28;
+    var s='<ellipse cx="'+(x+w/2+6)+'" cy="'+(y+h+2)+'" rx="'+(w*.58)+'" ry="'+(h*.035)+'" fill="rgba(20,32,26,.14)"/>'+
+      '<rect x="'+(x+w*.32)+'" y="'+y+'" width="'+(w*.36)+'" height="'+(h*.08)+'" fill="#e9e5da" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<polygon points="'+x+','+t+' '+(x+w/2)+','+(y+h*.07)+' '+(x+w)+','+t+'" fill="#efece4" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+x+'" y="'+t+'" width="'+w+'" height="'+(h*.72)+'" fill="'+WHITE+'" stroke="#cfc9bb" stroke-width="1.5"/>'+
+      '<rect x="'+(x+w*.82)+'" y="'+t+'" width="'+(w*.18)+'" height="'+(h*.72)+'" fill="rgba(20,32,26,.05)"/>';
+    if(comPlaca) s+=plaquinha(p,x+w*.14,y+h*.52,w*.62,w*.24,"Ísis");
+    return s;
+  }
+  function placa(x,y,w,h){
+    var s='<rect x="'+(x+6)+'" y="'+(y+7)+'" width="'+w+'" height="'+h+'" fill="rgba(20,32,26,.18)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#bdb6a7"/>';
+    for(var i=x+9;i<x+w;i+=9) s+='<line x1="'+i+'" y1="'+y+'" x2="'+i+'" y2="'+(y+h)+'" stroke="rgba(20,32,26,.05)" stroke-width="1"/>';
+    return s;
+  }
+  function elastico(x1,x2,y){return '<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" stroke="#1d1f1e" stroke-width="3.5" stroke-linecap="round" opacity=".88"/>';}
+  function mesa(x,y,s){
+    var m='<rect x="'+(x+6)+'" y="'+(y+8)+'" width="'+s+'" height="'+s+'" rx="10" fill="rgba(20,32,26,.2)"/>'+
+      '<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" rx="10" fill="#1b2a22"/>';
+    for(var i=1;i<10;i++){var d=s*i/10;
+      m+='<line x1="'+(x+d)+'" y1="'+(y+6)+'" x2="'+(x+d)+'" y2="'+(y+s-6)+'" stroke="rgba(74,222,128,.1)"/>'+
+         '<line x1="'+(x+6)+'" y1="'+(y+d)+'" x2="'+(x+s-6)+'" y2="'+(y+d)+'" stroke="rgba(74,222,128,.1)"/>';}
+    return m;
+  }
+  function cota(x1,x2,y,rotulo){
+    return '<g stroke="'+MUTE+'" stroke-width="1.5"><line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'"/><line x1="'+x1+'" y1="'+(y-7)+'" x2="'+x1+'" y2="'+(y+7)+'"/><line x1="'+x2+'" y1="'+(y-7)+'" x2="'+x2+'" y2="'+(y+7)+'"/></g>'+
+      '<rect x="'+((x1+x2)/2-(rotulo.length*5+12))+'" y="'+(y-12)+'" width="'+(rotulo.length*10+24)+'" height="24" fill="#eceae4"/>'+
+      txt((x1+x2)/2,y+6,rotulo,{size:15,weight:700,fill:SOFT,anchor:"middle"});
+  }
+
+  /* cenas */
+  /* peças da imobiliária */
+  function casa(p,x,y,w,nome,data){
+    var h=w*1.05, t=y+w*.42;
+    var s='<g opacity=".16" transform="translate(4 5)"><polygon points="'+x+','+t+' '+(x+w/2)+','+y+' '+(x+w)+','+t+' '+(x+w)+','+(y+h)+' '+x+','+(y+h)+'" fill="'+INK+'"/></g>'+
+      '<polygon points="'+x+','+t+' '+(x+w/2)+','+y+' '+(x+w)+','+t+' '+(x+w)+','+(y+h)+' '+x+','+(y+h)+'" fill="url(#'+p+'-l)"/>'+
+      '<circle cx="'+(x+w/2)+'" cy="'+(y+w*.2)+'" r="'+(w*.06)+'" fill="#f2efe7"/>'+
+      '<circle cx="'+(x+w/2)+'" cy="'+(y-w*.1)+'" r="'+(w*.13)+'" fill="none" stroke="#98a29d" stroke-width="'+(w*.03)+'"/>';
+    if(nome) s+=txt(x+w/2,t+w*.24,nome,{size:w*(nome.length>8?.13:.2),weight:800,fill:WHITE,anchor:"middle",len:Math.min(w*.78,nome.length*w*.1)});
+    if(data) s+=txt(x+w/2,t+w*.44,data,{size:w*.11,weight:700,fill:"#bfe3cc",anchor:"middle"});
+    return s;
+  }
+  function portaChaves(p,x,y,w,nome,marca){
+    var h=w*.42, s=sombra(x,y,w,h,10)+'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="10" fill="url(#'+p+'-l)"/>';
+    s+=txt(x+w/2,y+h*.42,nome,{size:h*.2,weight:800,fill:WHITE,anchor:"middle",len:Math.min(w*.62,nome.length*h*.13)});
+    if(marca) s+=txt(x+w-12,y+h*.22,marca,{size:h*.09,weight:700,fill:"#bfe3cc",anchor:"end"});
+    for(var i=0;i<4;i++){var gx=x+w*.2+i*w*.2;
+      s+='<rect x="'+(gx-3)+'" y="'+(y+h*.62)+'" width="6" height="'+(h*.3)+'" rx="3" fill="#1f5c3b"/><rect x="'+(gx-3)+'" y="'+(y+h*.88)+'" width="14" height="6" rx="3" fill="#1f5c3b"/>';}
+    return s;
+  }
+  function tag(x,y,w,cor,num){
+    var h=w*.5;
+    return sombra(x,y,w,h,h*.3)+'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(h*.3)+'" fill="'+cor+'"/>'+
+      '<circle cx="'+(x+h*.4)+'" cy="'+(y+h/2)+'" r="'+(h*.14)+'" fill="#f2efe7"/>'+
+      '<circle cx="'+(x-h*.05)+'" cy="'+(y+h/2)+'" r="'+(h*.34)+'" fill="none" stroke="#98a29d" stroke-width="'+(h*.07)+'"/>'+
+      (num?txt(x+w*.62,y+h*.7,num,{size:h*.52,weight:900,fill:"#fff",anchor:"middle"}):'');
+  }
+  function placaMesa(p,x,y,w){
+    var h=w*.36;
+    return '<polygon points="'+x+','+(y+h)+' '+(x+w*.08)+','+y+' '+(x+w*.92)+','+y+' '+(x+w)+','+(y+h)+'" fill="url(#'+p+'-l)"/>'+
+      txt(x+w/2,y+h*.5,"Corretor",{size:h*.26,weight:800,fill:WHITE,anchor:"middle"})+txt(x+w/2,y+h*.82,"CRECI 00000",{size:h*.18,weight:700,fill:"#bfe3cc",anchor:"middle"});
+  }
+  var CORES=["#2d7a4f","#3b6fa0","#d9a520","#c24a3a"];
+
+  var ILL={
+    entrega:function(){
+      var p="ie", b='';
+      b+=casa(p,70,90,190,"Família Silva","12/03/26");
+      b+=portaChaves(p,340,120,300,"Família Silva","sua marca");
+      b+=txt(165,330,"Chaveiro da casa nova",{size:16,weight:800,fill:SOFT,anchor:"middle"})+txt(490,330,"Porta-chaves de parede",{size:16,weight:800,fill:SOFT,anchor:"middle"});
+      return svg(p,700,360,b,"#f2efe7");
+    },
+    niveis:function(){
+      var p="in", b='';
+      for(var i=0;i<3;i++) b+=casa(p,60+i*100,110,80,"Silva",null);
+      for(var j=0;j<5;j++) b+=casa(p,420+j*58,70,48,null,null);
+      b+=placaMesa(p,430,200,130)+placaMesa(p,580,200,130);
+      b+='<rect x="830" y="50" width="320" height="250" rx="10" fill="#e3dccb" stroke="#cfc9bb"/>';
+      for(var r=0;r<4;r++)for(var c=0;c<6;c++){var gx=858+c*50, gy=78+r*58;
+        b+='<circle cx="'+gx+'" cy="'+gy+'" r="4" fill="#98a29d"/><rect x="'+(gx-14)+'" y="'+(gy+8)+'" width="28" height="30" rx="6" fill="'+CORES[r]+'"/>'+txt(gx,gy+29,String(r*6+c+1),{size:12,weight:900,fill:"#fff",anchor:"middle"});}
+      [[200,"R$ 225–300","ENTRADA · CORRETOR AUTÔNOMO"],[570,"R$ 450–600/mês","PADRÃO · CONTRATO"],[990,"R$ 900–1.200","COMPLETO · CHAVES DA LOCAÇÃO"]].forEach(function(r){
+        b+=txt(r[0],366,r[1],{size:30,weight:900,fill:INK,anchor:"middle"})+txt(r[0],394,r[2],{size:14,weight:700,fill:G,anchor:"middle",ls:1.2});
+      });
+      return svg(p,1200,410,b,"#f2efe7");
+    },
+    tags:function(){
+      var p="it", b='';
+      ["Venda","Locação","Temporada","Obra"].forEach(function(n,i){
+        for(var k=0;k<3;k++) b+=tag(60+k*120,50+i*70,96,CORES[i],String(i*100+k+1).padStart(3,"0"));
+        b+=txt(430,78+i*70,n,{size:15,weight:800,fill:SOFT});
+      });
+      b+='<rect x="560" y="120" width="190" height="80" rx="18" fill="#e7e3d9" stroke="#cfc9bb"/>'+txt(655,152,"Rua das Flores,",{size:15,weight:700,fill:MUTE,anchor:"middle"})+txt(655,176,"123 · ap 42",{size:15,weight:700,fill:MUTE,anchor:"middle"});
+      b+='<line x1="550" y1="110" x2="760" y2="210" stroke="#c24a3a" stroke-width="6" stroke-linecap="round"/><line x1="760" y1="110" x2="550" y2="210" stroke="#c24a3a" stroke-width="6" stroke-linecap="round"/>';
+      b+=txt(655,250,"Nunca: endereço na chave",{size:16,weight:900,fill:"#c24a3a",anchor:"middle"});
+      b+=txt(240,340,"Número + cor. A lista fica no escritório.",{size:16,weight:800,fill:G,anchor:"middle"});
+      return svg(p,820,370,b,"#f2efe7");
+    },
+    kit:function(){
+      var p="ik", b='', u=20;
+      b+=casa(p,50,200,6*u,"Silva",null)+cota(50,50+6*u,455,"6 cm");
+      b+=portaChaves(p,250,260,12*u,"Silva",null)+cota(250,250+12*u,455,"12 cm");
+      for(var i=0;i<5;i++) b+=tag(560+(i%3)*95+(i>2?45:0),230+Math.floor(i/3)*70,4*u,CORES[i%4],String(i+1));
+      b+=cota(560,560+4*u,455,"4 cm");
+      var rx=30, ry=490;
+      b+='<rect x="'+rx+'" y="'+ry+'" width="'+(40*u+18)+'" height="50" rx="3" fill="#d3d9d6" stroke="#b3bdb8"/>';
+      for(var mm=0;mm<=400;mm+=5){var x=rx+9+mm*u/10, hh=mm%10===0?18:10;
+        b+='<line x1="'+x.toFixed(1)+'" y1="'+ry+'" x2="'+x.toFixed(1)+'" y2="'+(ry+hh)+'" stroke="#55615b" stroke-width="'+(mm%10===0?1.2:.8)+'"/>';
+        if(mm%20===0) b+=txt(x,ry+38,String(mm/10),{size:11,weight:600,fill:SOFT,anchor:"middle"});}
+      return svg(p,870,560,b,"#eceae4");
+    }
+  };
+  var alvos=document.querySelectorAll("[data-ill]");
+  for(var i=0;i<alvos.length;i++){var f=ILL[alvos[i].getAttribute("data-ill")]; if(f) alvos[i].innerHTML=f();}
+})();
+</script>
+
+</body>
+</html>
